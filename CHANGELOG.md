@@ -1,8 +1,26 @@
 # Changelog
 
-All notable language changes. 
+Main language changes. 
 
-## [0.1.0] - 2026-02-16
+For detailed standard information, view [standards](./docs/standards) page.
+
+## 2026-06-17
+
+### Fixed
+- Corrected `CONCAT` result comment in `README.md` example.
+- Removed incomplete `$div_result` placeholder from `README.md` example.
+- Fixed typo: `extesion` → `extension` in `README.md`.
+- Fixed punctuation in `README.md` Reference section.
+
+## 2026-03-16
+
+### Added
+- Core elements documentation.
+- Syntax documentation.
+- Examples.
+- [Core standard](./docs/standards/core/) specification.
+
+## 2026-02-16
 
 ### Added
 - Initial project structure.
