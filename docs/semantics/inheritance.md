@@ -2,7 +2,7 @@
 
 Inheritance is the mechanism by which [extended types](../core/types.md#extended-types) derive properties from other types, forming a structured hierarchy rooted at the built-in **Object** type.
 
-Every extended type is a direct child or an indirect descendant of **Object**. This hierarchy determines how values are validated during [evaluation](evaluation.md), and which types are accepted by function parameters.
+Every extended type is a direct child or an indirect descendant of **Object**. This hierarchy determines how values are validated during [execution](execution.md), and which types are accepted by function parameters.
 
 
 ## Object as the root type
@@ -85,10 +85,10 @@ Geometry extension types
 Formula:
 ```php
 $c = CIRCLE_2D(POINT_2D(0, 0), 4)   # center = { x: 0, y: 0 }, radius = 4
-$c = MOVE(c, VECTOR_2D(2, 2))       # position changed by [2,2]
-$c = SCALE(c, 1.5)                  # scale changed by [1.5, 1.5]
+$c = MOVE($c, VECTOR_2D(2, 2))      # position changed by [2,2]
+$c = SCALE($c, 1.5)                 # scale changed by [1.5, 1.5]
 
-{ center: c.transform.position, radius: c.radius }
+{ center: $c.transform.position, radius: $c.radius }
 ```
 
 Result:
@@ -113,4 +113,4 @@ Result:
 - [Types](../core/types.md)
 - [Primitives](../core/primitives.md)
 - [Functions](../core/functions.md)
-- [Evaluation](evaluation.md)
+- [Execution](execution.md)

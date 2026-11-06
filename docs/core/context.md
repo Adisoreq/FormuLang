@@ -1,65 +1,45 @@
 # Context
 
-Context is the object containing all data required for the process of evaluating a single formula.
+Context is the object containing all data required for the process of executing a single formula.
+
 
 ## Description
 
-The context holds **local variables**, temporary values, and any data specific to the current formula evaluation and provides isolation between separate formula evaluations, while allowing optional persistence when required.
+The context holds **local variables**, temporary values, and any data specific to the current formula execution and provides isolation between separate formula executions, while allowing optional persistence when required.
+
 
 ## Context types
 
-### 1. Disposable
-   - Created during pre-evaluation and disposed after evaluation finishes.
+### 1. Disposable context
+
+   - Created during pre-execution and disposed after execution finishes.
    - Use: single formula execution with no retained state.
 
-### 2. Persistent
-   - Copied or passed by reference across multiple evaluations (e.g., rolling-window calculations, backtesting).
-   - Use: accumulate state (counters, caches) between successive evaluations.
+### 2. Persistent context
+
+   - Copied or passed by reference across multiple executions (e.g., rolling-window calculations, backtesting).
+   - Use: accumulate state (counters, caches) between successive executions.
+
+### 2.1. Loop context
+
+   - Special type of **persistent content** that is iterated through elements of the specified array.
+   - Stores information about current loop and it's iteration.
+
 
 ## Lifecycle
 
-1. Pre-evaluation
+1. Pre-execution
    - Initializing the context with environment-supplied data.
-2. Evaluation
+2. Execution
    - Reading/modifying context **variables** and **constants**.
    - Applying temporary **environment** parameters.
-3. Post-evaluation
+3. Post-execution
    - **Disposable**: freeing resources.
-   - **Persistent**: returning or storing context for next evaluation.
+   - **Persistent**: returning or storing context for next execution.
 
-## Examples
-
-### Disposable context
-
-```
-$a = 3
-$b = 4
-$c2 = a^2 + b^2
-
-SQRT(c2)
-```
-
-This context stores disposal data and can be disposed after evaluation.
-
-### Persistent context
-
-```
-@REQUIRE "stock-1.x.x"
-
-$sum := 0
-$period := PARAMS[0]
-
-$start = I - period
-$sum = SUB(sum, CLOSE[start])
-$sum = ADD(sum, CLOSE[I])
-
-DIV(sum, period)
-```
-
-The `sum` and `period` variables in above example are initialized once and accessed during multiple evaluation iterations, which is possible only with persistent context.
 
 ## Reference
 
 - [Containers](containers.md)
 - [Environment](environment.md)
-- [Evaluation](../semantics/evaluation.md)
+- [Execution](../semantics/execution.md)

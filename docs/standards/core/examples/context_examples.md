@@ -11,9 +11,9 @@ List of examples of the use of context constants and variables.
 ```
 $elements = ARRAY(1, 2, 3, 4, 5)
 $n = 5
-$sum = SUM(elements)
+$sum = SUM($elements)
 
-DIV(sum, n)
+DIV($sum, $n)
 ```
 
 #### Result:
@@ -24,7 +24,7 @@ DIV(sum, n)
 
 #### Explanation:
 
-The formula is equivalent of `DIV(SUM(ARRAY(1,2,3,4,5)), 5)`, but it uses context variables for readibility.
+The formula is equivalent of `DIV(SUM(ARRAY(1,2,3,4,5)), 5)`, but it uses context variables for readability.
 
 ### Example 2
 
@@ -32,7 +32,7 @@ The formula is equivalent of `DIV(SUM(ARRAY(1,2,3,4,5)), 5)`, but it uses contex
 
 ```
 $elements = ARRAY(10, 20, 30, 40, 50)
-SUB(MAX(elements), MIN(elements))
+SUB(MAX($elements), MIN($elements))
 ```
 
 #### Result:
@@ -57,7 +57,7 @@ $array_indexing = 1
 #### Result:
 
 ```
-AMBIGUITY_ERROR: "array_indexing" already exists.
+[INVALID_IDENTIFIER_ERROR (9)] "array_indexing" symbol is already defined by environment.
 ```
 
 #### Explanation
@@ -70,18 +70,18 @@ Context variable cannot be initialized, if **environment** variable with the sam
 
 ```
 $x
-CLAMP(x, 0, 1)
+CLAMP($x, 0, 1)
 ```
 
 #### Result:
 
 ```
-TYPE_ERROR: "x" is not a number.
+[UNDEFINED_ERROR (12)] Variable "x" has no value.
 ```
 
 #### Explanation
 
-When variable is declared without definition, it's default type is **Undefined**.
+When a variable is declared without a value, it is **Undefined**. Reading it before an assignment results in `UNDEFINED_ERROR`, so `CLAMP` is not called.
 
 ### Example 5
 
@@ -91,7 +91,7 @@ When variable is declared without definition, it's default type is **Undefined**
 $x
 $x = 1.2
 
-CLAMP(x, 0, 1)
+CLAMP($x, 0, 1)
 ```
 
 #### Result:
@@ -112,7 +112,7 @@ CLAMP(x, 0, 1)
 $x = TRUE
 $x = 1.2
 
-CLAMP(x, 0, 1)
+CLAMP($x, 0, 1)
 ```
 
 #### Result:
@@ -126,5 +126,5 @@ TYPE_ERROR: Trying to override BOOLEAN value with NUMBER.
 Non-**Undefined** values cannot be overridden with other type.
 
 ## Reference
-- [Context](../core/context.md)
-- [Environment](../core/environment.md)
+- [Context](../../../core/context.md)
+- [Environment](../../../core/environment.md)

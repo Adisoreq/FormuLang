@@ -9,6 +9,7 @@ Helper structure used to verify the arguments passed into called function.
 | Property | Description |
 | :------- | :---------- |
 | Base type | Base type of the argument primitive |
+| Element type | Base type of every element, if the base type is **Array** |
 | Extended type | Extended type of the argument primitive |
 | Any type | Determines whether matching the types should be ignored |
 | Multiple | Determines whether the template is applied to multiple arguments |
@@ -25,6 +26,17 @@ Base type
 | Requirement | Mandatory if `Any type` is **false**, optional if **true** |
 | Constraints | Cannot be **Undefined**, if `Any type` is **false** |
 
+Element type
+
+| Name | Element type |
+| ---- | ------------ |
+| Description | Checks if the base type of every element of the examined **Array** matches the template one. An empty array always matches. Written in the `Base type` column as `Array<Type>` |
+| Expected value | Base type identifier (character string) |
+| Requirement | Optional |
+| Constraints | `Base type` must be **Array** |
+
+If an element does not match, the template does not match, so the overload is not selected. If no overload matches, the call resolves to `ARGUMENT_ERROR`, or to the first **Error** element (see [Evaluation](../semantics/evaluation.md#3-function-call)).
+
 Extended type
 
 | Name | Extended type |
@@ -38,7 +50,7 @@ Any type
 
 | Name | Any type |
 | ---- | ------------ |
-| Description | Disables the `Base type` and `Extended type` checking |
+| Description | Disables the `Base type` and `Extended type` checking. Any value is accepted, including an **Error** value. An **Undefined** value is never checked, because reading it already results in `UNDEFINED_ERROR`. |
 | Expected value | **True** of **false** (boolean) |
 | Requirement | Optional |
 | Constraints | None |
@@ -68,7 +80,7 @@ Descriptive notation of argument template. Readable for humans, ignored by parse
 ### Elements
 
 1. **Name** - argument's identifier in collection
-2. **Type** - argument's **base type**, or **extended type**, if specified
+2. **Type** - argument's **base type**, or **extended type**, if specified. An **Array** with an element type is written as `Array<Type>`, e.g. `numbers <Array<Number>>`
 
 ### Principles
 
@@ -123,6 +135,20 @@ Only valid `Number` value
 
 `Geometry.Object2D` and all its descendants (`Geometry.Figure2D`, `Geometry.Curve2D`, etc.)
 
+### Element type template
+
+**Signature**: `arg <Array<Number>>`
+
+**Template**:
+
+| Base type | Extended type | Any type | Multiple | Optional |
+| :--: | :--: | :--: | :--: | :--: |
+| Array&lt;Number&gt; | - | false | false | false |
+
+**Accepted types**:
+
+An **Array** whose every element is a `Number`, including an empty array. `[1, 2, 3]` matches, `[1, "2"]` does not.
+
 ### Any type template
 
 **Signature**: `arg <Any>`
@@ -135,7 +161,7 @@ Only valid `Number` value
 
 **Accepted types**:
 
-Any valid value is accepted (`Null`, `Boolean`, `Number`, `Object`, etc.)
+Any valid value is accepted (`Null`, `Boolean`, `Number`, `Object`, `Error`, etc.)
 
 ### Multiple template
 

@@ -1,14 +1,16 @@
 # Environment
 
-The **environment** is an abstraction layer between **FormuLang** and the parsing program, providing all necessary data, constants, and parameters required for formula evaluation.
+The **environment** is an abstraction layer between **FormuLang** and the parsing program, providing all necessary data, constants, and parameters required for formula execution.
+
 
 ## Description
 
 - The environment stores **global constants**, **configuration parameters**, and **environment variables**.
-- Environment variables and constants are accessible to all formula evaluations and persist between them.
+- Environment variables and constants are accessible to all formula executions. Their default values persist between executions, because every execution works on a copy of them stored in its [context](context.md) (see [pre-execution](../semantics/pre-execution.md)).
 - The environment is initialized by the host application and can be used to inject external data or settings.
-- Environment constants and variables that affect the process of formula evaluation must be specified in the standard documentation.
-- Environment values are read-only during formula evaluation unless explicitly overridden.
+- Environment constants and variables that affect the process of formula execution must be specified in the standard documentation.
+- The environment is read-only during formula execution. Overriding a variable inside a formula changes only its copy in the context.
+
 
 ## Usage
 
@@ -33,28 +35,31 @@ NULL
 
 ### Overriding environment parameters
 
-You can temporarily override environment parameters inside a formula to change evaluation behavior for a single execution.
+You can temporarily override environment parameters inside a formula to change execution behavior for a single execution.
 
 ```
 @array_indexing = 1
 ```
 
-> **Note:** Overriding environment variables inside a formula only affects the current evaluation context and does not persist globally.
+> [!NOTE] 
+> Overriding environment variables inside a formula only affects the current execution context and does not persist globally.
+
 
 ## Example
 
 ```
-$ standards = ARRTOSTR(SUPPORTED_STANDARDS)
-CONCAT("Supported standards: ", standards)
+$standards = JOIN(STANDARDS, ", ")
+CONCAT("Supported standards: ", $standards)
 ```
 Result:
 ```
-Supported standards: ["core-1.1.3"]
+Supported standards: core-0.2
 ```
+
 
 ## Reference
 
 - [Containers](containers.md)
 - [Context](context.md)
-- [Evaluation](../semantics/evaluation.md)
+- [Execution](../semantics/execution.md)
 - [Environment examples](../standards/core/examples/environment_examples.md)

@@ -43,7 +43,7 @@ Special characters
 #### Formula:
 
 ```
-"Backslash: \\\nHashtag: \#\nQuotation: \""
+"Backslash: \\\nHashtag: #\nQuotation: \""
 ```
 
 #### Result:
@@ -61,10 +61,10 @@ Joining texts
 #### Formula:
 
 ```
-$ text1 = "Hello"
-$ text2 = "world!"
+$text1 = "Hello"
+$text2 = "world!"
 
-JOIN([text1, text2], ", ")
+JOIN([$text1, $text2], ", ")
 ```
 
 #### Result:
@@ -80,9 +80,9 @@ Splitting texts
 #### Formula:
 
 ```
-$ text = "apples | bananas | lemons"
+$text = "apples | bananas | lemons"
 
-SPLIT(text, " | ")
+SPLIT($text, " | ")
 ```
 
 #### Result:
@@ -93,5 +93,5 @@ SPLIT(text, " | ")
 
 ## Reference
 
-- [Values](../core/values.md)
-- [Variables](../core/containers.md#variables)
+- [Values](../../../core/values.md)
+- [Variables](../../../core/containers.md#variables)

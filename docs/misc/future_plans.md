@@ -43,13 +43,13 @@ Defining Simple Moving Average (SMA) indicator
 
 Formula:
 ```php
-$period = PARAMS[0] # Period is the first parameter
-$diff = I - period
-$skip = diff < 0 # Returns no value if didn't reach period
+$period = ARGS[0] # Period is the first parameter
+$diff = I - $period
+$skip = $diff < 0 # Returns no value if didn't reach period
 
-$arr = RANGE(CLOSE, MAX([0, diff]), I) # Get period range
+$arr = RANGE(CLOSE, MAX([0, $diff]), I) # Get period range
 
-IF(skip, null, AVG(arr)) # Return average (or null if before period)
+IF($skip, null, AVG($arr)) # Return average (or null if before period)
 ```
 
 ### 2. Geometry Extension
@@ -66,7 +66,7 @@ Formula:
 ```php
 $a = POINT_2D(10, 4)
 $b = POINT_2D(2.5, -2)
-DISTANCE(a, b)
+DISTANCE($a, $b)
 ```
 
 Result:
@@ -80,10 +80,10 @@ Result:
 
 Formula:
 ```php
-$ a = POINT_2D(0, 0); b = POINT_2D(0, 4); c = POINT_2D(4, 4); d = POINT_2D(4, 0)
-$ ab = EDGE_2D(a, b); bc = EDGE_2D(b, c); cd = EDGE_2D(c, d); da = EDGE_2D(d, a)
+$a = POINT_2D(0, 0); $b = POINT_2D(0, 4); $c = POINT_2D(4, 4); $d = POINT_2D(4, 0)
+$ab = EDGE_2D($a, $b); $bc = EDGE_2D($b, $c); $cd = EDGE_2D($c, $d); $da = EDGE_2D($d, $a)
 
-FIGURE_2D(ab, bc, cd, da)
+FIGURE_2D($ab, $bc, $cd, $da)
 ```
 
 Result:
@@ -134,7 +134,7 @@ Formula:
 $center = POINT_2D(2, 2)
 $radius = 4
 
-CIRCLE_2D(center, radius)
+CIRCLE_2D($center, $radius)
 ```
 
 Result:

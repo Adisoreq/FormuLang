@@ -1,0 +1,7 @@
+# ======================== #
+#      GitIgnore file      #
+# ======================== #
+
+# Private files
+*.env
+private/

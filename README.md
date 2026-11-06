@@ -1,26 +1,42 @@
-# FormuLang
+<div align="center">
 
-Mathematical, formula-based scripting language for managed, real-time mathematical operations.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="raw/images/logo/formulang.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="raw/images/logo/formulang-light-mode.svg" />
+  <img src="raw/images/logo/formulang-light-mode.svg" alt="FormuLang logo" width="355" />
+</picture>
 
-![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)
+<p>
+    Mathematical, formula-based scripting language for managed, real-time mathematical operations.
+</p>
+
+[![Status](https://img.shields.io/badge/status-under%20development-orange)](#project-status)
+[![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](LICENSE.txt)
+
+
+[**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Changelog**](CHANGELOG.md)
+
+</div>
+
 
 ## Overview
 
-FormuLang is a language standard for parsers / interpreters to perform mathematical calculations based on text formulas. It is designed to be embedded in host applications as a lightweight, formula-based scripting layer.
+FormuLang is a language standard for parsers and interpreters that calculate the results of text formulas. A host application embeds an implementation of the standard and lets its users write formulas.
 
-### Key characteristics
+### Main features
 
-- **Expression-oriented** — every formula evaluates to a result; operators are syntactic sugar for built-in functions (e.g. `a + b` → `ADD(a, b)`)
-- **Deterministic & side-effect-free** — functions are pure and stateless, ensuring predictable and reproducible results
-- **Rich type system** — supports `Null`, `Boolean`, `Number`, `Text`, `Array`, `Object`, lambda functions, and dedicated `Error` / `Undefined` types
-- **Scoped variables** — `$` for local (context) variables, `@` for global (environment) variables provided by the host application
-- **Error-as-value** — errors are informational values, not exceptions, allowing graceful handling within formulas
+- **Expressions** - every formula returns a result. Operators are a short form of built-in functions, e.g. `$a + $b` is `ADD($a, $b)`.
+- **Pure functions** - a function returns the same result for the same arguments and does not change anything else. Only procedures (e.g. `SET`) change variables.
+- **Types** - `Null`, `Boolean`, `Number`, `Text`, `Array`, `Object`, `Delegate` (functions and lambdas) and `Error`.
+- **Two variable scopes** - `$` marks context variables of the formula, `@` marks environment variables of the host application.
+- **Errors as values** - an error is a value that a formula can check, e.g. with `ISERR`. An error that is not handled stops the execution and becomes the result.
 
-### Evaluation pipeline
+### Execution pipeline
 
-Formulas go through a multi-stage pipeline: **cleanup** → **tokenization** → **parsing** → **validation** → **computation** → **finalization**, producing a single return value.
+A formula goes through these stages: **validation** → **clean-up** → **tokenization** → **parsing** → **evaluation** → **finalization**. The result is a single value.
 
-For detailed technical documentation, please refer to the [docs](docs) directory.
+The technical documentation is in the [docs](docs) directory.
+
 
 ## Syntax
 
@@ -33,7 +49,7 @@ For detailed technical documentation, please refer to the [docs](docs) directory
 # Variables
 $a = 1
 $b = 2
-$c = a + b # 3
+$c = $a + $b # 3
 
 # Booleans
 $b1 = true
@@ -48,61 +64,61 @@ $hexadecimal_integer = 0x40C # 1036
 
 # Text
 $message = "Hello, world!"
-$special_text = "This text includes:\n- new line\n-\ttabulator\n- special characters: \\, \", \#"
+$special_text = "This text includes:\n- new line\n-\ttabulator\n- special characters: \\, \", #"
 
 # Arithmetic
 $sum = ADD(4, 5) # 9
-$fracture = DIV(1, 5) # 0.2
+$fraction = DIV(1, 5) # 0.2
 
 # Logic
-$l1 = EQU(b1, b2) # false
+$l1 = EQU($b1, $b2) # false
 $l2 = 25 > 10 # true
-$l3 = IF(PRIME(4), "This number is prime", "This number is not prime") # "This number is not prime"
+$l3 = IF(MOD(4, 2) == 0, "Even", "Odd") # "Even"
 
 # Arrays
 $arr = [5, 6, 7, 8, 9] # ARRAY(5, 6, 7, 8, 9)
-$element = arr[2] # 7 (depending on environment)
+$element = $arr[2] # 7 (depending on environment)
 $left = [ "a", "b", "c" ]
 $right = [ "x", "y", "z" ]
-$both = CONCAT(left, right) # [ "a", "b", "c", "x", "y", "z" ]
+$both = CONCAT($left, $right) # [ "a", "b", "c", "x", "y", "z" ]
 $nested = [ [ 10, 20, 30 ], [ "a", "aa", "aaa" ], [ true, false ] ]
 
 # Objects
 $obj = { name: "John", age: 24 }
-$name = obj.name # "John"
-$age = obj.age # 24
+$name = $obj.name # "John"
+$age = $obj.age # 24
 
 # Lambda functions
 $square = (x) => POW(x, 2) # Raises argument to the power of 2
-$squared = square(5) # 25
-$div_by_3 = (n) => EQU(MOD(n, 3), 0) # Checks if number is dividable by 3
-$filtered = FILTER(arr, div_by_3) # [ 6, 9 ]
+$squared = $square(5) # 25
+$div_by_3 = (n) => EQU(MOD(n, 3), 0) # Checks if number is divisible by 3
+$filtered = FILTER($arr, $div_by_3) # [ 6, 9 ]
 
 # Errors
-$err = ERROR("Division by zero (0) is not permitted!")
+$is_err = ISERR(ERROR("Division by zero (0) is not permitted!")) # true; an unhandled error would abort the execution
 
 # Returning the value
-# Returned value may be either a direct literal, variable, or function call
-$result = message + "!!" # "Hello, world!!!"
-result
+# The result is the value of the last evaluated statement - either a direct literal, variable, or function call
+$result = $message + "!!" # "Hello, world!!!"
+$result
 ```
 
-## Project Status
 
-![Status](https://img.shields.io/badge/status-work%20in%20progress-orange)
-![Version](https://img.shields.io/badge/version-0.1.0--alpha-yellow)
+## Project Status
 
 Current stage: **Prototyping & Specification**
 
 This project is currently under active development. The syntax specification is stabilizing, but breaking changes may still occur.
 
 - [x] **Core syntax specification**
-- [ ] **Core semantic specification**
+- [x] **Core semantic specification**
 - [ ] **Extension standards specification**
+
 
 ## Trivia
 
-- Project's initial purpose was to define stock indicator functions. Now this functionality is realised as an extension, to ensure language's universality.
+- The project started as a way for users to define stock indicator functions. Stock indicators are now planned as an extension standard, so the core language stays general.
+
 
 ## Reference
 
@@ -118,9 +134,11 @@ Project is inspired by:
 
 - [Coda Formulas](https://coda.io/formulas)
 
+
 ## Authors
 
 Adrian Piznal
+
 
 ## License
 

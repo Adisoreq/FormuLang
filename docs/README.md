@@ -3,11 +3,12 @@
 **FormuLang** technical documentation overview.
 
 ## Core concepts
-- [**Primitives**](core/primitives.md) - elementary building blocks of **FormuLang**: types, values, containers, and functions.
+- [**Formula**](core/formula.md) - the text that is executed, its sequences and its result.
+- [**Primitives**](core/primitives.md) - basic elements of **FormuLang**: types, values, containers, and functions.
   - [**Types**](core/types.md) - category attributes that specify how values are interpreted, validated and computed.
   - [**Containers**](core/containers.md) - variables and constants used to store and access named values.
   - [**Functions**](core/functions.md) - autonomous blocks that process inputs and return a computed output.
-  - [**Context**](core/context.md) - scoped data container for a single formula evaluation.
+  - [**Context**](core/context.md) - scoped data container for a single formula execution.
   - [**Environment**](core/environment.md) - global abstraction layer between **FormuLang** and the host application.
 
 ## Syntax Specification
@@ -20,10 +21,16 @@ Definition of valid symbols, grammar rules, and text structure.
 
 ## Semantics & Execution
 How the code is interpreted and executed.
+- [**Validation**](semantics/validation.md) - environment integrity checks and syntax errors, before any other stage.
 - [**Cleanup**](semantics/cleanup.md) - input normalization and whitespace compression.
 - [**Tokenization**](semantics/tokenization.md) - splitting formulas into sequences and expressions.
+- [**Operator Parsing**](semantics/operator-parsing.md) - determining operator roles, binding power, and delimiter contexts.
 - [**Parsing**](semantics/parsing.md) - resolving expression trees and building the primitive map.
-- [**Evaluation**](semantics/evaluation.md) - full evaluation pipeline walkthrough.
+- [**Evaluation**](semantics/evaluation.md) - resolving the primitive map into computed values.
+- [**Finalization**](semantics/finalization.md) - wrapping the computed value into the returned result.
+- [**Execution**](semantics/execution.md) - full execution pipeline walkthrough.
+  - [**Pre-execution**](semantics/pre-execution.md) - building the context from the environment before execution.
+  - [**Post-execution**](semantics/post-execution.md) - consuming the result and releasing the context after execution.
 
 ## Standards
 Formal specifications defining built-in functions, constants, and procedures.

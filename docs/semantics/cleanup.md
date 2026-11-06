@@ -1,6 +1,6 @@
 # Clean-up
 
-**Clean-up** is the first stage of the [evaluation](./evaluation.md) process, where the formula string is compressed by removing comments and unnecessary white spaces.
+**Clean-up** is the second stage of the [execution](./execution.md) process, where the formula string is compressed by removing comments and unnecessary white spaces.
 
 ## Clean-up phases
 
@@ -14,9 +14,9 @@ Replaces every `[Tab]` (`\t`) with `[Space]`, and every carriage return (`\r`) c
 
 #### Description
 
-Removes **comment sigils** (`#`) and every character after them.
+Removes each **comment sigil** (`#`) that is located outside a [text literal](../syntax/literals.md#4-text), and the remaining characters on that line. The newline is retained as a line boundary. Thus, a semicolon to the left of `#` can separate sequences, but a semicolon to its right is part of the comment and is ignored.
 
-> **Note:** To use a literal `#` character inside a value (e.g. in a string), it must be escaped with a backslash (`\#`). An unescaped `#` is always treated as the start of a comment.
+> **Note:** A text literal begins with a quotation mark (`"`) and ends with the next quotation mark that is not preceded by an escaping backslash (`\`), or at the end of the line. A `#` inside a text literal is an ordinary character, e.g. `"Item #1"`.
 
 #### Example
 
@@ -24,18 +24,18 @@ Initial formula:
 ```
 # First comment
 
-$ x = 4 # Second comment
+$x = 4 # Second comment
 
-x ^ 2 # Third comment
+$x ^ 2 # Third comment
 ```
 
 Result:
 ```
 
 
-$ x = 4 
+$x = 4 
 
-x ^ 2 
+$x ^ 2 
 ```
 
 ### 3. White space compression
@@ -54,10 +54,10 @@ Unnecessary white spaces are removed.
 
 Initial formula:
 ```
-$ x = 2
-$ y = 3
+$x = 2
+$y = 3
 
-MUL(x, y)
+MUL($x, $y)
 ```
 
 Result:
@@ -65,7 +65,7 @@ Result:
 $x=2
 $y=3
 
-MUL(x,y)
+MUL($x,$y)
 ```
 
 ### 4. Line compression
@@ -81,16 +81,16 @@ Initial formula:
 $x=5
 $y=8
 
-MUL(x,y)
+MUL($x,$y)
 ```
 
 Result:
 ```
 $x=5
 $y=8
-MUL(x,y)
+MUL($x,$y)
 ```
 
 ## Reference
 
-- [Evaluation](./evaluation.md)
+- [Execution](./execution.md)

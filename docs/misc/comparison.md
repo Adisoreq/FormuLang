@@ -1,6 +1,6 @@
 # Comparison
 
-Comparison of FormuLang against similar formula and expression languages — covering its strengths, weaknesses, and key differentiators.
+Comparison of FormuLang with similar formula and expression languages: its strengths, its weaknesses and the main differences.
 
 ---
 
@@ -8,43 +8,43 @@ Comparison of FormuLang against similar formula and expression languages — cov
 
 ### 1. Application-agnostic standard
 
-FormuLang is a **language specification**, not a library or platform feature. It can be implemented by any parser/interpreter and embedded into any host application, without being tied to a specific runtime or ecosystem.
+FormuLang is a **language specification**, not a library or a feature of one platform. Any parser or interpreter can implement it, in any programming language, and any host application can embed it.
 
 ### 2. Pure, deterministic evaluation
 
-Functions are strictly **side-effect-free and deterministic**: the same input always produces the same output. This makes formulas easy to test, cache, and reason about, which is critical for real-time and financial use cases.
+Functions have **no side effects** and are **deterministic**: the same arguments always give the same result. Only procedures (`SET`, `INIT`, `COND_SET`) change variables. Formulas are therefore easy to test and to cache, which is important for real-time and financial calculations.
 
-### 3. Rich type system
+### 3. Formal type system
 
-FormuLang defines a broad set of types: `Null`, `Boolean`, `Number`, `Text`, `Array`, `Object`, `Error`, `Undefined`, and lambda functions. This exceeds the type coverage of most embedded formula systems.
+FormuLang defines the types `Null`, `Boolean`, `Number`, `Text`, `Array`, `Object`, `Delegate` and `Error`, and the `Undefined` state of a variable. Every function documents the types that it accepts and returns. Most embedded formula languages convert types implicitly and do not specify the rules.
 
 ### 4. Error-as-value
 
-Errors are **first-class values**, not thrown exceptions. Formulas can produce, inspect, and propagate error values gracefully without crashing evaluation — enabling robust error handling directly in expressions.
+Errors are **values**, not exceptions. A formula can create an error, check it (`ISERR`) and select another value instead (`IF`). An error that is not handled stops the execution and becomes the result of the formula.
 
 ### 5. Clear variable scoping model
 
-The `$`/`@` sigil convention formally separates **context variables** (local to an evaluation) from **environment variables** (provided globally by the host application). This makes integration contracts explicit and predictable.
+The `$` and `@` sigils separate **context variables** (local to an execution) from **environment variables** (provided by the host application). A reader of the formula sees at once which values come from the host.
 
 ### 6. Operators as syntactic sugar
 
-All infix operators (`+`, `-`, `>`, `^`, …) are defined as shorthand for named functions (`ADD`, `SUB`, `GT`, `POW`, …). This unifies the function and operator models, simplifying parser implementation and reasoning about precedence.
+All operators (`+`, `-`, `>`, `^`, …) are a short form of named functions (`ADD`, `SUB`, `GRE`, `POW`, …). The parser translates them to function calls, so the evaluation has to handle only function calls.
 
 ### 7. Lambda functions
 
-FormuLang natively supports **anonymous lambda functions** (`(x) => expr`), enabling higher-order operations such as `FILTER`, `MAP`, and `REDUCE` — a feature absent from most formula systems.
+FormuLang supports **anonymous lambda functions** (`(x) => expr`). Functions such as `MAP`, `FILTER`, `MAX` and `MIN` accept them as arguments. Most formula languages do not have lambdas.
 
 ### 8. Multi-line, multi-statement formulas
 
-Unlike single-expression formula languages (Excel, Math.js), FormuLang supports **multi-statement formulas** with named local variables, making complex logic readable and maintainable.
+Unlike single-expression formula languages (Excel, Coda), FormuLang supports **formulas with many statements** and named local variables. A long calculation can be split into named steps.
 
-### 9. Well-defined evaluation pipeline
+### 9. Well-defined execution pipeline
 
-The six-stage pipeline (cleanup → tokenization → parsing → validation → computation → finalization) is formally specified, giving implementors a clear contract and making behaviour auditable.
+The six stages of the execution (validation → clean-up → tokenization → parsing → evaluation → finalization) are specified in detail, so different implementations give the same results.
 
 ### 10. Open standard
 
-Licensed under **CC BY 4.0** — free to implement, extend, and redistribute.
+Licensed under **CC BY 4.0**: anyone can implement, extend and redistribute it.
 
 ---
 
@@ -52,7 +52,7 @@ Licensed under **CC BY 4.0** — free to implement, extend, and redistribute.
 
 ### 1. Alpha-stage specification
 
-The project is at **v0.1.0-alpha**. The specification is not yet stable; breaking changes may still occur, and no production-ready reference implementation exists yet.
+The project is at version **0.1.0-alpha** (Core standard `0.2`). The specification is not stable yet, so breaking changes can still occur.
 
 ### 2. No reference implementation
 
@@ -60,23 +60,23 @@ FormuLang is currently **specification-only**. Adopters must write their own par
 
 ### 3. No iteration constructs
 
-There are no loop primitives (`for`, `while`, `each`). Iteration relies on functional higher-order functions (`MAP`, `FILTER`, `REDUCE`), which may feel unfamiliar to users coming from imperative languages.
+There are no loops (`for`, `while`, `each`). Iteration uses functions with lambda arguments (`MAP`, `FILTER`), which can be unfamiliar to users of imperative languages.
 
 ### 4. No I/O or async capabilities
 
-FormuLang is intentionally **stateless and synchronous**. There is no file access, network calls, timers, or async evaluation — by design, but this limits use cases that require side-effecting operations.
+FormuLang is **stateless and synchronous** by design. There is no file access, no network calls, no timers and no asynchronous execution. Tasks that need side effects must be done by the host application.
 
 ### 5. Small ecosystem
 
-No package manager, no standard library beyond built-in functions, no community tooling (REPL, debugger, linter, IDE plugin) yet.
+There is no package manager, no library beyond the functions of the standards, and no tools (REPL, debugger, linter, IDE plugin) yet.
 
 ### 6. No string interpolation
 
-Text values cannot embed expressions inline (e.g., `"Value is {x}"`). Concatenation must be done explicitly via functions like `CONCAT`.
+Text values cannot contain expressions (e.g. `"Value is {x}"`). Texts must be joined with `+`, `CONCAT` or `JOIN`.
 
 ### 7. Limited error recovery
 
-Evaluation is all-or-nothing per formula. There is no mechanism to partially evaluate a formula and skip only the failing sub-expression.
+An **Error** that reaches the root of a sequence aborts the execution, and the error becomes the formula's result (unless `suppress_errors` is enabled). Errors can be handled inside an expression with `ISERR` and `IF`, but there is no mechanism to catch an error for a whole sequence or to return a partial result.
 
 ---
 
@@ -86,12 +86,12 @@ Evaluation is all-or-nothing per formula. There is no mechanism to partially eva
 
 #### Description
 
-Excel formulas are single-expression, cell-referenced calculations embedded in spreadsheet cells. They are the most widely used formula system in the world, with a large built-in function library.
+Excel formulas are single-expression, cell-referenced calculations embedded in spreadsheet cells. They are the most widely used formula system, with a large library of built-in functions.
 
 #### Similarities
 
 - Expression-oriented: every formula evaluates to a single result.
-- Rich built-in function library covering arithmetic, text, logic, and lookup operations.
+- Large library of built-in functions for arithmetic, text, logic and lookup.
 - Errors are represented as values (`#DIV/0!`, `#N/A`, `#VALUE!`, …), similar to FormuLang's error-as-value model.
 - Supports arrays and array operations (especially in modern Excel with dynamic arrays).
 
@@ -102,7 +102,7 @@ Excel formulas are single-expression, cell-referenced calculations embedded in s
 | **Scope** | Embeddable language standard | Tied to Microsoft Excel / spreadsheet model |
 | **Variables** | Named `$` variables | Cell references (A1, B2, …) |
 | **Multi-statement** | Yes | No — single expression per cell |
-| **Lambda functions** | Yes (native) | Limited — Excel 365 introduced `LAMBDA` recently |
+| **Lambda functions** | Yes | Only in Microsoft 365 (`LAMBDA`) |
 | **Type system** | Null, Boolean, Number, Text, Array, Object, Error, Undefined | Implicit coercion, no formal type model |
 | **Side effects** | None (pure) | Volatile functions (`NOW()`, `RAND()`) allowed |
 | **Embeddability** | Designed for embedding | Not embeddable independently |
@@ -121,7 +121,7 @@ EspoCRM Formula is a scripting layer embedded in the EspoCRM platform, used to d
 - Formula-based evaluation with named variables and built-in functions.
 - Context-injected variables provided by the host application.
 - Supports conditionals, string operations, and arithmetic.
-- Designed to be embedded — not a standalone language.
+- Embedded in a host application, not a standalone language.
 
 #### Differences
 
@@ -131,7 +131,7 @@ EspoCRM Formula is a scripting layer embedded in the EspoCRM platform, used to d
 | **Side effects** | None (pure) | Can read and write record fields (`entity\setAttribute`) |
 | **Lambda functions** | Yes | No |
 | **Type system** | Formal, with Undefined/Error types | Implicit, no formal specification |
-| **Multi-platform** | Yes — open standard | No — EspoCRM-only |
+| **Multi-platform** | Yes, open standard | No, EspoCRM only |
 | **Error handling** | Error-as-value | No structured error type |
 | **Standard** | Open, versioned specification | Undocumented internals |
 
@@ -155,8 +155,8 @@ Pine Script is TradingView's domain-specific language for creating custom techni
 | | FormuLang | Pine Script |
 | :--- | :--- | :--- |
 | **Scope** | General-purpose embeddable standard | Financial charting DSL |
-| **Execution model** | Single stateless evaluation | Implicit loop over historical bars |
-| **Persistent state** | None | Built-in (`var`, `varip`) — state persists across bars |
+| **Execution model** | Single stateless execution | Implicit loop over historical bars |
+| **Persistent state** | Optional persistent context | Built-in (`var`, `varip`), state persists across bars |
 | **Visual output** | None | Native plotting (`plot`, `barcolor`, `label.new`, …) |
 | **Side effects** | None | Order execution, alerts, drawings |
 | **Embeddability** | Yes | TradingView platform only |
@@ -184,8 +184,8 @@ Math.js is a JavaScript library that provides a parser for mathematical expressi
 | :--- | :--- | :--- |
 | **Nature** | Language standard (multi-implementable) | JavaScript library (single implementation) |
 | **Type system** | Null, Boolean, Number, Text, Array, Object, Error, Undefined | Number, BigNumber, Complex, Matrix, Unit, string |
-| **Text operations** | Rich text functions | Minimal |
-| **Object type** | Yes (`{ key: value }`) | No |
+| **Text operations** | Basic text functions (`TRIM`, `SPLIT`, `JOIN`, …) | Minimal |
+| **Object type** | Yes (`{ key: value }`) | Yes (`{ key: value }`) |
 | **Lambda functions** | Yes | Limited (arrow functions in scope) |
 | **Error handling** | Error-as-value | Thrown JavaScript exceptions |
 | **Host integration** | Formal context/environment model | Scope object passed to `evaluate()` |
@@ -203,9 +203,9 @@ Coda is a document platform that exposes a formula language for computed columns
 #### Similarities
 
 - Expression-oriented: every formula returns a single value.
-- Rich built-in functions for text, numbers, lists, dates.
+- Many built-in functions for text, numbers, lists and dates.
 - Supports list (array) operations with functional patterns.
-- Deterministic evaluation — no side effects in pure formulas.
+- Deterministic evaluation, with no side effects in pure formulas.
 
 #### Differences
 
@@ -215,7 +215,7 @@ Coda is a document platform that exposes a formula language for computed columns
 | **Lambda / higher-order** | Native lambda functions | Anonymous formula blocks in some list functions |
 | **Type system** | Formal specification | Implicit, platform-defined |
 | **Host integration** | Formal context (`$`) and environment (`@`) model | Table rows and columns as implicit context |
-| **Multi-statement** | Yes | No — single expression |
+| **Multi-statement** | Yes | No, single expression |
 | **Open standard** | Yes (CC BY 4.0) | Proprietary |
 | **Error type** | First-class `Error` value | Propagated automatically, not first-class |
 
@@ -232,7 +232,7 @@ Coda is a document platform that exposes a formula language for computed columns
 | Error-as-value | ✅ | ✅ | ❌ | ❌ | ❌ | ⚠️ |
 | Multi-statement formulas | ✅ | ❌ | ⚠️ | ✅ | ✅ | ❌ |
 | Formal type system | ✅ | ❌ | ❌ | ⚠️ | ⚠️ | ❌ |
-| Object type | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Object type | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | Persistent state | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | Production-ready | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
 

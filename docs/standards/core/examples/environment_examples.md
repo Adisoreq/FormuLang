@@ -1,6 +1,6 @@
 # Environment examples
 
-List of examples of the use of environment constants, variables and procedures.
+List of examples showing environment constants and variables, and procedures defined by the **Core** standard.
 
 ## Examples
 
@@ -9,8 +9,8 @@ List of examples of the use of environment constants, variables and procedures.
 #### Formula:
 
 ```
-$SET x 4.25
-RETURN x
+SET $x 4.25
+$x
 ```
 
 #### Result:
@@ -21,68 +21,67 @@ RETURN x
 
 #### Explanation:
 
-`SET` procedure is equivalent to variable assingment, while `RETURN` procedure is responsible for returning the formula result.
+`SET` procedure is equivalent to variable assignment (`$x = 4.25`). The formula's result is the value of the last statement, here `$x`.
 
 ### Example 2
 
 #### Formula:
 
 ```
-$standards = ARRTOSTR(SUPPORTED_STANDARDS)
-CONCAT("Supported standards: ", standards)
+$standards = JOIN(STANDARDS, ", ")
+CONCAT("Supported standards: ", $standards)
 ```
 
 #### Result:
 
 ```
-Supported standards: ["core-1.1.3", "stock-5.2.11"]
+Supported standards: core-0.2, stock-5.2
 ```
 
 #### Explanation:
 
-`SUPPORTED_STANDARDS` is the environment constant that contains information about **FormuLang** version and extensions supported by the specified implementation.
+`STANDARDS` is the environment constant that contains the identifiers of the standards supported by the specified implementation.
 
 ### Example 3
 
 #### Formula:
 
 ```
-@REQUIRE "core-1.3.2"
-@REQUIRE "stock-5.2+.x"
+REQUIRE "core-0.2"
+REQUIRE "stock-5.2+"
 
 $diff = CLOSE[I] - OPEN[I]
-$result = IF(diff > 0, 1, -1)
+$result = IF($diff > 0, 1, -1)
 
-result
+$result
 ```
 
 #### Result:
 
 ```
-NOT_SUPPORTED_ERROR: "stock-5.2+.x" is not supported.
+[NOT_SUPPORTED_ERROR (11)] Standard "stock-5.2+" is not supported.
 ```
 
 #### Explanation:
 
-The `REQUIRE` procedure throws an error if the environment doesn't support specified standard.
+The [`REQUIRE`](../procedures/REQUIRE.md) procedure returns an error if the environment doesn't support the specified standard.
 
 Required standards in example are:
 - `core`
-  - Exact version: **1.3.2**
+  - Exact version: **0.2**
 - `stock`
   - Major version: **5** (exact)
   - Minor version: **2** (or higher)
-  - Patch version: **any**
 
 ### Example 4
 
 #### Formula:
 
 ```
-@REQUIRE "math-1.x.x"
+REQUIRE "math-1.x"
 $radius = 2
 # Field = pi * r^2
-MUL(PI, POW(radius, 2))
+MUL(PI, POW($radius, 2))
 ```
 
 #### Result:
@@ -103,7 +102,7 @@ Some constants (like `PI`, `E`, etc.) are defined by a standard.
 @array_indexing = 1
 
 $elements = ARRAY(10, 20, 30, 40)
-elements[1]
+$elements[1]
 ```
 
 #### Result:
@@ -127,7 +126,7 @@ The `array_indexing` environment variable informs the parser whether arrays with
 #### Result:
 
 ```
-ENVIRONMENT_ERROR: "x" is not defined.
+[ENVIRONMENT_ERROR (10)] Environment variable "x" is not defined.
 ```
 
 #### Explanation:
@@ -135,4 +134,4 @@ ENVIRONMENT_ERROR: "x" is not defined.
 Unlike **context**, **environment** doesn't allow referring to non-existing variables.
 
 ## Reference
-- [Environment](../core/environment.md)
+- [Environment](../../../core/environment.md)

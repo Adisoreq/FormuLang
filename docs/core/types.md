@@ -12,7 +12,7 @@ Examples: `Boolean`, `Number`, `Text`
 
 ## Extended types
 
-Extended types are types [derived](../semantics/inheritance.md) from the **Object** type, introduced by standards or extensions to model domain-specific structures.
+Extended types are types [derived](../semantics/inheritance.md) from the **Object** type, introduced by extension standards to model domain-specific structures.
 
 ### Extended type naming
 
@@ -27,4 +27,4 @@ Examples: `Geometry.Point2D`, `Stock.Candle`
 
 - [Primitive](primitives.md)
 - [Inheritance](../semantics/inheritance.md)
-- [Object](../standards/core/types.md#object)
+- [Object](../standards/core/types/Object.md)

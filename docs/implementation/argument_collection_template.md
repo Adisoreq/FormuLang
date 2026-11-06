@@ -9,10 +9,10 @@ Arguments are matched against templates sequentially, left to right. Validation 
 
 ## Function overloads
 
-A function may accept more than one argument collection. Each collection represents a separate **overload** — a distinct parameter signature.
+A function may accept more than one argument collection. Each collection represents a separate **overload** — a distinct parameter signature. Only **named** functions have overloads; a [lambda function](../syntax/functions.md#lambda-function-expression) has no argument collection, so its arguments are bound directly to its parameters and the stored body tree is evaluated without any matching (see [lambda invocation](../semantics/evaluation.md#lambda-invocation)).
 
 During validation, overloads are tested in order — result is calculated with first matching overload.
-If no overload matches the input, function returns an error.
+If no overload matches the input, the function is not executed and returns an error: the leftmost **Error** argument, if there is one (the error is propagated), or `ARGUMENT_ERROR` otherwise. See [Evaluation](../semantics/evaluation.md#3-function-call).
 
 ## Examples
 
@@ -44,17 +44,17 @@ Overload resolution for `ADD`:
 
 ### Variadic collection
 
-**`ARRAY(...elements <Any>)`**
+**`ARRAY(...elements? <Any>)`**
 
 | Position | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | :------: | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
-| 1 | elements | | - | - | true | true | false |
+| 1 | elements | | - | - | true | true | true |
 
-`Multiple: true, Optional: false` — requires at least one argument. Valid calls: `ARRAY(3)`, `ARRAY(3, 5, 6)`.
+`Multiple: true, Optional: true` — accepts any number of arguments, also none. Valid calls: `ARRAY()`, `ARRAY(3)`, `ARRAY(3, 5, 6)`. With `Optional: false`, at least one argument is required.
 
 ### Optional argument
 
-**`JOIN(array <Array>, [separator <Text>])`**
+**`JOIN(array <Array>, separator? <Text>)`**
 
 | Position | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | :------: | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
@@ -93,7 +93,7 @@ Function with identifier "MAX" called with 1 **Array** literal argument.
 
 - Overload 2
     - Signature: `MAX(...numbers <Number>)`
-    - Description: Returns the greatest number from argument colection
+    - Description: Returns the greatest number from the argument collection
     - Collection template:
 
         | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
@@ -105,24 +105,33 @@ Function with identifier "MAX" called with 1 **Array** literal argument.
       - Result: `25`
 
 - Overload 3
-    - Signature: `MAX(elements <Array>, [handler <Delegate>])`
-    - Description: Returns the greatest number from the array. If handler function is specified, it's used to map array elements before finding the maximum.
+    - Signature: `MAX(numbers <Array<Number>>)`
+    - Description: Returns the greatest number from an array of numbers.
     - Collection template:
 
         | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
         | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
-        | 1 | elements | | Array | - | false | true | false |
-        | 2 | handler | | Delegate | - | false | false | true |
+        | 1 | numbers | | Array&lt;Number&gt; | - | false | false | false |
 
-    - Example 1:
+    - Example:
       - Formula: `MAX([4, 5, 7, 9])`
       - Result: `9`
 
-    - Example 2:
-      - Formula: `MAX([true, 4, 5, 7, "9"], (e) => IF(ISNUM(e), e, 0)`
+- Overload 4
+    - Signature: `MAX(elements <Array>, handler <Delegate>)`
+    - Description: Maps every element of the array with the handler function, and returns the greatest result.
+    - Collection template:
+
+        | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
+        | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
+        | 1 | elements | | Array | - | false | false | false |
+        | 2 | handler | | Delegate | - | false | false | false |
+
+    - Example 1:
+      - Formula: `MAX([true, 4, 5, 7, "9"], (e) => IF(ISNUM(e), e, 0))`
       - Result: `7`
     
-    - Example 3:
+    - Example 2:
       - Formula: `MAX([ {name: "Anna", age: 15}, {name: "Billy", age: 18}, {name: "Charlie", age: 21} ], (e) => e.age)`
       - Result: `21`
 
@@ -132,11 +141,14 @@ Function with identifier "MAX" called with 1 **Array** literal argument.
 | :------: | :---: | :---------- |
 | 1 | ❌ | Overload expects 2 numbers - both argument count and type are incorrect. |
 | 2 | ❌ | Overload expects 1 or more numbers, doesn't accept array. |
-| 3 | ✅ | Array argument satisfies overload's requirements. Handler delegate is optional. |
+| 3 | ✅ | The argument is an array and every element is a `Number`. |
+| 4 | - | Not checked: the first matching overload is used. It would not match anyway, because the `handler` argument is missing. |
 
 #### Resolution
 
 The maximum value will be calculated by the 3rd overload of the `MAX` function.
+
+The call `MAX([15, "25", 20])` matches no overload: overload 3 rejects the `Text` element and overload 4 requires a handler. It resolves to `ARGUMENT_ERROR`.
 
 ## Reference
 

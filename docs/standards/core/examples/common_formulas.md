@@ -19,13 +19,13 @@ $$
 - Standard expression:
 
 ```
-$ delta = SUB(POW(b, 2), MUL(MUL(4, a), c))
+$delta = SUB(POW($b, 2), MUL(MUL(4, $a), $c))
 ```
 
 - Operator expression:
 
 ```
-$ delta = b^2 - 4*a*c
+$delta = $b^2 - 4*$a*$c
 ```
 
 ---
@@ -45,13 +45,13 @@ $$
 - Standard expression:
 
 ```
-$ stdev = ROOT(DIV(SUM(MAP(arr, (e) => POW(SUB(e, AVG(arr)), 2))), LEN(arr)), 2)
+$stdev = ROOT(DIV(SUM(MAP($arr, (e) => POW(SUB(e, AVG($arr)), 2))), LEN($arr)), 2)
 ```
 
 - Operator expression:
 
 ```
-$ stdev = ROOT(SUM(MAP(arr, (e) => (e - AVG(arr))^2)) / LEN(arr), 2)
+$stdev = ROOT(SUM(MAP($arr, (e) => (e - AVG($arr))^2)) / LEN($arr), 2)
 ```
 
 ---
@@ -77,13 +77,13 @@ $$
 - Standard expression:
 
 ```
-$d = SQRT(ADD(POW(SUB(x2, x1), 2), POW(SUB(y2, y1), 2)))
+$d = SQRT(ADD(POW(SUB($x2, $x1), 2), POW(SUB($y2, $y1), 2)))
 ```
 
 - Operator expression:
 
 ```
-$d = ((x2 - x1)^2 + (y2 - y1)^2) ^ 0.5
+$d = (($x2 - $x1)^2 + ($y2 - $y1)^2) ^ 0.5
 ```
 
 ### 4. Compound Interest
@@ -106,16 +106,16 @@ $$
 - Standard expression:
 
 ```
-$a = MUL(p, POW(ADD(1, DIV(r, n)), MUL(n, t)))
+$a = MUL($p, POW(ADD(1, DIV($r, $n)), MUL($n, $t)))
 ```
 
 - Operator expression:
 
 ```
-$a = p * (1 + r/n)^(n*t)
+$a = $p * (1 + $r/$n)^($n*$t)
 ```
 
 ## Reference
 
-- [Functions](../core/functions.md)
-- [Variables](../core/containers.md)
+- [Functions](../../../core/functions.md)
+- [Variables](../../../core/containers.md)

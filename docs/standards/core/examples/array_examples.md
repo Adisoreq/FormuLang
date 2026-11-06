@@ -11,10 +11,10 @@ Initializing arrays
 #### Formula:
 
 ```
-$ a1 = ARRAY(1, 2, 3)
-$ a2 = ARRAY("a", "b", "c")
+$a1 = ARRAY(1, 2, 3)
+$a2 = ARRAY("a", "b", "c")
 
-[a1, a2]
+[$a1, $a2]
 ```
 
 #### Result:
@@ -29,6 +29,6 @@ Arrays may be nested
 
 ## Reference
 
-- [Arrays](../core//types.md#array)
-- [Values](../core/values.md)
-- [Variables](../core/containers.md#variables)
+- [Arrays](../types/Array.md)
+- [Values](../../../core/values.md)
+- [Variables](../../../core/containers.md#variables)

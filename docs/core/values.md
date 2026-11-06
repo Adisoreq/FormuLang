@@ -1,6 +1,6 @@
 # Values
 
-A value is a [primitive](primitives.md) consisting of a **[type](types.md)** and **data**. It represents a single unit of information and is the fundamental building block of formula evaluation — every operation in **FormuLang** both consumes and produces values.
+A value is a [primitive](primitives.md) consisting of a **[type](types.md)** and **data**. It is a single unit of information. Every operation in **FormuLang** receives values and returns a value.
 
 ## Structure
 
@@ -17,13 +17,13 @@ How a value behaves during assignment and when passed between operations is dete
 
 ### Pass-by-value
 
-Applies to **basic types**: `Null`, `Boolean`, `Number`, `Text`, `Undefined`, `Error`.
+Applies to **basic types**: `Null`, `Boolean`, `Number`, `Text`, `Undefined`.
 
 The data is **copied** on assignment or when passed to a function. Changes to the copy have no effect on the original.
 
 ### Pass-by-reference
 
-Applies to **complex types**: `Array`, `Tuple`, `Object`, `Delegate`.
+Applies to **complex types**: `Error`, `Array`, `Object`, `Delegate`.
 
 A **reference** to the underlying data is passed rather than a copy, avoiding the overhead of duplicating large structures.
 
@@ -32,12 +32,12 @@ A **reference** to the underlying data is passed rather than a copy, avoiding th
 | State | Type | Description |
 | :---- | :--- | :---------- |
 | **Defined** | Any type except `Undefined` | The value has been assigned and is ready for use. |
-| **Undefined** | `Undefined` | The value has been declared but not yet assigned. It can be superseded by any other type without error. |
+| **Undefined** | `Undefined` | The variable has been declared but not yet assigned. It can be assigned a value of any type without error. Reading it results in [`UNDEFINED_ERROR`](../standards/core/errors/UNDEFINED_ERROR.md). This state belongs to variables only; it is never a value of an expression. |
 | **Empty** | `Null` | The value has been explicitly set to a non-existing state. |
 
 ## Lifetime
 
-Values are **anonymous** primitives — they exist only for the duration of the operation that produces or consumes them. To retain a value beyond a single operation, it must be stored in a [container](containers.md) (a variable or constant).
+Values are **anonymous** primitives: they exist only during the operation that creates or uses them. To retain a value beyond a single operation, it must be stored in a [container](containers.md) (a variable or constant).
 
 ## Reference
 

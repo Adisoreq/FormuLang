@@ -104,22 +104,24 @@ Pattern of correct **Text** literal expressions:
 
 #### Literal definition
 
-- **Using keyword**
-  - `undefined` - if parser views it as a compile-time literal expression
-  - `UNDEFINED` - if parser views it as a pre-initialized environment constant
+**Undefined** has no literal: there is no `undefined` keyword and no `UNDEFINED` constant.
+
 - **Empty declaration**
-  - Automaticly set when new variable is declared without specified value
-  - Example: `$x` declaration is interpreted as `$x = undefined`
+  - A context variable is **Undefined** when it is declared without a value
+  - Example: the sequence `$x`, if `$x` does not exist yet, declares `$x` with no value
+  - Reading the variable before an assignment results in [`UNDEFINED_ERROR`](../standards/core/errors/UNDEFINED_ERROR.md) (see [Undefined](../standards/core/types/Undefined.md))
 
 
 ### 6. Error
 
 #### Literal definition
 - **Manual**
-  - Errors can be manually invoked using `ERROR` function.
-  - Example: `$average = IF( LEN(arr) > 0, AVG(arr), ERROR("Array is empty!") )`
+  - Errors can be manually created using `ERROR` function.
+  - Example: `$average = IF( LEN($arr) > 0, AVG($arr), ERROR("Array is empty!") )`
+  - The `ERROR` call in the example is computed even when the array is not empty, but `IF` discards it. The execution is aborted only if the **Error** reaches the root of a sequence, here when `$arr` is empty and the assignment propagates it.
 - **Automatic**
-  - Parsers are obliged to have automatic mechanisms to invoke errors when parsing formulas with incorrect syntax or bugged semantics.
+  - Parsers are obliged to have automatic mechanisms to create errors when parsing formulas with incorrect syntax or bugged semantics.
+- See [Evaluation](../semantics/evaluation.md#5-sequence-result) for how errors affect the execution.
 
 
 ### 7. Array
@@ -134,8 +136,12 @@ Array type literal definition is realized by `ARRAY` function call:
 ### 8. Object
 
 #### Literal definition
-- Basic Function Expression: `OBJECT( PAIR("Param1", 11), PAIR("Param2", 22) )`
-- Abbreviated Operator Expression: `{ "Param1": 11, "Param2": 22 }`
+- Abbreviated Operator Expression: `{ Param1: 11, Param2: 22 }`
+- Keys can be written as an identifier or as a **Text** literal; both notations are equivalent: `{ "key": "val" }` is the same object as `{ key: "val" }`.
+- Every key must follow the [identifier naming restrictions](naming.md#naming-restrictions) (`^[a-zA-Z_]\w*$`). A key that doesn't (e.g. `{ "my key": 1 }`, `{ "1st": 1 }`) results in a `SYNTAX_ERROR`.
+- Inside the key position an identifier is always a key, even if it is spelled like a keyword: `{ null: 1 }` has the key `"null"`.
+- Every key must be unique. Because `key` and `"key"` are equivalent, `{ x: 1, "x": 2 }` is a duplicate and results in a `SYNTAX_ERROR`.
+- Values are accessed with `object.key` or `object["key"]` (see [GET](../standards/core/functions/GET.md)).
 
 
 ### 9. Lambda function

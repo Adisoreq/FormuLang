@@ -64,19 +64,19 @@ Various number expressions
 
 ```
 # Integer
-$ a = -40
+$a = -40
 
 # Real
-$ b = .8
+$b = .8
 
 # Scientific
-$ c = 2.5e+2
+$c = 2.5e+2
 
 # Hexadecimal
-$ d = 0x2c
+$d = 0x2c
 
 # Result
-a * b + c * d
+$a * $b + $c * $d
 ```
 
 #### Result:
@@ -96,6 +96,6 @@ a * b + c * d
 
 ## Reference
 
-- [Values](../core/values.md)
-- [Variables](../core/containers.md#variables)
-- [Literals](../syntax/literals.md)
+- [Values](../../../core/values.md)
+- [Variables](../../../core/containers.md#variables)
+- [Literals](../../../syntax/literals.md)

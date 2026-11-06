@@ -1,16 +1,16 @@
 # Primitives
 
-Primitives are the fundamental building blocks of the **FormuLang** system, used in data initialization, evaluation, and validation.
+Primitives are the basic elements of **FormuLang**. Every formula is built from them, and every stage of the execution works on them.
 
 ## List of primitives
 - **Type** - Attribute that determines how processed values are interpreted and computed. [Read more.](types.md)
 - **Value** - Stored data with an assigned type, used as the input and output of every operation. [Read more.](values.md)
-- **Value container** - stored value, accessed by it's unique name.
-  - **Constant** - A constant, predefined value bound to a specific context. Cannot be modified within the process of evaluating the formula. [Read more.](containers.md)
-  - **Variable** - A value declared and modified within the process of formula evaluation. [Read more.](containers.md)
+- **Value container** - stored value, accessed by its unique name.
+  - **Constant** - A constant, predefined value bound to a specific context. Cannot be modified within the process of executing the formula. [Read more.](containers.md)
+  - **Variable** - A value declared and modified within the process of formula execution. [Read more.](containers.md)
 - **Function** - An autonomous block that performs operations based on its input parameters and returns a computed output value. [Read more.](functions.md)
   - **Native functions** - Built-in, various type functions that perform logical and mathematical operations. Accessed via unique name.
-  - **Lambda functions** - Temporary, anonymous functions, declared and terminated withing the procees of formula evaluation.
+  - **Lambda functions** - Temporary, anonymous functions, declared and terminated within the process of formula execution.
   - **Procedures** - Built-in **Void**/**Error** type functions used to manipulate the environment and the process of parsing the formula.
 
 ## Primitives classification

@@ -42,7 +42,7 @@ Lowercase words separated by underlines.
 ```
 
 #### Use:
-- Variables (e.g. `my_variable`)
+- Variables (e.g. `my_variable`, written with a `$` or `@` sigil: `$my_variable`; the sigil is not part of the identifier)
 
 ### 2. Screaming snake case
 
@@ -56,10 +56,10 @@ Uppercase words separated by underlines.
 ```
 
 #### Use:
-- Procedures (e.g. `SET`, `RETURN`)
+- Procedures (e.g. `SET`, `REQUIRE`)
 - Constants (e.g. `PI`, `MAX_VALUE`)
 - Native functions (e.g. `SUM`, `EQU`)
 
 ## Reference
-- [Primitives](../core/primitives)
+- [Primitives](../core/primitives.md)
 - [Literals](./literals.md)
