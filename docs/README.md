@@ -1,6 +1,12 @@
-# FormuLang Documentation
+<div align="center">
+
+<img src="../raw/images/icons/monogram.svg" height="60" alt="FormuLang monogram" />
+
+# Documentation
 
 **FormuLang** technical documentation overview.
+
+</div>
 
 ## Core concepts
 - [**Formula**](core/formula.md) - the text that is executed, its sequences and its result.

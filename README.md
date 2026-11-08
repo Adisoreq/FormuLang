@@ -1,9 +1,9 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="raw/images/logo/formulang.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="raw/images/logo/formulang-light-mode.svg" />
-  <img src="raw/images/logo/formulang-light-mode.svg" alt="FormuLang logo" width="355" />
+  <source media="(prefers-color-scheme: dark)" srcset="./raw/images/icons/logotype-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./raw/images/icons/logotype-light.svg" />
+  <img src="./raw/images/icons/logotype-light.svg" alt="FormuLang logo" width="500" alt="FormuLang logo" />
 </picture>
 
 <p>
@@ -12,7 +12,6 @@
 
 [![Status](https://img.shields.io/badge/status-under%20development-orange)](#project-status)
 [![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](LICENSE.txt)
-
 
 [**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Changelog**](CHANGELOG.md)
 
@@ -143,3 +142,7 @@ Adrian Piznal
 ## License
 
 This project is licensed under the Creative Commons Attribution 4.0 International Public License.
+
+<div align="center">
+<img src="./raw/images/icons/monogram.svg" height="50" alt="FormuLang monogram" />
+</div>
