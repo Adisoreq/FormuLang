@@ -33,6 +33,8 @@ Controlled by the `split_object` and `include_object_class` serialization parame
 
 - [`ISOBJ`](../functions/ISOBJ.md)
 - [`GET`](../functions/GET.md)
+- [`KEYS`](../functions/KEYS.md)
+- [`HAS`](../functions/HAS.md)
 
 ## Reference
 

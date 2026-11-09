@@ -28,6 +28,8 @@ Functions responsible for mathematical calculations on **Number** values.
 | `FLOOR(number, precision)` | | Rounds the number down to the specific precision. [[Read more]](FLOOR.md) | `Number` |
 | `ROUND(number, precision)` | | Rounds the number automatically to the specific precision. [[Read more]](ROUND.md) | `Number` |
 | `CLAMP(value, min, max)` | | Clamps the value to the range between min and max. [[Read more]](CLAMP.md) | `Number` |
+| `SIGN(num)` | | Returns `1` for a positive number, `-1` for a negative number and `0` for zero. [[Read more]](SIGN.md) | `Number` |
+| `TRUNC(number, precision)` | | Cuts off the digits after the specific precision (rounds towards zero). [[Read more]](TRUNC.md) | `Number` |
 
 ### 2. Logic & Comparison Functions
 
@@ -67,6 +69,14 @@ Functions for manipulating **Text** strings.
 | `LOWERCASE(text)` | Transforms text into lowercase. [[Read more]](LOWERCASE.md) | `Text` |
 | `JOIN(array, separator)` | Joins array elements into a single text string using the specified separator. [[Read more]](JOIN.md) | `Text` |
 | `SPLIT(text, separator)` | Splits a text string into an array by the specified separator. [[Read more]](SPLIT.md) | `Array` |
+| `LEN(text)` | Returns the number of characters in the text. [[Read more]](LEN.md) | `Number` |
+| `SUBSTR(text, start, length)` | Returns `length` characters of the text, beginning at `start` (follows `@array_indexing`). Without `length`, returns the rest of the text. [[Read more]](SUBSTR.md) | `Text` |
+| `FIND(text, part)` | Returns the position of the first occurrence of `part` (follows `@array_indexing`), or `null`. [[Read more]](FIND.md) | `Number` / `Null` |
+| `CONTAINS(text, part)` | Checks if the text contains `part`. [[Read more]](CONTAINS.md) | `Boolean` |
+| `STARTS(text, part)` | Checks if the text begins with `part`. [[Read more]](STARTS.md) | `Boolean` |
+| `ENDS(text, part)` | Checks if the text ends with `part`. [[Read more]](ENDS.md) | `Boolean` |
+| `REPLACE(text, search, replacement)` | Replaces every occurrence of `search` with `replacement`. [[Read more]](REPLACE.md) | `Text` |
+| `REVERSE(text)` | Returns the characters of the text in the reverse order. [[Read more]](REVERSE.md) | `Text` |
 
 ### 5. Array & Collection Functions
 
@@ -86,6 +96,14 @@ Functions operating on **Arrays** and collections.
 | `SEQ(n, step, start)` / `SEQ(n, generator)` | Creates an array of `n` numbers forming a sequence, starting at `@array_indexing` by default. [[Read more]](SEQ.md) | `Array` |
 | `MAP(array, lambda)` | Returns the copy of an array modified by applying a lambda function to each of its elements. The lambda can receive the index as the second parameter. [[Read more]](MAP.md) | `Array` |
 | `FILTER(array, lambda)` | Returns a new array with elements that satisfy the lambda function condition. [[Read more]](FILTER.md) | `Array` |
+| `REDUCE(array, lambda, initial)` | Combines all elements into a single value: `(acc, e) => ...` or `(acc, e, i) => ...`, starting with `initial`. [[Read more]](REDUCE.md) | `Any` |
+| `ANY(array, lambda)` | Checks if at least one element satisfies the lambda function condition. [[Read more]](ANY.md) | `Boolean` |
+| `ALL(array, lambda)` | Checks if every element satisfies the lambda function condition. [[Read more]](ALL.md) | `Boolean` |
+| `FIND(array, value)` | Returns the index of the first element equal to `value` (follows `@array_indexing`), or `null`. [[Read more]](FIND.md) | `Number` / `Null` |
+| `CONTAINS(array, value)` | Checks if the array has an element equal to `value`. [[Read more]](CONTAINS.md) | `Boolean` |
+| `HAS(array, index)` | Checks if the array has an element at the index (follows `@array_indexing`). Checks the index, not the value. [[Read more]](HAS.md) | `Boolean` |
+| `SORT(array)` / `SORT(array, handler)` | Returns the elements in ascending order: numbers, texts, or elements ordered by the handler results. The sort is stable. [[Read more]](SORT.md) | `Array` |
+| `REVERSE(array)` | Returns the elements in the reverse order. [[Read more]](REVERSE.md) | `Array` |
 
 ### 6. Type Functions
 
@@ -109,6 +127,31 @@ Type-related functions.
 | `BOOL(value)` | Converts value to `Boolean`. [[Read more]](BOOL.md) | `Boolean` |
 | `NUMBER(value)` | Converts value to `Number`. [[Read more]](NUMBER.md) | `Number` |
 | `TEXT(value)` | Converts value to `Text`. [[Read more]](TEXT.md) | `Text` |
+
+### 8. Trigonometric Functions
+
+Trigonometric functions on **Number** values. Angles are in radians; use `RAD` and `DEG` to convert degrees.
+
+| Function | Description | Return Type |
+| :------- | :---------- | :---------: |
+| `SIN(angle)` | Calculates the sine of an angle. [[Read more]](SIN.md) | `Number` |
+| `COS(angle)` | Calculates the cosine of an angle. [[Read more]](COS.md) | `Number` |
+| `TAN(angle)` | Calculates the tangent of an angle. [[Read more]](TAN.md) | `Number` |
+| `ASIN(value)` | Calculates the arcsine, from `-PI / 2` to `PI / 2`. [[Read more]](ASIN.md) | `Number` |
+| `ACOS(value)` | Calculates the arccosine, from `0` to `PI`. [[Read more]](ACOS.md) | `Number` |
+| `ATAN(value)` | Calculates the arctangent, from `-PI / 2` to `PI / 2`. [[Read more]](ATAN.md) | `Number` |
+| `ATAN2(y, x)` | Calculates the angle of the point `(x, y)`, from `-PI` to `PI`. [[Read more]](ATAN2.md) | `Number` |
+| `DEG(radians)` | Converts radians to degrees. [[Read more]](DEG.md) | `Number` |
+| `RAD(degrees)` | Converts degrees to radians. [[Read more]](RAD.md) | `Number` |
+
+### 9. Object Functions
+
+Functions operating on **Objects**.
+
+| Function | Description | Return Type |
+| :------- | :---------- | :---------: |
+| `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. [[Read more]](KEYS.md) | `Array` |
+| `HAS(object, key)` | Checks if the object has a value stored under the key. [[Read more]](HAS.md) | `Boolean` |
 
 
 ## Reference

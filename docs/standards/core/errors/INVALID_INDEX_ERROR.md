@@ -6,7 +6,7 @@ Trying to access an array element with non-existent index.
 
 ## Cause
 
-[`GET`](../functions/GET.md) (or the `array[index]` operator) receives an index that is out of the array's range or is not a whole number.
+[`GET`](../functions/GET.md) (or the `array[index]` operator) receives an index that is out of the array's range or is not a whole number. [`RANGE`](../functions/RANGE.md) and [`SUBSTR`](../functions/SUBSTR.md) return it for an index or a text position outside of the array or the text.
 
 ## Example
 

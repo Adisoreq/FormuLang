@@ -33,6 +33,7 @@ Controlled by the `decimal_place` serialization parameter.
 - [`ISNUM`](../functions/ISNUM.md)
 - [`NUMBER`](../functions/NUMBER.md)
 - [Arithmetic functions](../functions/README.md#1-arithmetic-functions)
+- [Trigonometric functions](../functions/README.md#8-trigonometric-functions)
 
 ## Reference
 

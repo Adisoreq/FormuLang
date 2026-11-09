@@ -20,6 +20,7 @@ Text is enclosed in **double quotation marks** (`"`), e.g. `"Hello"`. [Special c
 
 - Follows **pass-by-value** semantics.
 - Can be joined with `ADD` (the `+` operator) or [`CONCAT`](../functions/CONCAT.md).
+- Positions of characters (used by [`SUBSTR`](../functions/SUBSTR.md) and [`FIND`](../functions/FIND.md)) follow `@array_indexing`, like array indices.
 
 ## Related functions
 
