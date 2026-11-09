@@ -19,11 +19,24 @@ Changes between versions: [Core changelog](CHANGELOG.md).
 
 ## Context structure
 
-### 1. Context constants
+### 1. Context types
 
-***Core*** standard does not require predefined context constants.
+The **Core** standard defines two [context types](../../core/context.md#context-types):
 
-### 2. Context variables
+| Context type | Base type | Context constants | Expected result |
+| :----------- | :-------- | :---------------- | :-------------- |
+| [Default Context](../../core/context.md#1-default-context) | - | none | any value |
+| [Iteration Context](../../core/context.md#2-iteration-context) | Default Context | `I`, `N`, `PREV` | any value |
+
+### 2. Context constants
+
+| Constant | Context type | Type | Description |
+| :------- | :----------- | :--: | :---------- |
+| `I` | Iteration Context | `Number` | Index of the current iteration. Follows `@array_indexing`: the first iteration is `@array_indexing`. |
+| `N` | Iteration Context | `Number` | Number of iterations. Does not depend on `@array_indexing`. |
+| `PREV` | Iteration Context | `Any` | Result of the previous iteration, `null` in the first iteration. |
+
+### 3. Context variables
 
 All context variables are defined by user.
 
@@ -37,6 +50,9 @@ All context variables are defined by user.
 | `E` | `Number` | `2.718281828459045` | Euler's number. Used in calculus, compound interest, and exponential growth calculations. |
 | `PI` | `Number` | `3.141592653589793` | Ratio of a circle's circumference to its diameter. Used in geometry and trigonometry. |
 | `PHI` | `Number` | `1.618033988749894` | Golden ratio. |
+| `NULL` | `Null` | `null` | Null value. Equivalent of the `null` literal. |
+| `TRUE` | `Boolean` | `true` | Equivalent of the `true` literal. |
+| `FALSE` | `Boolean` | `false` | Equivalent of the `false` literal. |
 
 ### 2. Environment variables
 
@@ -44,6 +60,18 @@ All context variables are defined by user.
 | :------- | :--: | :------------ | :---------- |
 | `array_indexing` | `Number` | `0` | Base of access-by-index array operations. When accessing the array element, the variable's value is subtracted from target index. Usable in solutions for users, who are not familiar with 0-based indexing. |
 | `suppress_errors` | `Boolean` | `false` | Prevents aborting the execution: an **Error** (other than `SUCCESS`) returned by the root of a sequence is turned into a `null` value and the execution continues. |
+
+### 3. Serialization variables
+
+Environment variables that control [serialization](semantics/serialization.md#serialization-parameters) (e.g. the `TEXT` function and console display).
+
+| Variable | Type | Initial value | Description |
+| :------- | :--: | :------------ | :---------- |
+| `decimal_place` | `Number` | `-1` | Decimal place at which serialized numbers end. A negative value does not limit the notation. |
+| `split_array` | `Boolean` | `false` | Places every serialized array element in a new line. |
+| `split_object` | `Boolean` | `false` | Places every serialized key-value pair in a new line. |
+| `include_object_class` | `Boolean` | `false` | Precedes serialized objects with their class notation. |
+| `max_array_preview` | `Number` | `-1` | Maximal number of serialized array elements. Longer arrays are abbreviated with ` ... `. A negative value does not limit arrays. |
 
 
 ## Built-in Procedures
@@ -138,7 +166,8 @@ Functions operating on **Arrays** and collections.
 | `MAX(...)` | Returns the largest of the numbers, or of the array elements (optionally mapped by a handler). | `Number` |
 | `MIN(...)` | Returns the smallest of the numbers, or of the array elements (optionally mapped by a handler). | `Number` |
 | `RANGE(array, first_index, last_index)` | Returns a sub-array from `first_index` up to and including `last_index`. | `Array` |
-| `MAP(array, lambda)` | Returns the copy of an array modified by applying a lambda function to each of its elements. | `Array` |
+| `SEQ(n, step, start)` / `SEQ(n, generator)` | Creates an array of `n` numbers forming a sequence, starting at `@array_indexing` by default. [[Read more]](functions/SEQ.md) | `Array` |
+| `MAP(array, lambda)` | Returns the copy of an array modified by applying a lambda function to each of its elements. The lambda can receive the index as the second parameter: `(e, i) => ...`. | `Array` |
 | `FILTER(array, lambda)` | Returns a new array with elements that satisfy the lambda function condition. | `Array` |
 
 ### 6. Type Functions

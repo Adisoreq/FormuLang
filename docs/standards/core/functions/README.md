@@ -83,7 +83,8 @@ Functions operating on **Arrays** and collections.
 | `MAX(...)` | Returns the largest of the numbers, or of the array elements (optionally mapped by a handler). [[Read more]](MAX.md) | `Number` |
 | `MIN(...)` | Returns the smallest of the numbers, or of the array elements (optionally mapped by a handler). [[Read more]](MIN.md) | `Number` |
 | `RANGE(array, first_index, last_index)` | Returns a sub-array from `first_index` up to and including `last_index`. [[Read more]](RANGE.md) | `Array` |
-| `MAP(array, lambda)` | Returns the copy of an array modified by applying a lambda function to each of its elements. [[Read more]](MAP.md) | `Array` |
+| `SEQ(n, step, start)` / `SEQ(n, generator)` | Creates an array of `n` numbers forming a sequence, starting at `@array_indexing` by default. [[Read more]](SEQ.md) | `Array` |
+| `MAP(array, lambda)` | Returns the copy of an array modified by applying a lambda function to each of its elements. The lambda can receive the index as the second parameter. [[Read more]](MAP.md) | `Array` |
 | `FILTER(array, lambda)` | Returns a new array with elements that satisfy the lambda function condition. [[Read more]](FILTER.md) | `Array` |
 
 ### 6. Type Functions

@@ -6,53 +6,15 @@ Plans for enhancements in the future
 
 ### 1. Stock Extension
 
+Specified as the [**Stock**](../standards/stock/README.md) standard (`stock-0.1`).
+
+### 2. Time types (Core)
+
 #### Description
 
-Stock-oriented data types and indicator functions.
+Extended types for dates and durations (year, month, day, hour, minute, second), shared by every standard. Until then, points in time are **Number** values: Unix time in milliseconds, UTC (see the `TIME` constant of the [Stock](../standards/stock/README.md) standard).
 
-#### Indicator context structure:
-
-| Container | Primitive type | Base type | Description |
-| --- | --- | --- | --- |
-| I | `Container` / `Constant` | `Number` | Current loop iteration |
-| N | `Container` / `Constant` | `Number` | Number of candles in array |
-| CANDLES | `Container` / `Constant` | `Array` | Array of candles to compute indicators |
-| OPEN | `Container` / `Constant` | `Array` | Extracted array of open values from candles |
-| CLOSE | `Container` / `Constant` | `Array` | Extracted array of close values from candles |
-| HIGH | `Container` / `Constant` | `Array` | Extracted array of high values from candles |
-| LOW | `Container` / `Constant` | `Array` | Extracted array of low values from candles |
-| VOLUME | `Container` / `Constant` | `Array` | Amount of volume per candle |
-
-#### Example 1
-
-Operating on candle data type.
-
-Formula:
-```php
-CANDLE(5_000, 4_000, 5_500, 4_500)
-```
-
-Result:
-```js
-[Stock.Candle] { open: 5000, close: 4000, high: 5500, low: 4500 }
-```
-
-#### Example 2 
-
-Defining Simple Moving Average (SMA) indicator
-
-Formula:
-```php
-$period = ARGS[0] # Period is the first parameter
-$diff = I - $period
-$skip = $diff < 0 # Returns no value if didn't reach period
-
-$arr = RANGE(CLOSE, MAX([0, $diff]), I) # Get period range
-
-IF($skip, null, AVG($arr)) # Return average (or null if before period)
-```
-
-### 2. Geometry Extension
+### 3. Geometry Extension
 
 #### Description
 
@@ -155,7 +117,7 @@ Result:
 }
 ```
 
-### 3. Algebra Extension
+### 4. Algebra Extension
 
 #### Descriptions
 

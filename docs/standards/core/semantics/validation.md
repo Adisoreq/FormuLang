@@ -37,8 +37,16 @@ The environment must provide the following elements of the [Core environment str
 | `E` | Constant | `Number` | - |
 | `PI` | Constant | `Number` | - |
 | `PHI` | Constant | `Number` | - |
+| `NULL` | Constant | `Null` | - |
+| `TRUE` | Constant | `Boolean` | Must be `true`. |
+| `FALSE` | Constant | `Boolean` | Must be `false`. |
 | `array_indexing` | Variable | `Number` | Must be a whole number. |
 | `suppress_errors` | Variable | `Boolean` | - |
+| `decimal_place` | Variable | `Number` | Must be a whole number. |
+| `split_array` | Variable | `Boolean` | - |
+| `split_object` | Variable | `Boolean` | - |
+| `include_object_class` | Variable | `Boolean` | - |
+| `max_array_preview` | Variable | `Number` | Must be a whole number. |
 
 
 ## Validation algorithm
@@ -79,7 +87,8 @@ Implementations may extend the detail text, but it must identify the problem and
 | Problem | Error | Detail text pattern |
 | :------ | :---- | :------------------ |
 | Missing or wrongly typed constant or variable | `ENVIRONMENT_ERROR` | `Environment constant "<NAME>" is missing or is not of type <Type>.` <br> `Environment variable "<NAME>" is missing or is not of type <Type>.` |
-| `array_indexing` is not a whole number | `ENVIRONMENT_ERROR` | `Environment variable "array_indexing" must be a whole number.` |
+| `array_indexing`, `decimal_place` or `max_array_preview` is not a whole number | `ENVIRONMENT_ERROR` | `Environment variable "<NAME>" must be a whole number.` |
+| `TRUE` or `FALSE` has a wrong value | `ENVIRONMENT_ERROR` | `Environment constant "<NAME>" must be <value>.` |
 | `STANDARDS` without the Core identifier | `ENVIRONMENT_ERROR` | `Environment constant "STANDARDS" does not contain the Core standard.` |
 | Invalid symbol | `SYNTAX_ERROR` | `Invalid symbol "<c>" at line <L>, column <C>.` |
 | Invalid escape sequence | `SYNTAX_ERROR` | `Invalid escape sequence "\<c>" at line <L>, column <C>.` |

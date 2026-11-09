@@ -7,7 +7,7 @@ Used for debugging and console line display.
 
 ## Serialization parameters
 
-Parameters that affect the serialization result:
+Parameters that affect the serialization result. They are [environment variables](../README.md#3-serialization-variables), so a formula can override them for the current execution, e.g. `@decimal_place = 2`.
 
 | Name | Type | Default | Description |
 | :--: | :--: | :---: | ------------- |
@@ -15,6 +15,10 @@ Parameters that affect the serialization result:
 | `split_array` | **Boolean** | false | Used to specify, if the serialized array should be split using `[New line]` symbols |
 | `split_object` | **Boolean** | false | Used to specify, if the serialized object should be split using `[New line]` symbols |
 | `include_object_class` | **Boolean** | false | Used to specify, if the serialized object should be preceded by its class notation |
+| `max_array_preview` | **Number** | `-1` | Used to specify, how many elements of an array are serialized before the array is abbreviated |
+
+> [!NOTE]
+> Serialization is meant for reading. Its result does not have to be a valid formula: e.g. an abbreviated array cannot be parsed back.
 
 
 
@@ -143,6 +147,22 @@ Example:
 | :--: | :---: | :-----------: | :--------- |
 | Array | 1, 2 .. 10 | false | `[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]` |
 | Array | "abc", "def", "ghi" | true | `[` <br> `  "abc",` <br> `  "def",` <br> `  "ghi"` <br> `]` | 
+
+The `max_array_preview` parameter limits the number of serialized elements:
+
+- If it is negative, or the array has no more elements than its value, every element is serialized.
+- Otherwise, with `k` set to its value, only the first `ceil(k / 2)` and the last `floor(k / 2)` elements are serialized, and the omitted ones are replaced with a single `...` element.
+- The parameter applies to every array separately, including nested arrays.
+
+Example:
+
+| Type | Value | max_array_preview | Serialized |
+| :--: | :---: | :---------------: | :--------- |
+| Array | 1, 2 .. 12 | -1 | `[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]` |
+| Array | 1, 2 .. 100 | 10 | `[1, 2, 3, 4, 5, ..., 96, 97, 98, 99, 100]` |
+| Array | 1, 2 .. 100 | 5 | `[1, 2, 3, ..., 99, 100]` |
+| Array | 1, 2, 3 | 5 | `[1, 2, 3]` |
+| Array | 1, 2 .. 100 | 0 | `[...]` |
 
 ### Object values
 

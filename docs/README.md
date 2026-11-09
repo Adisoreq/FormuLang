@@ -41,6 +41,7 @@ How the code is interpreted and executed.
 ## Standards
 Formal specifications defining built-in functions, constants, and procedures.
 - [**Core**](standards/core/README.md) - elementary standard, the basis of every other extension.
+- [**Stock**](standards/stock/README.md) - market data: candles, indicators, candle patterns and strategies (in progress).
 
 ## Examples
 Practical usage scenarios.

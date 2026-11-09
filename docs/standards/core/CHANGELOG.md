@@ -24,6 +24,12 @@ Identifier: `core-0.2`.
 - [Validation](semantics/validation.md) algorithm: environment integrity checks and a single-pass scan of the raw formula (symbols, comments, text literals and escape sequences, delimiters) that collects all errors.
 - [Parsing](semantics/parsing.md) algorithm (Pratt parser): sequence splitting, prefix and infix steps, function and procedure calls, lambda parameter lists, operator translation table.
 - [Types](types/README.md) and [errors](errors/README.md) are documented like functions: an index `README.md` and a separate document for every type and error.
+- [Context types](../../core/context.md#context-types): a context type has a base type, context constants and an expected result. The Core standard defines **Default Context** and **Iteration Context** (constants `I`, `N` and `PREV`). `I` follows `@array_indexing`; context variables are not kept between iterations.
+- Environment constants `NULL`, `TRUE` and `FALSE` in the Core environment structure and in the validation checks.
+- Serialization parameters are environment variables (`decimal_place`, `split_array`, `split_object`, `include_object_class`) and are checked by the validation.
+- Serialization variable `max_array_preview`, which abbreviates long arrays: `[1, 2, 3, ..., 99, 100]`.
+- Function [`SEQ`](functions/SEQ.md): an array of `n` numbers, `SEQ(n)`, `SEQ(n, step)`, `SEQ(n, step, start)` and `SEQ(n, generator)`. By default, it starts at `@array_indexing`.
+- [`MAP`](functions/MAP.md) accepts a lambda with 2 parameters, `(e, i) => ...`, where `i` is the index of the element (following `@array_indexing`).
 
 ### Changed
 - The version is `0.2` (identifier `core-0.2`). Examples use it instead of `core-1.0`.
@@ -34,6 +40,7 @@ Identifier: `core-0.2`.
 - [**Undefined**](types/Undefined.md) is only the state of a variable that is declared but has no value. It is never a value of an expression: it is never passed to a function, returned by a function or stored in an array or object. The only way to create it is the declaration `$x`. The `undefined` literal and the `UNDEFINED` constant are removed.
 - `UNKNOWN_SYMBOL_ERROR` is also returned when a formula reads a context variable or a constant that does not exist.
 - `INIT` (`:=`) also stores the value when the variable is declared but has no value.
+- The **Loop context** is replaced with the **Iteration Context**.
 
 ### Fixed
 - `ISERR` could never return `true`, and `IF(c, x, ERROR(...))` always returned an error. `ISERR` and the `then` and `else` parameters of `IF` now receive errors as values.
