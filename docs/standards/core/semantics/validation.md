@@ -33,7 +33,7 @@ The environment must provide the following elements of the [Core environment str
 
 | Element | Kind | Required type | Additional requirement |
 | :------ | :--- | :------------ | :--------------------- |
-| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifier of the **Core** standard (`core-0.2`). |
+| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifier of the **Core** standard (`core-0.3`). |
 | `E` | Constant | `Number` | - |
 | `PI` | Constant | `Number` | - |
 | `PHI` | Constant | `Number` | - |

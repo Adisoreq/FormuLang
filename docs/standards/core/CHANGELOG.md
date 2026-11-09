@@ -2,7 +2,22 @@
 
 Changes of the [**Core**](README.md) standard. Changes of the language itself (syntax, semantics, implementation structures) are in the [main changelog](../../../CHANGELOG.md).
 
-## 0.2 (in progress)
+## 0.3 (in progress)
+
+Identifier: `core-0.3`.
+
+### Added
+- [Trigonometric functions](functions/README.md#8-trigonometric-functions) `SIN`, `COS`, `TAN`, `ASIN`, `ACOS`, `ATAN`, `ATAN2(y, x)`, and the conversions `DEG` and `RAD`. Angles are in radians. `TAN` returns `OPERATION_ERROR` for a result that is not finite, `ASIN` and `ACOS` for a value outside of the range from `-1` to `1`. `ATAN2(0, 0)` is `0`.
+- Arithmetic functions [`SIGN`](functions/SIGN.md) and [`TRUNC`](functions/TRUNC.md) (rounds towards zero, with the same `precision` as `ROUND`).
+- Text functions [`SUBSTR`](functions/SUBSTR.md), [`FIND`](functions/FIND.md), [`CONTAINS`](functions/CONTAINS.md), [`STARTS`](functions/STARTS.md), [`ENDS`](functions/ENDS.md), [`REPLACE`](functions/REPLACE.md) and [`REVERSE`](functions/REVERSE.md), and the overload `LEN(text)`. Positions of characters follow `@array_indexing`. `FIND` returns `null` if the value does not occur.
+- Array functions [`REDUCE`](functions/REDUCE.md), [`ANY`](functions/ANY.md), [`ALL`](functions/ALL.md), [`SORT`](functions/SORT.md) (stable, ascending, numbers or texts, or by a handler), and the array overloads of `FIND`, `CONTAINS` and `REVERSE` (elements are compared with `EQU`).
+- [Object functions](functions/README.md#9-object-functions) [`KEYS`](functions/KEYS.md) (in the order in which the keys were defined) and [`HAS`](functions/HAS.md). `HAS` also has an array overload, `HAS(array, index)`: like `GET`, it checks the key or the index, and returns `false` for an index that is not a whole number.
+- [`INVALID_INDEX_ERROR`](errors/INVALID_INDEX_ERROR.md) is also returned by `SUBSTR` for a text position outside of the text.
+
+### Changed
+- The version is `0.3` (identifier `core-0.3`). The `STANDARDS` constant and the examples use it.
+
+## 0.2 (2026-11-07)
 
 Identifier: `core-0.2`.
 
@@ -30,11 +45,6 @@ Identifier: `core-0.2`.
 - Serialization variable `max_array_preview`, which abbreviates long arrays: `[1, 2, 3, ..., 99, 100]`.
 - Function [`SEQ`](functions/SEQ.md): an array of `n` numbers, `SEQ(n)`, `SEQ(n, step)`, `SEQ(n, step, start)` and `SEQ(n, generator)`. By default, it starts at `@array_indexing`.
 - [`MAP`](functions/MAP.md) accepts a lambda with 2 parameters, `(e, i) => ...`, where `i` is the index of the element (following `@array_indexing`).
-- [Trigonometric functions](functions/README.md#8-trigonometric-functions) `SIN`, `COS`, `TAN`, `ASIN`, `ACOS`, `ATAN`, `ATAN2(y, x)`, and the conversions `DEG` and `RAD`. Angles are in radians. `TAN` returns `OPERATION_ERROR` for a result that is not finite, `ASIN` and `ACOS` for a value outside of the range from `-1` to `1`. `ATAN2(0, 0)` is `0`.
-- Arithmetic functions [`SIGN`](functions/SIGN.md) and [`TRUNC`](functions/TRUNC.md) (rounds towards zero, with the same `precision` as `ROUND`).
-- Text functions [`SUBSTR`](functions/SUBSTR.md), [`FIND`](functions/FIND.md), [`CONTAINS`](functions/CONTAINS.md), [`STARTS`](functions/STARTS.md), [`ENDS`](functions/ENDS.md), [`REPLACE`](functions/REPLACE.md) and [`REVERSE`](functions/REVERSE.md), and the overload `LEN(text)`. Positions of characters follow `@array_indexing`. `FIND` returns `null` if the value does not occur.
-- Array functions [`REDUCE`](functions/REDUCE.md), [`ANY`](functions/ANY.md), [`ALL`](functions/ALL.md), [`SORT`](functions/SORT.md) (stable, ascending, numbers or texts, or by a handler), and the array overloads of `FIND`, `CONTAINS` and `REVERSE` (elements are compared with `EQU`).
-- [Object functions](functions/README.md#9-object-functions) [`KEYS`](functions/KEYS.md) (in the order in which the keys were defined) and [`HAS`](functions/HAS.md). `HAS` also has an array overload, `HAS(array, index)`: like `GET`, it checks the key or the index, and returns `false` for an index that is not a whole number.
 
 ### Changed
 - The version is `0.2` (identifier `core-0.2`). Examples use it instead of `core-1.0`.

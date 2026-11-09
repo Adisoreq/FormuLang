@@ -73,12 +73,12 @@ Every segment is checked on its own. A `+` raises the lower limit of its own seg
 
 ## Examples
 
-Assuming `STANDARDS` is `[ "core-0.2" ]`:
+Assuming `STANDARDS` is `[ "core-0.3" ]`:
 
 | Formula | Result |
 | :------ | :----- |
 | `REQUIRE "core-0.2+"` | `SUCCESS` |
-| `REQUIRE(["core-0.x", "core-0.2"])` | `SUCCESS` |
+| `REQUIRE(["core-0.x", "core-0.3"])` | `SUCCESS` |
 | `REQUIRE "stock-5.2+"` | `[NOT_SUPPORTED_ERROR (11)] Standard "stock-5.2+" is not supported.` |
 | `REQUIRE "core-1.0+"` | `[NOT_SUPPORTED_ERROR (11)] Standard "core-1.0+" is not supported.` |
 | `REQUIRE "core"` | `[OPERATION_ERROR (3)] "core" is not a valid standard requirement.` |

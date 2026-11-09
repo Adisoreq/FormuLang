@@ -9,7 +9,7 @@ Core standard
 
 | Name | Latest version | Description |
 | :--- | :------------: | :---------- |
-| `core` | `0.2` | Basic mathematical, logical, text and array operations. Basis of every other extension. [[Read more]](./core/README.md) |
+| `core` | `0.3` | Basic mathematical, logical, text and array operations. Basis of every other extension. [[Read more]](./core/README.md) |
 
 Extension standards
 
@@ -23,14 +23,14 @@ An arrow points from a standard to the standard it requires, with the required v
 
 ```mermaid
 graph BT
-    core["core-0.2"]
+    core["core-0.3"]
     stock["stock-0.1"]
 
     stock -- "core-0.2+" --> core
 ```
 
 ```
-core-0.2
+core-0.3
 └── stock-0.1      (requires core-0.2+)
 ```
 

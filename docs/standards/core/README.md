@@ -7,9 +7,9 @@
 
 **Name**: `Core`
 
-**Latest version**: `0.2`
+**Latest version**: `0.3`
 
-**Identifier**: `core-0.2`
+**Identifier**: `core-0.3`
 
 **Description**: Elementary standard defining core **FormuLang** concepts and structures. Basis of every other extension.
 
@@ -46,7 +46,7 @@ All context variables are defined by user.
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | `[ "core-0.2" ]` | Stores the array of supported standards' identifiers. |
+| `STANDARDS` | `Array` | `[ "core-0.3" ]` | Stores the array of supported standards' identifiers. |
 | `E` | `Number` | `2.718281828459045` | Euler's number. Used in calculus, compound interest, and exponential growth calculations. |
 | `PI` | `Number` | `3.141592653589793` | Ratio of a circle's circumference to its diameter. Used in geometry and trigonometry. |
 | `PHI` | `Number` | `1.618033988749894` | Golden ratio. |

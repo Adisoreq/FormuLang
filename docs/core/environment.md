@@ -53,7 +53,7 @@ CONCAT("Supported standards: ", $standards)
 ```
 Result:
 ```
-Supported standards: core-0.2
+Supported standards: core-0.3
 ```
 
 

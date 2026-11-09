@@ -1,8 +1,20 @@
+<div align="center">
+
+<img src="./raw/images/icons/monogram.svg" height="50" alt="FormuLang monogram" />
+
 # Changelog
 
-Main language changes: syntax, semantics and implementation structures.
+Main language changes: syntax, semantics, functionality and implementation structures.
 
-Changes of the standards are in their own changelogs, e.g. the [Core changelog](./docs/standards/core/CHANGELOG.md). The list of standards is on the [standards](./docs/standards) page.
+</div>
+
+
+## 2026-11-09
+
+Core standard changes of this date are in the [Core changelog](./docs/standards/core/CHANGELOG.md) (version `0.3`).
+
+### Changed
+- The documentation refers to the Core standard version `0.3` (identifier `core-0.3`): the [standards](./docs/standards/README.md) list, the [Environment](./docs/core/environment.md) example and [Comparison](./docs/misc/comparison.md).
 
 ## 2026-11-07
 

@@ -35,7 +35,7 @@ CONCAT("Supported standards: ", $standards)
 #### Result:
 
 ```
-Supported standards: core-0.2, stock-5.2
+Supported standards: core-0.3, stock-5.2
 ```
 
 #### Explanation:
@@ -47,7 +47,7 @@ Supported standards: core-0.2, stock-5.2
 #### Formula:
 
 ```
-REQUIRE "core-0.2"
+REQUIRE "core-0.3"
 REQUIRE "stock-5.2+"
 
 $diff = CLOSE[I] - OPEN[I]
@@ -68,7 +68,7 @@ The [`REQUIRE`](../procedures/REQUIRE.md) procedure returns an error if the envi
 
 Required standards in example are:
 - `core`
-  - Exact version: **0.2**
+  - Exact version: **0.3**
 - `stock`
   - Major version: **5** (exact)
   - Minor version: **2** (or higher)
