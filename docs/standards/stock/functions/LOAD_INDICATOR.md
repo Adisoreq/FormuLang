@@ -1,6 +1,6 @@
-# INDICATOR
+# LOAD_INDICATOR
 
-[**Stock**](../README.md) standard function. Computes an indicator from the [indicator registry](../README.md#2-indicator-registry) for every candle, and returns its whole series.
+[**Stock**](../README.md) standard function. Computes an indicator from the [indicator registry](../README.md#2-formula-registry) for every candle, and returns its whole series.
 
 The function can be called only in a context derived from the [Stock Context](../README.md#stock-context) (e.g. in another indicator or in a strategy).
 
@@ -8,19 +8,19 @@ The function can be called only in a context derived from the [Stock Context](..
 
 ### Overload 1: Default parameters
 
-Signature: `INDICATOR(id <Text>)`
+Signature: `LOAD_INDICATOR(id <Text>)`
 
-Equivalent of `INDICATOR(id, { })`: every parameter has its default value.
+Equivalent of `LOAD_INDICATOR(id, { })`: every parameter has its default value.
 
 ### Overload 2: Parameters
 
-Signature: `INDICATOR(id <Text>, parameters <Object>)`
+Signature: `LOAD_INDICATOR(id <Text>, parameters <Object>)`
 
-Equivalent of `INDICATOR(id, parameters, CLOSE)`.
+Equivalent of `LOAD_INDICATOR(id, parameters, CLOSE)`.
 
 ### Overload 3: Parameters and source
 
-Signature: `INDICATOR(id <Text>, parameters <Object>, source <Array>)`
+Signature: `LOAD_INDICATOR(id <Text>, parameters <Object>, source <Array>)`
 
 Collection template:
 
@@ -32,7 +32,7 @@ Collection template:
 
 Algorithm:
 
-1. Finds the indicator definition with the identifier `id`. If there is none, returns an `INVALID_KEY_ERROR`.
+1. Finds the indicator definition with the identifier `id` in the indicators part of the registry. If there is none, returns an `INVALID_KEY_ERROR`.
 2. If `parameters` has a key that is not a parameter of the definition, returns an `INVALID_KEY_ERROR`. Otherwise, completes `parameters` with the default values of the missing parameters.
 3. If `source` does not have `N` elements, or one of its elements is neither a **Number** nor `null`, returns an `OPERATION_ERROR`.
 4. If the same indicator with the same parameters and source is already being computed by one of the calling formulas (the indicator calls itself, directly or indirectly), returns an `OPERATION_ERROR`.
@@ -46,22 +46,22 @@ Algorithm:
    - If an iteration returns a value that is not allowed in the Indicator Context, or its kind differs from the previous non-`null` results, returns an `OPERATION_ERROR`.
 7. Returns an array of `N` results: the element at the index `I` is the value of the indicator for the candle `CANDLES[I]`.
 
-To read the value for the current candle, index the result with `I`: `INDICATOR("SMA", { period: 20 })[I]`.
+To read the value for the current candle, index the result with `I`: `LOAD_INDICATOR("SMA", { period: 20 })[I]`.
 
 Examples (registry with `SMA` and `MACD` from the [indicator examples](../examples/indicator_examples.md), `CLOSE` = `[1, 2, 3, 4, 5]`):
 
 | Formula | Result |
 | :------ | :----- |
-| `INDICATOR("SMA", { period: 3 })` | `[ null, null, 2, 3, 4 ]` |
-| `INDICATOR("SMA", { period: 2 }, [10, 20, 30, 40, 50])` | `[ null, 15, 25, 35, 45 ]` |
-| `INDICATOR("SMA", { period: 3 })[I]` (with `I` = `4`) | `4` |
-| `INDICATOR("XYZ")` | `[INVALID_KEY_ERROR (8)] ...` |
-| `INDICATOR("SMA", { length: 3 })` | `[INVALID_KEY_ERROR (8)] ...` |
-| `INDICATOR("SMA", { period: 3 }, [1, 2])` | `[OPERATION_ERROR (3)] ...` |
+| `LOAD_INDICATOR("SMA", { period: 3 })` | `[ null, null, 2, 3, 4 ]` |
+| `LOAD_INDICATOR("SMA", { period: 2 }, [10, 20, 30, 40, 50])` | `[ null, 15, 25, 35, 45 ]` |
+| `LOAD_INDICATOR("SMA", { period: 3 })[I]` (with `I` = `4`) | `4` |
+| `LOAD_INDICATOR("XYZ")` | `[INVALID_KEY_ERROR (8)] ...` |
+| `LOAD_INDICATOR("SMA", { length: 3 })` | `[INVALID_KEY_ERROR (8)] ...` |
+| `LOAD_INDICATOR("SMA", { period: 3 }, [1, 2])` | `[OPERATION_ERROR (3)] ...` |
 
 ## Performance
 
-The result does not depend on the iteration of the calling formula, but the calling formula calls `INDICATOR` in every iteration. A naive implementation computes the whole series `N` times, so it needs `N²` executions of the indicator formula.
+The result does not depend on the iteration of the calling formula, but the calling formula calls `LOAD_INDICATOR` in every iteration. A naive implementation computes the whole series `N` times, so it needs `N²` executions of the indicator formula.
 
 Indicator formulas are deterministic: the same indicator, parameters, source and candles always give the same series. An implementation **may** therefore store the series and reuse it, as long as the result is the same as computing it again. The key of the stored series is the identifier, the completed parameters and the source.
 

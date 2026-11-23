@@ -44,9 +44,9 @@ Functions that evaluate conditions and return **Boolean** values.
 | `EQU(a, b)` | `==` | Checks if values are identical. [[Read more]](EQU.md) | `Boolean` |
 | `NEQ(a, b)` | `!=` | Checks if values are different. [[Read more]](NEQ.md) | `Boolean` |
 | `GRE(a, b)` | `>` | Checks if `a` is greater than `b`. [[Read more]](GRE.md) | `Boolean` |
-| `LES(a, b)` | `<` | Checks if `a` is lesser than `b`. [[Read more]](LES.md) | `Boolean` |
+| `LES(a, b)` | `<` | Checks if `a` is less than `b`. [[Read more]](LES.md) | `Boolean` |
 | `GEQ(a, b)` | `>=` | Checks if `a` is greater or equal to `b`. [[Read more]](GEQ.md) | `Boolean` |
-| `LEQ(a, b)` | `<=` | Checks if `a` is lesser or equal to `b`. [[Read more]](LEQ.md) | `Boolean` |
+| `LEQ(a, b)` | `<=` | Checks if `a` is less than or equal to `b`. [[Read more]](LEQ.md) | `Boolean` |
 
 ### 3. Control Flow Functions
 
@@ -77,6 +77,7 @@ Functions for manipulating **Text** strings.
 | `ENDS(text, part)` | Checks if the text ends with `part`. [[Read more]](ENDS.md) | `Boolean` |
 | `REPLACE(text, search, replacement)` | Replaces every occurrence of `search` with `replacement`. [[Read more]](REPLACE.md) | `Text` |
 | `REVERSE(text)` | Returns the characters of the text in the reverse order. [[Read more]](REVERSE.md) | `Text` |
+| `FORMAT(template, values)` | Replaces the placeholders of the template (`{}`, `{0}`, `{key}`, `{:.2}`) with the elements of an array or the values of an object. [[Read more]](FORMAT.md) | `Text` |
 
 ### 5. Array & Collection Functions
 
@@ -152,6 +153,25 @@ Functions operating on **Objects**.
 | :------- | :---------- | :---------: |
 | `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. [[Read more]](KEYS.md) | `Array` |
 | `HAS(object, key)` | Checks if the object has a value stored under the key. [[Read more]](HAS.md) | `Boolean` |
+
+### 10. Time Functions
+
+Functions operating on points in time. A point in time is a **Number**: Unix time in milliseconds, UTC (`0` is `1970-01-01 00:00:00.000`). The current time is the `NOW` environment constant. The functions use the local time defined by the `@time_offset` environment variable (minutes from UTC). Supported years: `1` - `9999`.
+
+| Function | Description | Return Type |
+| :------- | :---------- | :---------: |
+| `YEAR(time)` | Returns the year. [[Read more]](YEAR.md) | `Number` |
+| `MONTH(time)` | Returns the month, from `1` to `12`. [[Read more]](MONTH.md) | `Number` |
+| `DAY(time)` | Returns the day of the month, from `1` to `31`. [[Read more]](DAY.md) | `Number` |
+| `WEEKDAY(time)` | Returns the ISO day of the week, from `1` (Monday) to `7` (Sunday). [[Read more]](WEEKDAY.md) | `Number` |
+| `HOUR(time)` | Returns the hour, from `0` to `23`. [[Read more]](HOUR.md) | `Number` |
+| `MINUTE(time)` | Returns the minute, from `0` to `59`. [[Read more]](MINUTE.md) | `Number` |
+| `SECOND(time)` | Returns the second, from `0` to `59`. [[Read more]](SECOND.md) | `Number` |
+| `MILLISECOND(time)` | Returns the millisecond, from `0` to `999`. [[Read more]](MILLISECOND.md) | `Number` |
+| `DATE(year, month, day, hour, minute, second, millisecond)` | Creates a point in time from its parts (`hour` and the next parts are optional). [[Read more]](DATE.md) | `Number` |
+| `FORMAT_TIME(time, format)` | Converts a point in time to text, e.g. `"YYYY-MM-DD hh:mm:ss.iii"`. [[Read more]](FORMAT_TIME.md) | `Text` |
+
+Durations are plain numbers of milliseconds, so they are computed with arithmetic: `$t + 24 * 60 * 60 * 1000` is one day later, `($end - $start) / 1000` is a duration in seconds.
 
 
 ## Reference

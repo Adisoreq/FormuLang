@@ -18,7 +18,7 @@ List of valid symbols:
 | `A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M` `N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z` | 65 - 90 | 41 - 5A |
 | `[` `\` `]` `^` `_` `` ` `` | 91 - 96 | 5B - 60 |
 | `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m` `n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z` | 97 - 122 | 61 - 7A |
-| `{` `\` `}` `~` | 123 - 126 | 7B - 7E | 
+| `{` `\|` `}` `~` | 123 - 126 | 7B - 7E | 
 
 
 ## Symbols classification
@@ -38,9 +38,32 @@ List of valid symbols:
    - **Escape sequence symbols** ( `\` `"` `n` `t` ) - symbols used inside [escape sequences](#escape-sequences).
 
 
+## Text characters
+
+The [symbols list](#symbols-list) applies to the code of a formula. Inside [text literals](literals.md#4-text) and comments, a wider set of characters is allowed.
+
+| Place | Allowed characters |
+| :---- | :----------------- |
+| Code (identifiers, numbers, operators) | Only the [symbols list](#symbols-list) (ASCII). |
+| Text literals | **Text characters**: every Unicode character (Unicode scalar value), e.g. `ó`, `ą`, `ß`, `€`, `→`, except the control characters `U+0000` - `U+001F` and `U+007F` - `U+009F`. `[Tab]` is allowed. A new line is not allowed (use `\n`). |
+| Comments | Every character. The content of a comment is not checked. |
+
+Identifiers stay ASCII: `$zółw` is a `SYNTAX_ERROR`, while `"żółw"` is a valid **Text**.
+
+A **character** of a **Text** value is one Unicode code point. `LEN("żółw")` is `4`, and functions such as `SUBSTR`, `FIND` and `REVERSE` count positions in code points. Texts are not normalized: `"é"` written as one code point (`U+00E9`) and as `e` with a combining accent (`U+0065 U+0301`) are different texts.
+
+Example:
+
+```php
+$greeting = "Cześć, świecie!"  # ✅ Unicode inside a text literal
+$price = "12 €"                # ✅
+$łódź = 1                      # ❌ SYNTAX_ERROR: Unicode is not allowed in identifiers
+```
+
+
 ## Escape sequences
 
-Some specials characters need to be put in a combination with **backslash (`\`)** in order to be included in a text expression.
+Some special characters need to be put in a combination with **backslash (`\`)** in order to be included in a text expression.
 
 Characters that require an escape sequence: `\` `"` `[New line]` `[Tab]`
 
@@ -58,5 +81,5 @@ Characters that require an escape sequence: `\` `"` `[New line]` `[Tab]`
 | `"This function is called \"hyperbola\"."` | ✅ `This function is called "hyperbola".` |
 | `"Reading C:\Users\user\Documents\data.txt file..."` | ❌ Syntax error - the single **backslash (`\`)** is the **escape sequence** operator. |
 | `"Reading C:\\Users\\user\\Documents\\data.txt file..."` | ✅ `Reading C:\Users\user\Documents\data.txt file...` |
-| `"This text is` <br/> `SPLIT` <br/> `into mutliple lines"` | ❌ Syntax error - text expression must be a single-line character sequence. |
+| `"This text is` <br/> `SPLIT` <br/> `into multiple lines"` | ❌ Syntax error - text expression must be a single-line character sequence. |
 | `"Line 1\nLine 2\n..."` | ✅ Parser splits text using `\n` escape sequences. |

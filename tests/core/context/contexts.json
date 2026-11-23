@@ -1,0 +1,115 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Iteration Context and Time Context. The runner executes every iteration (or frame), even after an iteration results in an Error, and compares all the results.",
+  "standards": ["core-1.0"],
+  "cases": [
+    {
+      "id": "core.context.iteration.001",
+      "description": "I and N",
+      "spec": "../../../docs/core/context.md#2-iteration-context",
+      "context": { "type": "Iteration", "n": 3 },
+      "formula": "I * 10 + N",
+      "expected": { "results": [3, 13, 23] }
+    },
+    {
+      "id": "core.context.iteration.002",
+      "description": "I follows @array_indexing",
+      "context": { "type": "Iteration", "n": 3 },
+      "environment": { "variables": { "array_indexing": 1 } },
+      "formula": "I",
+      "expected": { "results": [1, 2, 3] }
+    },
+    {
+      "id": "core.context.iteration.003",
+      "description": "PREV is the result of the previous iteration",
+      "context": { "type": "Iteration", "n": 4 },
+      "formula": "IF(ISNULL(PREV), 1, PREV * 2)",
+      "expected": { "results": [1, 2, 4, 8] }
+    },
+    {
+      "id": "core.context.iteration.004",
+      "description": "Context variables are not kept between iterations",
+      "context": { "type": "Iteration", "n": 2 },
+      "formula": ["$x := 0", "$x = $x + 1", "$x"],
+      "expected": { "results": [1, 1] }
+    },
+    {
+      "id": "core.context.iteration.005",
+      "description": "NOW is the same in all iterations",
+      "context": { "type": "Iteration", "n": 3 },
+      "environment": { "constants": { "NOW": 1000 } },
+      "formula": "NOW",
+      "expected": { "results": [1000, 1000, 1000] }
+    },
+    {
+      "id": "core.context.time.001",
+      "description": "Time constants",
+      "spec": "../../../docs/core/context.md#3-time-context",
+      "context": {
+        "type": "Time",
+        "frames": [
+          { "time_s": 0, "dtime_s": 0 },
+          { "time_s": 0.5, "dtime_s": 0.5 },
+          { "time_s": 1.25, "dtime_s": 0.75 }
+        ]
+      },
+      "formula": "[FRAME, TIME_S, TIME_MS, DTIME_S, DTIME_MS]",
+      "expected": {
+        "results": [
+          [0, 0, 0, 0, 0],
+          [1, 0.5, 500, 0.5, 500],
+          [2, 1.25, 1250, 0.75, 750]
+        ]
+      }
+    },
+    {
+      "id": "core.context.time.002",
+      "description": "Accumulation with PREV and DTIME_S",
+      "context": {
+        "type": "Time",
+        "frames": [
+          { "time_s": 0, "dtime_s": 0 },
+          { "time_s": 0.5, "dtime_s": 0.5 },
+          { "time_s": 1, "dtime_s": 0.5 }
+        ]
+      },
+      "formula": ["$position = IF(ISNULL(PREV), 0, PREV)", "MIN($position + 5 * DTIME_S, 100)"],
+      "expected": { "results": [0, 2.5, 5] }
+    },
+    {
+      "id": "core.context.time.003",
+      "description": "FRAME follows @array_indexing",
+      "context": { "type": "Time", "frames": [ { "time_s": 0, "dtime_s": 0 }, { "time_s": 1, "dtime_s": 1 } ] },
+      "environment": { "variables": { "array_indexing": 1 } },
+      "formula": "FRAME",
+      "expected": { "results": [1, 2] }
+    },
+    {
+      "id": "core.context.time.004",
+      "description": "NOW is set for every frame",
+      "context": {
+        "type": "Time",
+        "frames": [
+          { "time_s": 0, "dtime_s": 0, "now": 1000 },
+          { "time_s": 0.5, "dtime_s": 0.5, "now": 1500 }
+        ]
+      },
+      "formula": "NOW",
+      "expected": { "results": [1000, 1500] }
+    },
+    {
+      "id": "core.context.time.005",
+      "description": "Rotation that repeats every 4 seconds",
+      "context": {
+        "type": "Time",
+        "frames": [
+          { "time_s": 0, "dtime_s": 0 },
+          { "time_s": 0.5, "dtime_s": 0.5 },
+          { "time_s": 4.25, "dtime_s": 3.75 }
+        ]
+      },
+      "formula": "MOD(TIME_S / 4 * 360, 360)",
+      "expected": { "results": [0, 45, 22.5] }
+    }
+  ]
+}

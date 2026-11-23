@@ -139,7 +139,7 @@ The parser does not check the number or types of the arguments. They are matched
 
 ### Procedure call without parentheses
 
-Procedures of the active standard (in Core: `SET`, `INIT`, `COND_SET`, `REQUIRE`) may be written without parentheses, with their arguments separated by white space instead of commas, e.g. `REQUIRE "core-0.2+"` or `SET $x 100`.
+Procedures of the active standard (in Core: `SET`, `INIT`, `COND_SET`, `REQUIRE`) may be written without parentheses, with their arguments separated by white space instead of commas, e.g. `REQUIRE "core-1+"` or `SET $x 100`.
 
 1. Consume the **Identifier**. Let **n** be the number of parameters of the procedure.
 2. Parse the first **n − 1** arguments with `ParseExpression(10)`. Only a single operand (literal, variable, grouped expression, array or object literal) is consumed, so the next argument can start right after it.

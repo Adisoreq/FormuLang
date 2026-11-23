@@ -1,0 +1,25 @@
+{
+  "$schema": "../../schema.json",
+  "description": "FORMAT(template, values). Examples from docs/standards/core/functions/FORMAT.md.",
+  "standards": ["core-1.0"],
+  "cases": [
+    { "id": "core.functions.FORMAT.001", "description": "Sequential {}", "formula": "FORMAT(\"Mam {} jablek i {} gruszek.\", [10, 5])", "expected": { "result": "Mam 10 jablek i 5 gruszek." } },
+    { "id": "core.functions.FORMAT.002", "description": "Indexed {n}", "formula": "FORMAT(\"{1} before {0}\", [\"a\", \"b\"])", "expected": { "result": "b before a" } },
+    { "id": "core.functions.FORMAT.003", "description": "The same index used many times", "formula": "FORMAT(\"{0}{0}{0}\", [\"ha\"])", "expected": { "result": "hahaha" } },
+    { "id": "core.functions.FORMAT.004", "description": "Indices follow @array_indexing", "environment": { "variables": { "array_indexing": 1 } }, "formula": "FORMAT(\"{1}-{2}\", [\"a\", \"b\"])", "expected": { "result": "a-b" } },
+    { "id": "core.functions.FORMAT.005", "description": "Decimal places specifier", "formula": "FORMAT(\"Price: {:.2} zł\", [12.5])", "expected": { "result": "Price: 12.50 zł" } },
+    { "id": "core.functions.FORMAT.006", "description": "Specifier .0 rounds half away from zero", "formula": "FORMAT(\"{:.0}%\", [99.5])", "expected": { "result": "100%" } },
+    { "id": "core.functions.FORMAT.007", "description": "Escaped braces", "formula": "FORMAT(\"Set: {{{}}}\", [7])", "expected": { "result": "Set: {7}" } },
+    { "id": "core.functions.FORMAT.008", "description": "Values are serialized like TEXT", "formula": "FORMAT(\"{} and {}\", [[1, 2], true])", "expected": { "result": "[1, 2] and true" } },
+    { "id": "core.functions.FORMAT.009", "description": "Unused elements are ignored", "formula": "FORMAT(\"No placeholders\", [1])", "expected": { "result": "No placeholders" } },
+    { "id": "core.functions.FORMAT.010", "description": "Object keys", "formula": "FORMAT(\"{name} ma {age} lat\", { name: \"Ola\", age: 24 })", "expected": { "result": "Ola ma 24 lat" } },
+    { "id": "core.functions.FORMAT.011", "description": "Object keys with specifiers", "formula": "FORMAT(\"{x:.1}, {y:.1}\", { x: 1, y: 2.25 })", "expected": { "result": "1.0, 2.3" } },
+    { "id": "core.functions.FORMAT.012", "description": "Not enough elements", "formula": "FORMAT(\"{} {}\", [1])", "expected": { "error": { "code": "INVALID_INDEX_ERROR" } } },
+    { "id": "core.functions.FORMAT.013", "description": "{} mixed with {n}", "formula": "FORMAT(\"{} {1}\", [1, 2])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.FORMAT.014", "description": "Specifier used with a text", "formula": "FORMAT(\"{:.2}\", [\"text\"])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.FORMAT.015", "description": "Unclosed brace", "formula": "FORMAT(\"{\", [1])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.FORMAT.016", "description": "Missing object key", "formula": "FORMAT(\"{name}\", { })", "expected": { "error": { "code": "INVALID_KEY_ERROR" } } },
+    { "id": "core.functions.FORMAT.017", "description": "{} with an object", "formula": "FORMAT(\"{}\", { a: 1 })", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.FORMAT.018", "description": "White space inside braces", "formula": "FORMAT(\"{ 0 }\", [1])", "expected": { "error": { "code": "OPERATION_ERROR" } } }
+  ]
+}

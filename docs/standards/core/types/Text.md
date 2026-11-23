@@ -8,7 +8,14 @@ Text is a type defining a set of characters, used to process and display text.
 
 ## Literal
 
-Text is enclosed in **double quotation marks** (`"`), e.g. `"Hello"`. [Special characters](../../../syntax/symbols.md#symbols-classification) may require [escape sequences](../../../syntax/symbols.md#escape-sequences).
+Text is enclosed in **double quotation marks** (`"`), e.g. `"Hello"`. [Special characters](../../../syntax/symbols.md#symbols-classification) may require [escape sequences](../../../syntax/symbols.md#escape-sequences). A text literal may contain Unicode [text characters](../../../syntax/symbols.md#text-characters), e.g. `"Zażółć gęślą jaźń"`.
+
+## Characters
+
+- A **character** of a text is one Unicode code point. Every text function that counts, finds or reverses characters (`LEN`, `SUBSTR`, `FIND`, `REVERSE`, `SPLIT` with `""`) works on code points: `LEN("żółw")` is `4`.
+- Texts are not normalized. Two texts are equal (`EQU`) only if they have the same code points in the same order.
+- `UPPERCASE` and `LOWERCASE` follow the Unicode default case mapping, independent of any locale.
+- `SORT` compares texts by their code points.
 
 ## Serialization
 

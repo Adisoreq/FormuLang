@@ -1,6 +1,6 @@
 # LES
 
-Comparison [**Core**](../README.md) standard function. Checks if `a` is lesser than `b`.
+Comparison [**Core**](../README.md) standard function. Checks if `a` is less than `b`.
 
 ## Overloads
 

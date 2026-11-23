@@ -6,13 +6,13 @@ Plans for enhancements in the future
 
 ### 1. Stock Extension
 
-Specified as the [**Stock**](../standards/stock/README.md) standard (`stock-0.1`).
+Specified as the [**Stock**](../standards/stock/README.md) standard (`stock-1.0`).
 
-### 2. Time types (Core)
+### 2. Time (Core)
 
-#### Description
+Specified in the **Core** standard: points in time are **Number** values (Unix time in milliseconds, UTC), with the [time functions](../standards/core/functions/README.md#10-time-functions) (`YEAR`, `MONTH`, `DAY`, `WEEKDAY`, `HOUR`, `MINUTE`, `SECOND`, `MILLISECOND`, `DATE`, `FORMAT_TIME`), the `NOW` constant, the `@time_offset` variable and the [Time Context](../core/context.md#3-time-context).
 
-Extended types for dates and durations (year, month, day, hour, minute, second), shared by every standard. Until then, points in time are **Number** values: Unix time in milliseconds, UTC (see the `TIME` constant of the [Stock](../standards/stock/README.md) standard).
+Possible future additions: time zone names with daylight saving time (e.g. `"Europe/Warsaw"`), parsing text into a point in time, and the names of months and days in `FORMAT_TIME`.
 
 ### 3. Geometry Extension
 

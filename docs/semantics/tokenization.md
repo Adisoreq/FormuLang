@@ -9,7 +9,7 @@
 
 1. Load the post-clean-up **formula text** and initialize the [**tokenization state**](#tokenization-state).
 2. Iterate through every **character** of every **line** of the input text:
-   1.  If **current character** is not a [valid symbol](../syntax/symbols.md#symbols-list), then stop the process and return an **error**.
+   1.  If **current mode** is **Text** and **current character** is not a [text character](../syntax/symbols.md#text-characters), or **current mode** is not **Text** and **current character** is not a [valid symbol](../syntax/symbols.md#symbols-list), then stop the process and return an **error**. Unicode characters are allowed only inside text literals.
    2. Else, if **current mode** is **None**:
       1. If the **current character** is a **white space**, ignore it and continue.
       2. Else, if the current character is a [**digit**](../syntax/symbols.md#symbols-classification), open the **Number** token and append symbol.
@@ -246,7 +246,7 @@ Start --> 1 --> 1.1
 
 ## Tokenization state
 
-Tokenization state is a structure used to determine the tokenizator's behaviour under specific conditions
+Tokenization state is a structure used to determine the tokenizer's behaviour under specific conditions
 
 | Property | Description | Default value |
 | :------: | :---------- | :-----------: |
@@ -284,7 +284,7 @@ Actions that modify the tokenization state in an organized way
 ```
 $message = "12.5[rad] in [deg] is:"
 $angle := 12.5 * 180 / PI
-FORMAT("%s\n%.1f", [$message, $angle])
+FORMAT("{}\n{:.1}", [$message, $angle])
 ```
 
 ### Tokenization process
@@ -329,7 +329,7 @@ FORMAT("%s\n%.1f", [$message, $angle])
 ```
 $message = "12.5[rad] in [deg] is:"
 $angle := 12.5 * 180 / PI
-FORMAT("%s\n%.1f", [$message, $angle])
+FORMAT("{}\n{:.1}", [$message, $angle])
 ```
 
 |  #  | Token | Type |
@@ -353,7 +353,7 @@ FORMAT("%s\n%.1f", [$message, $angle])
 | 17 | `FORMAT` | Identifier |
 | 18 | `(` | Operator |
 | 19 | `"` | Operator |
-| 20 | `%s\n%.1f` | Text |
+| 20 | `{}\n{:.1}` | Text |
 | 21 | `"` | Operator |
 | 22 | `,` | Operator |
 | 23 | `[` | Operator |

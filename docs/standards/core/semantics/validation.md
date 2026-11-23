@@ -20,7 +20,8 @@ Environment problems are reported as [`ENVIRONMENT_ERROR`](../errors/ENVIRONMENT
 | Property | Description | Default value |
 | :------- | :---------- | :-----------: |
 | Errors | Array of the errors found so far. | [ ] <br/> (empty array) |
-| Mode | Current scanning mode: **Code**, **Text** or **Comment**. | Code |
+| Mode | Current scanning mode: **Code**, **Text**, **Comment** (line comment) or **Scoped comment**. | Code |
+| Comment start | Position of the `<` of the current scoped comment. | - |
 | Escape sequence | Whether the previous character was an unescaped backslash inside a text literal. | false |
 | Delimiter stack | Opening delimiters (`(`, `[`, `{`) that are not closed yet, with their positions. | [ ] <br/> (empty stack) |
 | Text start | Position of the opening quotation mark of the current text literal. | - |
@@ -33,15 +34,17 @@ The environment must provide the following elements of the [Core environment str
 
 | Element | Kind | Required type | Additional requirement |
 | :------ | :--- | :------------ | :--------------------- |
-| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifier of the **Core** standard (`core-0.3`). |
+| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifier of the **Core** standard (`core-1.0`). |
 | `E` | Constant | `Number` | - |
 | `PI` | Constant | `Number` | - |
 | `PHI` | Constant | `Number` | - |
+| `NOW` | Constant | `Number` | Must be a whole number. |
 | `NULL` | Constant | `Null` | - |
 | `TRUE` | Constant | `Boolean` | Must be `true`. |
 | `FALSE` | Constant | `Boolean` | Must be `false`. |
 | `array_indexing` | Variable | `Number` | Must be a whole number. |
 | `suppress_errors` | Variable | `Boolean` | - |
+| `time_offset` | Variable | `Number` | Must be a whole number. |
 | `decimal_place` | Variable | `Number` | Must be a whole number. |
 | `split_array` | Variable | `Boolean` | - |
 | `split_object` | Variable | `Boolean` | - |
@@ -55,26 +58,32 @@ The environment must provide the following elements of the [Core environment str
 2. For every element of the [environment checks](#environment-checks), in table order, append an `ENVIRONMENT_ERROR` to **Errors** if the element does not meet its requirements.
 3. Iterate through every **character** of the formula text. A carriage return (`\r`), a line feed (`\n`) and the pair `\r\n` are all one **line break**. Increase **Column** for every character other than a line break, and handle the **current character**:
    1. If **Mode** is **Comment**: if the character is a line break, set **Mode** to **Code** and start a new line (increase **Line**, set **Column** to 0). Otherwise ignore the character (the content of a comment is not checked), and continue.
-   2. Else, if the character is not a [valid symbol](../../../syntax/symbols.md#symbols-list) or a line break, append a `SYNTAX_ERROR` (invalid symbol) and continue.
-   3. Else, if the character is a line break:
+   2. Else, if **Mode** is **Scoped comment**:
+      1. If the character is a line break, start a new line (increase **Line**, set **Column** to 0), and continue.
+      2. Else, if the character is `#` and the **next character** is `>`, consume both characters (increase **Column** once more), set **Mode** to **Code**, and continue.
+      3. Otherwise ignore the character (the content of a comment is not checked), and continue.
+   3. Else, if the character is not a line break and is not allowed in the current **Mode**, append a `SYNTAX_ERROR` (invalid symbol) and continue. In **Code** mode, the allowed characters are the [valid symbols](../../../syntax/symbols.md#symbols-list) (ASCII). In **Text** mode, they are the [text characters](../../../syntax/symbols.md#text-characters), which include Unicode characters such as `ó` or `ą`.
+   4. Else, if the character is a line break:
       1. If **Mode** is **Text**, append a `SYNTAX_ERROR` (text literal not closed) pointing to **Text start**, and set **Mode** to **Code** and **Escape sequence** to false.
       2. Start a new line (increase **Line**, set **Column** to 0) and continue.
-   4. Else, if **Mode** is **Text**:
+   5. Else, if **Mode** is **Text**:
       1. If **Escape sequence** is true: set it to false, and if the character is not an [escape sequence symbol](../../../syntax/symbols.md#escape-sequences) (`\`, `"`, `n`, `t`), append a `SYNTAX_ERROR` (invalid escape sequence).
       2. Else, if the character is a quotation mark (`"`), set **Mode** to **Code**.
       3. Else, if the character is a backslash (`\`), set **Escape sequence** to true.
       4. Any other character, including `#`, is an ordinary part of the text.
-   5. Else (**Mode** is **Code**):
-      1. If the character is the comment sigil (`#`), set **Mode** to **Comment**. The same rule is used by the [clean-up](../../../semantics/cleanup.md#2-removing-comments).
-      2. Else, if the character is a quotation mark (`"`), set **Mode** to **Text** and store its position in **Text start**.
-      3. Else, if the character is `(`, `[` or `{`, push it with its position on the **Delimiter stack**.
-      4. Else, if the character is `)`, `]` or `}`:
+   6. Else (**Mode** is **Code**):
+      1. If the character is `<` and the **next character** is `#`, consume both characters (increase **Column** once more), store the position of `<` in **Comment start** and set **Mode** to **Scoped comment**.
+      2. Else, if the character is the comment sigil (`#`), set **Mode** to **Comment**. The same rules are used by the [clean-up](../../../semantics/cleanup.md#2-removing-comments).
+      3. Else, if the character is a quotation mark (`"`), set **Mode** to **Text** and store its position in **Text start**.
+      4. Else, if the character is `(`, `[` or `{`, push it with its position on the **Delimiter stack**.
+      5. Else, if the character is `)`, `]` or `}`:
          1. If the **Delimiter stack** is empty, append a `SYNTAX_ERROR` (unmatched closing delimiter).
          2. Else, pop the top of the stack. If it is not the opening delimiter matching the character, append a `SYNTAX_ERROR` (closing delimiter does not match the opening delimiter).
-      5. Else, if the character is a semicolon (`;`) and the **Delimiter stack** is not empty, append a `SYNTAX_ERROR` (sequence separator inside a delimiter).
+      6. Else, if the character is a semicolon (`;`) and the **Delimiter stack** is not empty, append a `SYNTAX_ERROR` (sequence separator inside a delimiter).
 4. After the last character:
    1. If **Mode** is **Text**, append a `SYNTAX_ERROR` (text literal not closed) pointing to **Text start**.
-   2. For every opening delimiter left on the **Delimiter stack**, from the top, append a `SYNTAX_ERROR` (opening delimiter not closed).
+   2. If **Mode** is **Scoped comment**, append a `SYNTAX_ERROR` (scoped comment not closed) pointing to **Comment start**.
+   3. For every opening delimiter left on the **Delimiter stack**, from the top, append a `SYNTAX_ERROR` (opening delimiter not closed).
 5. Return **Errors**.
 
 A new line inside an open delimiter is not an error: it is ignored by the [parser](parsing.md#splitting-into-sequences).
@@ -87,12 +96,14 @@ Implementations may extend the detail text, but it must identify the problem and
 | Problem | Error | Detail text pattern |
 | :------ | :---- | :------------------ |
 | Missing or wrongly typed constant or variable | `ENVIRONMENT_ERROR` | `Environment constant "<NAME>" is missing or is not of type <Type>.` <br> `Environment variable "<NAME>" is missing or is not of type <Type>.` |
-| `array_indexing`, `decimal_place` or `max_array_preview` is not a whole number | `ENVIRONMENT_ERROR` | `Environment variable "<NAME>" must be a whole number.` |
+| `array_indexing`, `time_offset`, `decimal_place` or `max_array_preview` is not a whole number | `ENVIRONMENT_ERROR` | `Environment variable "<NAME>" must be a whole number.` |
+| `NOW` is not a whole number | `ENVIRONMENT_ERROR` | `Environment constant "NOW" must be a whole number.` |
 | `TRUE` or `FALSE` has a wrong value | `ENVIRONMENT_ERROR` | `Environment constant "<NAME>" must be <value>.` |
 | `STANDARDS` without the Core identifier | `ENVIRONMENT_ERROR` | `Environment constant "STANDARDS" does not contain the Core standard.` |
 | Invalid symbol | `SYNTAX_ERROR` | `Invalid symbol "<c>" at line <L>, column <C>.` |
 | Invalid escape sequence | `SYNTAX_ERROR` | `Invalid escape sequence "\<c>" at line <L>, column <C>.` |
 | Text literal not closed | `SYNTAX_ERROR` | `Text literal is not closed at line <L>, column <C>.` |
+| Scoped comment not closed | `SYNTAX_ERROR` | `Scoped comment is not closed at line <L>, column <C>.` |
 | Unmatched closing delimiter | `SYNTAX_ERROR` | `Unmatched "<c>" at line <L>, column <C>.` |
 | Delimiters do not match | `SYNTAX_ERROR` | `"<c>" does not match the opening delimiter at line <L>, column <C>.` |
 | Opening delimiter not closed | `SYNTAX_ERROR` | `Unclosed "<c>" at line <L>, column <C>.` |
@@ -107,6 +118,10 @@ Examples assume a correct environment, unless stated otherwise.
 | :------ | :----- |
 | `$x = 4 # ok ; ( "` | none (the comment is not checked) |
 | `$x = "Item #1"` | none (`#` inside a text literal is an ordinary character) |
+| `$b = <# ( " #> 24` | none (the content of a scoped comment is not checked) |
+| `$x = "Zażółć gęślą jaźń"` | none (Unicode characters are allowed inside a text literal) |
+| `$zółw = 1` | `[SYNTAX_ERROR (2)] Invalid symbol "ó" at line 1, column 3.` |
+| `$a = 1 <# note` | `[SYNTAX_ERROR (2)] Scoped comment is not closed at line 1, column 8.` |
 | `MUL(2, 3` | `[SYNTAX_ERROR (2)] Unclosed "(" at line 1, column 4.` |
 | `ADD(1, 2))` | `[SYNTAX_ERROR (2)] Unmatched ")" at line 1, column 10.` |
 | `ADD(1, 2]` | `[SYNTAX_ERROR (2)] "]" does not match the opening delimiter at line 1, column 9.` |

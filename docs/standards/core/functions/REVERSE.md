@@ -40,7 +40,7 @@ Collection template:
 
 Algorithm:
 
-- Returns a new text with the characters of `text`, from the last to the first
+- Returns a new text with the characters (Unicode code points) of `text`, from the last to the first
 
 Examples:
 

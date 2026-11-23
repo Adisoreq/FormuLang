@@ -16,6 +16,29 @@ These markers operate before or at the boundary of a formula sequence; they are 
 | :----- | :----: | :--- | :------ |
 | Line boundary | `[New line]` (`\n`) | Ends the current line and its sequence. | `$x = 1`<br/>`$y = 2` |
 | Line comment | `#` | Ignores the marker and all text to its right on the same line. A newline ends the comment. Inside a text literal `#` is an ordinary character. | `$x = 1 # note` |
+| Scoped comment | `<#` … `#>` | Ignores all text from `<#` up to and including the first following `#>`. The comment may span multiple lines and cannot be nested. Inside a text literal or a line comment, `<#` and `#>` are ordinary characters. | `$b = <# note #> 24` |
+
+Scoped comment rules:
+
+- `<#` opens a scoped comment only outside a text literal and outside another comment. `#>` closes it.
+- `#>` outside a scoped comment is not a closing marker: it begins a line comment (with `#`), so `$x = 1 #> note` is `$x = 1` followed by a line comment.
+- `<` followed by `#` always opens a scoped comment. To compare with a value after a line comment, separate the symbols: `$a < # note` is not a scoped comment (and is a syntax error, because `<` has no right operand).
+- A scoped comment that is not closed results in a `SYNTAX_ERROR`.
+- During [clean-up](../semantics/cleanup.md#2-removing-comments), a scoped comment is replaced with one `[Space]`, or with one `[New line]` if it contains a line break, so it always separates the tokens around it and keeps the sequence boundaries.
+
+Example:
+
+```
+$a = 14 # This comment ends with the line
+$b = <# This comment is scoped #> 24
+
+<#
+Hey!
+This comment is multi-line!
+#>
+
+$a + $b
+```
 
 ### 2. Sequence separator
 
@@ -110,7 +133,7 @@ Used to assign values to variables.
 
 ## Operator length
 
-This table lists operator tokens recognized during tokenization. `#` begins a line comment, which is removed during [clean-up](../semantics/cleanup.md). A new line is emitted by the tokenizer as a `[New line]` boundary token, which is not an operator and is not part of this table.
+This table lists operator tokens recognized during tokenization. `#` begins a line comment and `<#` … `#>` delimit a scoped comment; both are removed during [clean-up](../semantics/cleanup.md), so they never reach the tokenizer. A new line is emitted by the tokenizer as a `[New line]` boundary token, which is not an operator and is not part of this table.
 
 | Length | Operators |
 | ------ | --------- |

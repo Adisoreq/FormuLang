@@ -2,11 +2,19 @@
 
 Changes of the [**Core**](README.md) standard. Changes of the language itself (syntax, semantics, implementation structures) are in the [main changelog](../../../CHANGELOG.md).
 
-## 0.3 (in progress)
+## 1.0 (unreleased)
 
-Identifier: `core-0.3`.
+Identifier: `core-1.0`. First stable release. It contains the work of version `0.3`, which was never released on its own. From this version on, changes within the `1.x` versions are backward compatible.
 
 ### Added
+- Scoped comments `<# ... #>` ([Operators](../../syntax/operators.md#1-formula-and-line-structure)): they may span multiple lines and cannot be nested. `#>` outside a scoped comment begins a line comment, so existing formulas do not change. [Clean-up](../../semantics/cleanup.md#2-removing-comments) replaces a scoped comment with one space, or with one new line if it contains a line break. [Validation](semantics/validation.md) has the **Scoped comment** mode and reports an unclosed comment as `SYNTAX_ERROR`.
+- Unicode characters inside text literals ([Text characters](../../syntax/symbols.md#text-characters)), e.g. `"Zażółć gęślą jaźń"`. Identifiers stay ASCII. A character of a **Text** is one Unicode code point, and texts are not normalized ([Text](types/Text.md#characters)).
+- Text function [`FORMAT(template, values)`](functions/FORMAT.md): placeholders `{}`, `{index}` (follows `@array_indexing`), `{key}`, the decimal places specifier `{:.n}`, and the escapes `{{` and `}}`.
+- [Time functions](functions/README.md#10-time-functions) on points in time (**Number**, Unix time in milliseconds, UTC): [`YEAR`](functions/YEAR.md), [`MONTH`](functions/MONTH.md), [`DAY`](functions/DAY.md), [`WEEKDAY`](functions/WEEKDAY.md) (ISO, `1` = Monday), [`HOUR`](functions/HOUR.md), [`MINUTE`](functions/MINUTE.md), [`SECOND`](functions/SECOND.md), [`MILLISECOND`](functions/MILLISECOND.md), [`DATE`](functions/DATE.md) and [`FORMAT_TIME`](functions/FORMAT_TIME.md) (tokens `YYYY`, `MM`, `DD`, `hh`, `mm`, `ss`, `iii`, text in `[ ]`). Supported years: `1` - `9999`.
+- Environment constant `NOW` (current time, set once in the [pre-execution](../../semantics/pre-execution.md), so the functions stay pure) and environment variable `time_offset` (minutes from UTC, default `0`). Both are checked by the validation.
+- [Time Context](../../core/context.md#3-time-context) with the constants `TIME_S`, `TIME_MS`, `DTIME_S`, `DTIME_MS`, `FRAME` and `PREV`, for formulas executed once per frame (animations, simulations, real-time measurements).
+- [Time examples](examples/time_examples.md).
+- [Conformance tests](../../../tests/README.md): language-independent test cases (JSON) for implementations.
 - [Trigonometric functions](functions/README.md#8-trigonometric-functions) `SIN`, `COS`, `TAN`, `ASIN`, `ACOS`, `ATAN`, `ATAN2(y, x)`, and the conversions `DEG` and `RAD`. Angles are in radians. `TAN` returns `OPERATION_ERROR` for a result that is not finite, `ASIN` and `ACOS` for a value outside of the range from `-1` to `1`. `ATAN2(0, 0)` is `0`.
 - Arithmetic functions [`SIGN`](functions/SIGN.md) and [`TRUNC`](functions/TRUNC.md) (rounds towards zero, with the same `precision` as `ROUND`).
 - Text functions [`SUBSTR`](functions/SUBSTR.md), [`FIND`](functions/FIND.md), [`CONTAINS`](functions/CONTAINS.md), [`STARTS`](functions/STARTS.md), [`ENDS`](functions/ENDS.md), [`REPLACE`](functions/REPLACE.md) and [`REVERSE`](functions/REVERSE.md), and the overload `LEN(text)`. Positions of characters follow `@array_indexing`. `FIND` returns `null` if the value does not occur.
@@ -15,7 +23,12 @@ Identifier: `core-0.3`.
 - [`INVALID_INDEX_ERROR`](errors/INVALID_INDEX_ERROR.md) is also returned by `SUBSTR` for a text position outside of the text.
 
 ### Changed
-- The version is `0.3` (identifier `core-0.3`). The `STANDARDS` constant and the examples use it.
+- The version is `1.0` (identifier `core-1.0`). The `STANDARDS` constant and the examples use it; `REQUIRE` examples use `core-1+`.
+- `LEN`, `SUBSTR`, `FIND` and `REVERSE` count Unicode code points.
+- The [tokenization](../../semantics/tokenization.md) example uses the `FORMAT` placeholders (`"{}\n{:.1}"`) instead of the undefined `%s` notation.
+
+### Fixed
+- `LES` and `LEQ` were described as "lesser than"; typos in Literals, Symbols and Tokenization.
 
 ## 0.2 (2026-11-07)
 

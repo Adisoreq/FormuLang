@@ -7,9 +7,9 @@
 
 **Name**: `Core`
 
-**Latest version**: `0.3`
+**Latest version**: `1.0`
 
-**Identifier**: `core-0.3`
+**Identifier**: `core-1.0`
 
 **Description**: Elementary standard defining core **FormuLang** concepts and structures. Basis of every other extension.
 
@@ -21,12 +21,13 @@ Changes between versions: [Core changelog](CHANGELOG.md).
 
 ### 1. Context types
 
-The **Core** standard defines two [context types](../../core/context.md#context-types):
+The **Core** standard defines three [context types](../../core/context.md#context-types):
 
 | Context type | Base type | Context constants | Expected result |
 | :----------- | :-------- | :---------------- | :-------------- |
 | [Default Context](../../core/context.md#1-default-context) | - | none | any value |
 | [Iteration Context](../../core/context.md#2-iteration-context) | Default Context | `I`, `N`, `PREV` | any value |
+| [Time Context](../../core/context.md#3-time-context) | Default Context | `TIME_S`, `TIME_MS`, `DTIME_S`, `DTIME_MS`, `FRAME`, `PREV` | any value |
 
 ### 2. Context constants
 
@@ -35,6 +36,12 @@ The **Core** standard defines two [context types](../../core/context.md#context-
 | `I` | Iteration Context | `Number` | Index of the current iteration. Follows `@array_indexing`: the first iteration is `@array_indexing`. |
 | `N` | Iteration Context | `Number` | Number of iterations. Does not depend on `@array_indexing`. |
 | `PREV` | Iteration Context | `Any` | Result of the previous iteration, `null` in the first iteration. |
+| `TIME_S` | Time Context | `Number` | Total time from the first frame to the current frame, in seconds. |
+| `TIME_MS` | Time Context | `Number` | Total time from the first frame to the current frame, in milliseconds. |
+| `DTIME_S` | Time Context | `Number` | Delta (frame) time, in seconds. `0` in the first frame. |
+| `DTIME_MS` | Time Context | `Number` | Delta (frame) time, in milliseconds. `0` in the first frame. |
+| `FRAME` | Time Context | `Number` | Index of the current frame. Follows `@array_indexing`. |
+| `PREV` | Time Context | `Any` | Result of the previous frame, `null` in the first frame. |
 
 ### 3. Context variables
 
@@ -46,10 +53,11 @@ All context variables are defined by user.
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | `[ "core-0.3" ]` | Stores the array of supported standards' identifiers. |
+| `STANDARDS` | `Array` | `[ "core-1.0" ]` | Stores the array of supported standards' identifiers. |
 | `E` | `Number` | `2.718281828459045` | Euler's number. Used in calculus, compound interest, and exponential growth calculations. |
 | `PI` | `Number` | `3.141592653589793` | Ratio of a circle's circumference to its diameter. Used in geometry and trigonometry. |
 | `PHI` | `Number` | `1.618033988749894` | Golden ratio. |
+| `NOW` | `Number` | current time | The moment of the [pre-execution](../../semantics/pre-execution.md): Unix time in milliseconds, UTC. It is set once and does not change during the execution, so every function stays pure. |
 | `NULL` | `Null` | `null` | Null value. Equivalent of the `null` literal. |
 | `TRUE` | `Boolean` | `true` | Equivalent of the `true` literal. |
 | `FALSE` | `Boolean` | `false` | Equivalent of the `false` literal. |
@@ -60,6 +68,7 @@ All context variables are defined by user.
 | :------- | :--: | :------------ | :---------- |
 | `array_indexing` | `Number` | `0` | Base of access-by-index array operations. When accessing the array element, the variable's value is subtracted from target index. Usable in solutions for users, who are not familiar with 0-based indexing. |
 | `suppress_errors` | `Boolean` | `false` | Prevents aborting the execution: an **Error** (other than `SUCCESS`) returned by the root of a sequence is turned into a `null` value and the execution continues. |
+| `time_offset` | `Number` | `0` | Offset of the local time from UTC, in minutes (a whole number, e.g. `60` for UTC+1, `-300` for UTC-5). Used by the [time functions](functions/README.md#10-time-functions). Daylight saving time is not applied automatically: the host application sets the offset that is valid for the execution. |
 
 ### 3. Serialization variables
 
@@ -83,7 +92,7 @@ Procedures are part of the **Core** standard. They operate on context or environ
 | [`SET`](procedures/SET.md) | Context, Environment | Overrides a variable. Environment variables are overridden only for the current execution. | `SET $result 100` | `$result = 100` |
 | [`INIT`](procedures/INIT.md) | Context, Environment | Initializes a variable only if it does not exist yet or has no value. | `INIT $result 100` | `$result := 100` |
 | [`COND_SET`](procedures/COND_SET.md) | Context, Environment | Overrides a variable only if it already exists. | `COND_SET $result 100` | `$result ?= 100` |
-| [`REQUIRE`](procedures/REQUIRE.md) | Environment | Ensures that the environment supports the requested standard. | `REQUIRE "core-0.x"` | |
+| [`REQUIRE`](procedures/REQUIRE.md) | Environment | Ensures that the environment supports the requested standard. | `REQUIRE "core-1+"` | |
 
 
 ## Built-in Functions
@@ -127,9 +136,9 @@ Functions that evaluate conditions and return **Boolean** values.
 | `EQU(a, b)` | `==` | Checks if values are identical. | `Any`, `Any` | `Boolean` |
 | `NEQ(a, b)` | `!=` | Checks if values are different. | `Any`, `Any` | `Boolean` |
 | `GRE(a, b)` | `>` | Checks if `a` is greater than `b`. | `Number`, `Number` | `Boolean` |
-| `LES(a, b)` | `<` | Checks if `a` is lesser than `b`. | `Number`, `Number` | `Boolean` |
+| `LES(a, b)` | `<` | Checks if `a` is less than `b`. | `Number`, `Number` | `Boolean` |
 | `GEQ(a, b)` | `>=` | Checks if `a` is greater or equal to `b`. | `Number`, `Number` | `Boolean` |
-| `LEQ(a, b)` | `<=` | Checks if `a` is lesser or equal to `b`. | `Number`, `Number` | `Boolean` |
+| `LEQ(a, b)` | `<=` | Checks if `a` is less than or equal to `b`. | `Number`, `Number` | `Boolean` |
 
 ### 3. Control Flow Functions
 
@@ -160,6 +169,7 @@ Functions for manipulating **Text** strings.
 | `ENDS(text, part)` | Checks if the text ends with `part`. | `Boolean` |
 | `REPLACE(text, search, replacement)` | Replaces every occurrence of `search` with `replacement`. | `Text` |
 | `REVERSE(text)` | Returns the characters of the text in the reverse order. | `Text` |
+| `FORMAT(template, values)` | Replaces the placeholders of the template (`{}`, `{0}`, `{key}`, `{:.2}`) with the elements of an array or the values of an object. [[Read more]](functions/FORMAT.md) | `Text` |
 
 ### 5. Array & Collection Functions
 
@@ -236,6 +246,23 @@ Functions operating on **Objects**.
 | :------- | :---------- | :---------: |
 | `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. | `Array` |
 | `HAS(object, key)` | Checks if the object has a value stored under the key. | `Boolean` |
+
+### 10. Time Functions
+
+Functions operating on points in time. A point in time is a **Number**: Unix time in milliseconds, UTC. The functions use the local time defined by `@time_offset`. Details: [Time functions](functions/README.md#10-time-functions).
+
+| Function | Description | Return Type |
+| :------- | :---------- | :---------: |
+| `YEAR(time)` | Returns the year. | `Number` |
+| `MONTH(time)` | Returns the month, from `1` to `12`. | `Number` |
+| `DAY(time)` | Returns the day of the month, from `1` to `31`. | `Number` |
+| `WEEKDAY(time)` | Returns the ISO day of the week, from `1` (Monday) to `7` (Sunday). | `Number` |
+| `HOUR(time)` | Returns the hour, from `0` to `23`. | `Number` |
+| `MINUTE(time)` | Returns the minute, from `0` to `59`. | `Number` |
+| `SECOND(time)` | Returns the second, from `0` to `59`. | `Number` |
+| `MILLISECOND(time)` | Returns the millisecond, from `0` to `999`. | `Number` |
+| `DATE(year, month, day, hour, minute, second, millisecond)` | Creates a point in time from its parts (`hour` and the next parts are optional). | `Number` |
+| `FORMAT_TIME(time, format)` | Converts a point in time to text, e.g. `"YYYY-MM-DD hh:mm:ss.iii"`. | `Text` |
 
 
 ## Reference

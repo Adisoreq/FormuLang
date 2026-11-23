@@ -1,0 +1,82 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Validation of the formula text and of the environment. Examples from docs/standards/core/semantics/validation.md.",
+  "standards": ["core-1.0"],
+  "cases": [
+    {
+      "id": "core.validation.001",
+      "description": "The content of a line comment is not checked",
+      "formula": ["$x = 4 # ok ; ( \"", "$x"],
+      "expected": { "result": 4 }
+    },
+    {
+      "id": "core.validation.002",
+      "description": "Unclosed parenthesis",
+      "formula": "MUL(2, 3",
+      "expected": { "errors": [ { "code": "SYNTAX_ERROR", "message": "Unclosed \"(\" at line 1, column 4." } ] }
+    },
+    {
+      "id": "core.validation.003",
+      "description": "Unmatched closing parenthesis",
+      "formula": "ADD(1, 2))",
+      "expected": { "errors": [ { "code": "SYNTAX_ERROR", "message": "Unmatched \")\" at line 1, column 10." } ] }
+    },
+    {
+      "id": "core.validation.004",
+      "description": "Closing delimiter does not match",
+      "formula": "ADD(1, 2]",
+      "expected": { "errors": [ { "code": "SYNTAX_ERROR", "message": "\"]\" does not match the opening delimiter at line 1, column 9." } ] }
+    },
+    {
+      "id": "core.validation.005",
+      "description": "Invalid escape sequence",
+      "formula": "$x = \"a\\qb\"",
+      "expected": { "errors": [ { "code": "SYNTAX_ERROR", "message": "Invalid escape sequence \"\\q\" at line 1, column 9." } ] }
+    },
+    {
+      "id": "core.validation.006",
+      "description": "Sequence separator inside a delimiter",
+      "formula": "SUM([1; 2])",
+      "expected": { "errors": [ { "code": "SYNTAX_ERROR", "message": "Unexpected \";\" inside a delimiter at line 1, column 7." } ] }
+    },
+    {
+      "id": "core.validation.007",
+      "description": "All errors are reported, in the order of detection",
+      "formula": ["$x = (1", "$y = \"a"],
+      "expected": {
+        "errors": [
+          { "code": "SYNTAX_ERROR", "message": "Text literal is not closed at line 2, column 6." },
+          { "code": "SYNTAX_ERROR", "message": "Unclosed \"(\" at line 1, column 6." }
+        ]
+      }
+    },
+    {
+      "id": "core.validation.008",
+      "description": "Environment variable of a wrong type",
+      "environment": { "variables": { "suppress_errors": "yes" } },
+      "formula": "$x = 1",
+      "expected": { "errors": [ { "code": "ENVIRONMENT_ERROR", "message": "Environment variable \"suppress_errors\" is missing or is not of type Boolean." } ] }
+    },
+    {
+      "id": "core.validation.009",
+      "description": "time_offset must be a whole number",
+      "environment": { "variables": { "time_offset": 1.5 } },
+      "formula": "1",
+      "expected": { "errors": [ { "code": "ENVIRONMENT_ERROR", "message": "Environment variable \"time_offset\" must be a whole number." } ] }
+    },
+    {
+      "id": "core.validation.010",
+      "description": "NOW must be a whole number",
+      "environment": { "constants": { "NOW": 0.5 } },
+      "formula": "1",
+      "expected": { "errors": [ { "code": "ENVIRONMENT_ERROR", "message": "Environment constant \"NOW\" must be a whole number." } ] }
+    },
+    {
+      "id": "core.validation.011",
+      "description": "Missing environment constant",
+      "environment": { "omit": ["PI"] },
+      "formula": "1",
+      "expected": { "errors": [ { "code": "ENVIRONMENT_ERROR", "message": "Environment constant \"PI\" is missing or is not of type Number." } ] }
+    }
+  ]
+}

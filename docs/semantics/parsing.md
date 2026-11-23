@@ -86,7 +86,7 @@ The lambda primitive in the shared primitive map therefore represents the whole 
 ### Formula:
 
 ```
-REQUIRE "core-0.2+"
+REQUIRE "core-1+"
 
 $a = 4
 $b = 3
@@ -95,7 +95,7 @@ $c = $a^2 + $b^2
 SQRT($c)
 ```
 
-After [clean-up](./cleanup.md) the formula has five sequences: `REQUIRE "core-0.2+"`, `$a=4`, `$b=3`, `$c=$a^2+$b^2` and `SQRT($c)`.
+After [clean-up](./cleanup.md) the formula has five sequences: `REQUIRE "core-1+"`, `$a=4`, `$b=3`, `$c=$a^2+$b^2` and `SQRT($c)`.
 
 ### Expression trees:
 
@@ -103,7 +103,7 @@ After [clean-up](./cleanup.md) the formula has five sequences: `REQUIRE "core-0.
 graph TD
 
 subgraph S1["Sequence 1"]
-    REQ[REQUIRE] --> T1["#quot;core-0.2+#quot;"]
+    REQ[REQUIRE] --> T1["#quot;core-1+#quot;"]
 end
 
 subgraph S2["Sequence 2"]
@@ -138,7 +138,7 @@ Expressions are listed from the first one to be processed (highest level) to the
 
 | Sequence | Level | Expressions |
 | :------: | :---: | :---------- |
-| 1 | 2 | `"core-0.2+"` |
+| 1 | 2 | `"core-1+"` |
 | 1 | 1 | `REQUIRE` |
 | 2 | 2 | `$a` `4` |
 | 2 | 1 | `=` |
@@ -166,8 +166,8 @@ Expressions are listed from the first one to be processed (highest level) to the
 
 | Expression | Primitive type | Base type | Value |
 | :--------- | :------------- | :-------- | :---- |
-| `"core-0.2+"` | Value | `Text` | core-0.2+ |
-| `REQUIRE("core-0.2+")` | Function | `Error` | |
+| `"core-1+"` | Value | `Text` | core-1+ |
+| `REQUIRE("core-1+")` | Function | `Error` | |
 | `$a` | Variable | `Undefined` | |
 | `4` | Value | `Number` | 4.0 |
 | `SET($a,4)` | Function | `Error` | |

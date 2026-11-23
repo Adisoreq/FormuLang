@@ -1,9 +1,9 @@
 # Literals
 
-Literals are directly defined values in a way that allows to unambiguously identify it's type.
+Literals are directly defined values in a way that allows to unambiguously identify its type.
 
 
-## Definining literals
+## Defining literals
 
 Literals are defined by a specific sequence of symbols, unique for every type.
 
@@ -38,7 +38,7 @@ Literal values with **Boolean** type are defined using keywords:
   - Separator cannot be neither first nor last number expression's symbol.
   - Example: `1_000_000` interpreted as `1000000`
 - **Fraction**:
-  - Number with fraction is defined by separating number's interger part from fraction part with **dot** (`.`) symbol.
+  - Number with fraction is defined by separating number's integer part from fraction part with **dot** (`.`) symbol.
   - Only one separation symbol is allowed inside a number.
   - Example: `12.5`
 - **Abbreviated fraction**
@@ -58,7 +58,7 @@ Literal values with **Boolean** type are defined using keywords:
 
 #### Regex:
 
-Interger pattern:
+Integer pattern:
 
 ```regexp
 ^\d+(?:_\d+)*$
@@ -86,7 +86,8 @@ Hexadecimal pattern:
 
 #### Literal definition
 - Text literals are defined by enclosing set of symbols inside **double quotation marks** (`"`).
-- Text can consist of all [allowed symbols](symbols.md).
+- Text can consist of all [text characters](symbols.md#text-characters): the [allowed symbols](symbols.md#symbols-list) and other Unicode characters, e.g. `"Zażółć gęślą jaźń"`.
+- A character of a text is one Unicode code point.
 - Example: `"This is a 1 single-line text inside quotation marks!"`
 
 Text literal expressions with [special characters](symbols.md#symbols-classification) might require the use of [escape sequences](symbols.md#escape-sequences).

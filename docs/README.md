@@ -41,7 +41,10 @@ How the code is interpreted and executed.
 ## Standards
 Formal specifications defining built-in functions, constants, and procedures.
 - [**Core**](standards/core/README.md) - elementary standard, the basis of every other extension.
-- [**Stock**](standards/stock/README.md) - market data: candles, indicators, candle patterns and strategies (in progress).
+- [**Stock**](standards/stock/README.md) - market data: candles, indicators, candle patterns and strategies.
+
+## Conformance
+An implementation **conforms** to a standard (e.g. `core-1.0`) if it passes every [conformance test](../tests/README.md) that requires only the standards it supports. The tests are JSON files that any implementation can run, independent of its programming language.
 
 ## Examples
 Practical usage scenarios.
@@ -51,3 +54,4 @@ Practical usage scenarios.
 - [Array Examples](standards/core/examples/array_examples.md)
 - [Number Examples](standards/core/examples/number_examples.md)
 - [Text Examples](standards/core/examples/text_examples.md)
+- [Time Examples](standards/core/examples/time_examples.md)

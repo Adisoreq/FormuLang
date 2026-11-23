@@ -50,7 +50,7 @@ MUL(MUL(2, PI), 2.5)
 Complex formula:
 
 ```php
-REQUIRE "core-0.2+"
+REQUIRE "core-1+"
 @array_indexing = 0
 
 $r = 2.5

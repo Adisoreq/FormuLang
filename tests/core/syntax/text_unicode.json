@@ -1,0 +1,86 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Unicode characters inside text literals. A character is one Unicode code point.",
+  "standards": ["core-1.0"],
+  "cases": [
+    {
+      "id": "core.syntax.unicode.001",
+      "description": "Polish letters inside a text literal",
+      "spec": "../../../docs/syntax/symbols.md#text-characters",
+      "formula": "\"Zażółć gęślą jaźń\"",
+      "expected": { "result": "Zażółć gęślą jaźń" }
+    },
+    {
+      "id": "core.syntax.unicode.002",
+      "description": "LEN counts code points",
+      "formula": "LEN(\"żółw\")",
+      "expected": { "result": 4 }
+    },
+    {
+      "id": "core.syntax.unicode.003",
+      "description": "A character outside of the Basic Multilingual Plane is one character (not two UTF-16 units)",
+      "formula": "LEN(\"a😀b\")",
+      "expected": { "result": 3 }
+    },
+    {
+      "id": "core.syntax.unicode.004",
+      "description": "REVERSE keeps code points whole",
+      "formula": "REVERSE(\"a😀ą\")",
+      "expected": { "result": "ą😀a" }
+    },
+    {
+      "id": "core.syntax.unicode.005",
+      "description": "SUBSTR counts positions in code points",
+      "formula": "SUBSTR(\"łódź\", 1, 2)",
+      "expected": { "result": "ód" }
+    },
+    {
+      "id": "core.syntax.unicode.006",
+      "description": "FIND returns a position in code points",
+      "formula": "FIND(\"źdźbło\", \"b\")",
+      "expected": { "result": 3 }
+    },
+    {
+      "id": "core.syntax.unicode.007",
+      "description": "UPPERCASE follows the Unicode default case mapping",
+      "formula": "UPPERCASE(\"żółw\")",
+      "expected": { "result": "ŻÓŁW" }
+    },
+    {
+      "id": "core.syntax.unicode.008",
+      "description": "LOWERCASE follows the Unicode default case mapping",
+      "formula": "LOWERCASE(\"ĄĘÓ\")",
+      "expected": { "result": "ąęó" }
+    },
+    {
+      "id": "core.syntax.unicode.009",
+      "description": "Texts are not normalized: a precomposed and a decomposed é are different",
+      "spec": "../../../docs/standards/core/types/Text.md#characters",
+      "formula": "\"é\" == \"é\"",
+      "expected": { "result": false }
+    },
+    {
+      "id": "core.syntax.unicode.010",
+      "description": "Unicode text joined with +",
+      "formula": "\"Cześć, \" + \"świecie!\"",
+      "expected": { "result": "Cześć, świecie!" }
+    },
+    {
+      "id": "core.syntax.unicode.011",
+      "description": "Unicode is not allowed in identifiers",
+      "spec": "../../../docs/standards/core/semantics/validation.md#validation-algorithm",
+      "formula": "$zółw = 1",
+      "expected": {
+        "errors": [
+          { "code": "SYNTAX_ERROR", "message": "Invalid symbol \"ó\" at line 1, column 3." }
+        ]
+      }
+    },
+    {
+      "id": "core.syntax.unicode.012",
+      "description": "Unicode in a line comment is not checked",
+      "formula": "1 # komentarz: zażółć",
+      "expected": { "result": 1 }
+    }
+  ]
+}

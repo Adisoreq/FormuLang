@@ -70,6 +70,44 @@ Rules:
 - `N` does not depend on `@array_indexing`.
 - Every iteration starts with no context variables and with the environment variables of the environment. Context variables and overridden environment variables are not kept between iterations. The only state passed from one iteration to the next is `PREV`.
 - If an iteration results in an **Error**, the host application decides whether the remaining iterations are executed.
+- The `NOW` environment constant is set once before the first iteration and is the same in all iterations.
+
+### 3. Time Context
+
+Defined by the [**Core**](../standards/core/README.md) standard. The host application executes the same formula repeatedly as time passes (e.g. once for every frame of an animation, a simulation step or a real-time measurement). Each run is a **frame**. Unlike in the Iteration Context, the number of frames does not have to be known in advance.
+
+| Property | Value |
+| :------- | :---- |
+| Base type | Default Context |
+| Context constants | `TIME_S`, `TIME_MS`, `DTIME_S`, `DTIME_MS`, `FRAME`, `PREV` |
+| Expected result | any value |
+| Kind | Persistent (only through `PREV`) |
+
+| Constant | Type | Description |
+| :------- | :--: | :---------- |
+| `TIME_S` | `Number` | Total time from the start of the first frame to the start of the current frame, in seconds. `0` in the first frame. |
+| `TIME_MS` | `Number` | `TIME_S` in milliseconds (`TIME_S * 1000`). |
+| `DTIME_S` | `Number` | Delta time: time from the start of the previous frame to the start of the current frame, in seconds. `0` in the first frame. |
+| `DTIME_MS` | `Number` | `DTIME_S` in milliseconds (`DTIME_S * 1000`). |
+| `FRAME` | `Number` | Index of the current frame. The first frame has the index `@array_indexing`. |
+| `PREV` | `Any` | Result of the previous frame. `null` in the first frame. |
+
+Rules:
+
+- The frames are executed in order, one at a time. The host application decides when the next frame starts (e.g. at a fixed rate, or as fast as possible) and when the frames stop.
+- The time constants are not required to be whole numbers. `TIME_S` and `TIME_MS` never decrease, and `DTIME_S` and `DTIME_MS` are never negative.
+- `FRAME` is computed from the current value of `@array_indexing`, in the same way as `I` in the Iteration Context.
+- Every frame starts with no context variables and with the environment variables of the environment. The only state passed from one frame to the next is `PREV`.
+- The `NOW` environment constant is set again for every frame. `TIME_S` is measured by the host application, so it does not have to be equal to the difference of `NOW` values.
+- If a frame results in an **Error**, the host application decides whether the next frames are executed.
+
+Example: a point that moves with the speed of `5` units per second and stops at `100`:
+
+```php
+$speed = 5
+$position = IF(ISNULL(PREV), 0, PREV)
+MIN($position + $speed * DTIME_S, 100)
+```
 
 
 ## Lifecycle

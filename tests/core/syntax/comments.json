@@ -1,0 +1,98 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Line comments (#) and scoped comments (<# ... #>).",
+  "standards": ["core-1.0"],
+  "cases": [
+    {
+      "id": "core.syntax.comments.001",
+      "description": "Line comment at the end of a line",
+      "spec": "../../../docs/syntax/operators.md#1-formula-and-line-structure",
+      "formula": ["$x = 4 # comment", "$x * 2 # another ; comment"],
+      "expected": { "result": 8 }
+    },
+    {
+      "id": "core.syntax.comments.002",
+      "description": "# inside a text literal is an ordinary character",
+      "formula": "\"Item #1\"",
+      "expected": { "result": "Item #1" }
+    },
+    {
+      "id": "core.syntax.comments.003",
+      "description": "Example from the plan: line, scoped and multi-line comments",
+      "spec": "../../../docs/syntax/operators.md#1-formula-and-line-structure",
+      "formula": [
+        "$a = 14 # This comment ends with the line",
+        "$b = <# This comment is scoped #> 24",
+        "",
+        "<#",
+        "Hey!",
+        "This comment is multi-line!",
+        "#>",
+        "",
+        "$a + $b"
+      ],
+      "expected": { "result": 38 }
+    },
+    {
+      "id": "core.syntax.comments.004",
+      "description": "A scoped comment inside a function call",
+      "formula": "ADD(1, <# the second argument #> 2)",
+      "expected": { "result": 3 }
+    },
+    {
+      "id": "core.syntax.comments.005",
+      "description": "A scoped comment separates tokens: 1<#x#>2 is not 12",
+      "spec": "../../../docs/semantics/cleanup.md#2-removing-comments",
+      "formula": "[1<#x#>, 2]",
+      "expected": { "result": [1, 2] }
+    },
+    {
+      "id": "core.syntax.comments.006",
+      "description": "A multi-line scoped comment keeps the sequence boundary",
+      "spec": "../../../docs/semantics/cleanup.md#2-removing-comments",
+      "formula": ["$a = 1 <# this comment", "spans two lines #> $b = 2", "$a + $b"],
+      "expected": { "result": 3 }
+    },
+    {
+      "id": "core.syntax.comments.007",
+      "description": "Scoped comments cannot be nested: the first #> closes the comment",
+      "formula": "<# a <# b #> 5",
+      "expected": { "result": 5 }
+    },
+    {
+      "id": "core.syntax.comments.008",
+      "description": "#> outside a scoped comment begins a line comment",
+      "formula": ["$x = 1 #> not a closing marker", "$x"],
+      "expected": { "result": 1 }
+    },
+    {
+      "id": "core.syntax.comments.009",
+      "description": "<# and #> inside a text literal are ordinary characters",
+      "formula": "\"<# not a comment #>\"",
+      "expected": { "result": "<# not a comment #>" }
+    },
+    {
+      "id": "core.syntax.comments.010",
+      "description": "Two scoped comments on one line",
+      "formula": "<# a #> <# b #> 5",
+      "expected": { "result": 5 }
+    },
+    {
+      "id": "core.syntax.comments.011",
+      "description": "The content of a scoped comment is not validated",
+      "formula": ["$b = <# ( \" #> 24", "$b"],
+      "expected": { "result": 24 }
+    },
+    {
+      "id": "core.syntax.comments.012",
+      "description": "A scoped comment that is not closed",
+      "spec": "../../../docs/standards/core/semantics/validation.md#error-messages",
+      "formula": "$a = 1 <# note",
+      "expected": {
+        "errors": [
+          { "code": "SYNTAX_ERROR", "message": "Scoped comment is not closed at line 1, column 8." }
+        ]
+      }
+    }
+  ]
+}

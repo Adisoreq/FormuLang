@@ -1,6 +1,6 @@
 # Indicator examples
 
-Indicator definitions for the [indicator registry](../README.md#2-indicator-registry). Every formula is executed in an [Indicator Context](../README.md#indicator-context), once for every candle.
+Indicator definitions for the [indicator registry](../README.md#2-formula-registry). Every formula is executed in an [Indicator Context](../README.md#indicator-context), once for every candle.
 
 The examples assume `@array_indexing` = `0` in the environment, but they work with any value, because they use `I` and `@array_indexing` instead of fixed indices.
 
@@ -29,7 +29,7 @@ IF($complete, AVG($window), null)
 
 #### Result:
 
-`INDICATOR("SMA", { period: 3 })` with `CLOSE` = `[1, 2, 3, 4, 5]`:
+`LOAD_INDICATOR("SMA", { period: 3 })` with `CLOSE` = `[1, 2, 3, 4, 5]`:
 
 ```js
 [null, null, 2, 3, 4]
@@ -64,7 +64,7 @@ IF(ISNULL($x),
 
 #### Result:
 
-`INDICATOR("EMA", { period: 3 })` with `CLOSE` = `[1, 2, 3, 4, 5]` (`$alpha` = `0.5`):
+`LOAD_INDICATOR("EMA", { period: 3 })` with `CLOSE` = `[1, 2, 3, 4, 5]` (`$alpha` = `0.5`):
 
 ```js
 [null, null, 2, 3, 4]
@@ -91,14 +91,14 @@ MACD has three series. Its signal line is the EMA of the whole MACD line, so the
 #### Formula:
 
 ```php
-$short = INDICATOR("EMA", { period: PARAMETERS.short_period }, SOURCE)
-$long = INDICATOR("EMA", { period: PARAMETERS.long_period }, SOURCE)
+$short = LOAD_INDICATOR("EMA", { period: PARAMETERS.short_period }, SOURCE)
+$long = LOAD_INDICATOR("EMA", { period: PARAMETERS.long_period }, SOURCE)
 
 # MACD line for every candle: the two series joined element by element
 $line = MAP($short, (s, i) => IF(OR(ISNULL(s), ISNULL($long[i])), null, s - $long[i]))
 
 $macd = $line[I]
-$signal = INDICATOR("EMA", { period: PARAMETERS.signal_period }, $line)[I]
+$signal = LOAD_INDICATOR("EMA", { period: PARAMETERS.signal_period }, $line)[I]
 
 IF(OR(ISNULL($macd), ISNULL($signal)),
    null,
@@ -108,7 +108,7 @@ IF(OR(ISNULL($macd), ISNULL($signal)),
 #### Usage:
 
 ```php
-$macd = INDICATOR("MACD")[I]   # default parameters: 12, 26, 9
+$macd = LOAD_INDICATOR("MACD")[I]   # default parameters: 12, 26, 9
 IF(ISNULL($macd), null, $macd.histogram)
 ```
 
@@ -117,6 +117,6 @@ The `EMA` of `$line` skips the `null` values at the beginning of the MACD line: 
 ## Reference
 
 - [Stock standard](../README.md)
-- [`INDICATOR`](../functions/INDICATOR.md)
+- [`LOAD_INDICATOR`](../functions/LOAD_INDICATOR.md)
 - [Iteration Context](../../../core/context.md#2-iteration-context)
 - [Strategy examples](strategy_examples.md)

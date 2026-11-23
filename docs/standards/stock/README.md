@@ -7,11 +7,11 @@
 
 **Name**: `Stock`
 
-**Latest version**: `0.1`
+**Latest version**: `1.0`
 
-**Identifier**: `stock-0.1`
+**Identifier**: `stock-1.0`
 
-**Requires**: `core-0.2+`
+**Requires**: `core-1+`
 
 **Description**: Extension standard for market data: candles, technical indicators, candle patterns and trading strategies. Formulas are executed once for every candle of a chart, in an [Iteration Context](../../core/context.md#2-iteration-context).
 
@@ -28,7 +28,7 @@ Every Stock context type derives from the Core [Iteration Context](../../core/co
 | :----------- | :-------- | :------------------- | :-------------- |
 | [Stock Context](#stock-context) | Iteration Context | `CANDLES`, `OPEN`, `HIGH`, `LOW`, `CLOSE`, `VOLUME`, `TIME` | any value |
 | [Indicator Context](#indicator-context) | Stock Context | `PARAMETERS`, `SOURCE` | `Null`, `Number` or `Object` |
-| [Pattern Context](#pattern-context) | Stock Context | none | `Boolean` |
+| [Pattern Context](#pattern-context) | Stock Context | `PARAMETERS` | `Boolean` |
 | [Strategy Context](#strategy-context) | Stock Context | `BUY`, `NEUTRAL`, `SELL` | `Number` from `-1` to `1` |
 
 ### Stock Context
@@ -53,8 +53,8 @@ Used to define a technical indicator. The formula computes the value of the indi
 
 | Constant | Type | Description |
 | :------- | :--: | :---------- |
-| `PARAMETERS` | `Object` | Parameters of the indicator, e.g. `{ period: 14 }`. The host application completes missing parameters with the default values of the [indicator definition](#indicator-registry). |
-| `SOURCE` | `Array` | Input series of the indicator (**Number** or `null` elements, `N` elements). It is `CLOSE`, unless another series is given to [`INDICATOR`](functions/INDICATOR.md). |
+| `PARAMETERS` | `Object` | Parameters of the indicator, e.g. `{ period: 14 }`. Missing parameters are completed with the default values of the [indicator definition](#2-formula-registry). |
+| `SOURCE` | `Array` | Input series of the indicator (**Number** or `null` elements, `N` elements). It is `CLOSE`, unless another series is given to [`LOAD_INDICATOR`](functions/LOAD_INDICATOR.md). |
 
 Expected result of every iteration:
 
@@ -68,7 +68,13 @@ The previous value of the indicator is available as `PREV` (see [Iteration Conte
 
 ### Pattern Context
 
-Used to find candle patterns. The formula returns `true` if the pattern starts at the current candle, and `false` otherwise. The host application collects the indices of the candles for which the formula returned `true`.
+Used to find candle patterns. The formula returns `true` if the pattern is found at the current candle, and `false` otherwise. The host application collects the indices of the candles for which the formula returned `true`.
+
+| Constant | Type | Description |
+| :------- | :--: | :---------- |
+| `PARAMETERS` | `Object` | Parameters of the pattern, e.g. `{ min_body: 0.5 }`. Missing parameters are completed with the default values of the [pattern definition](#2-formula-registry). A pattern without parameters receives `{ }`. |
+
+Every iteration returns a **Boolean**. Otherwise, the result of the pattern is an `OPERATION_ERROR`. Patterns can be used in other formulas with [`LOAD_PATTERN`](functions/LOAD_PATTERN.md).
 
 ### Strategy Context
 
@@ -93,19 +99,26 @@ All context variables are defined by user. As in every Iteration Context, they a
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | contains `"stock-0.1"` | The Core constant must contain the identifier of the Stock standard (and of the required Core standard). |
+| `STANDARDS` | `Array` | contains `"stock-1.0"` | The Core constant must contain the identifier of the Stock standard (and of the required Core standard). |
 
-### 2. Indicator registry
+### 2. Formula registry
 
-The environment holds the **indicator registry**: the indicator definitions provided by the host application. The registry is not a **FormuLang** value; formulas use it only through the [`INDICATOR`](functions/INDICATOR.md) function.
+The environment holds the **formula registry**: the definitions of indicators and patterns provided by the host application. The registry is not a **FormuLang** value; formulas use it only through the [`LOAD_INDICATOR`](functions/LOAD_INDICATOR.md) and [`LOAD_PATTERN`](functions/LOAD_PATTERN.md) functions.
 
-Every indicator definition contains:
+The registry has two parts:
+
+| Part | Formula executed in | Loaded with |
+| :--- | :------------------ | :---------- |
+| **Indicators** | [Indicator Context](#indicator-context) | [`LOAD_INDICATOR`](functions/LOAD_INDICATOR.md) |
+| **Patterns** | [Pattern Context](#pattern-context) | [`LOAD_PATTERN`](functions/LOAD_PATTERN.md) |
+
+Every definition contains:
 
 | Element | Description |
 | :------ | :---------- |
-| **Identifier** | Unique **Text** used to call the indicator, e.g. `"SMA"`. It follows the [identifier naming restrictions](../../syntax/naming.md#naming-restrictions). |
-| **Formula** | Formula executed in an [Indicator Context](#indicator-context). |
-| **Parameters** | Names of the parameters with their default values, e.g. `period` = `14`. |
+| **Identifier** | **Text** used to load the definition, e.g. `"SMA"` or `"ENGULFING"`. It follows the [identifier naming restrictions](../../syntax/naming.md#naming-restrictions), and is unique within its part of the registry (an indicator and a pattern may have the same identifier). |
+| **Formula** | Formula executed in the context of its part. |
+| **Parameters** | Names of the parameters with their default values, e.g. `period` = `14`. May be empty. |
 
 How the host application stores the definitions is not specified.
 
@@ -122,7 +135,10 @@ How the host application stores the definitions is not specified.
 | Function | Description | Return Type |
 | :------- | :---------- | :---------: |
 | [`CANDLE(object)`](functions/CANDLE.md) | Creates a `Stock.Candle` from an **Object**. | `Stock.Candle` |
-| [`INDICATOR(id, parameters, source)`](functions/INDICATOR.md) | Computes an indicator from the registry for every candle. | `Array` |
+| [`IS_BULLISH(candle)`](functions/IS_BULLISH.md) | Checks if the candle closed higher than it opened (`close > open`). | `Boolean` |
+| [`IS_BEARISH(candle)`](functions/IS_BEARISH.md) | Checks if the candle closed lower than it opened (`close < open`). | `Boolean` |
+| [`LOAD_INDICATOR(id, parameters, source)`](functions/LOAD_INDICATOR.md) | Computes an indicator from the registry for every candle. | `Array` |
+| [`LOAD_PATTERN(id, parameters)`](functions/LOAD_PATTERN.md) | Checks a pattern from the registry for every candle. | `Array<Boolean>` |
 
 
 ## Examples

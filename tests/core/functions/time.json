@@ -1,0 +1,35 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Time functions, the NOW constant and the time_offset variable. 1795431080123 is 2026-11-23 10:51:20.123 UTC (Monday).",
+  "standards": ["core-1.0"],
+  "defaults": {
+    "environment": { "constants": { "NOW": 1795431080123 } }
+  },
+  "cases": [
+    { "id": "core.functions.time.001", "description": "NOW is constant during the execution", "formula": ["$a = NOW", "$a == NOW"], "expected": { "result": true } },
+    { "id": "core.functions.time.002", "formula": "YEAR(NOW)", "expected": { "result": 2026 } },
+    { "id": "core.functions.time.003", "formula": "MONTH(NOW)", "expected": { "result": 11 } },
+    { "id": "core.functions.time.004", "formula": "DAY(NOW)", "expected": { "result": 23 } },
+    { "id": "core.functions.time.005", "description": "ISO day of the week, Monday is 1", "formula": "WEEKDAY(NOW)", "expected": { "result": 1 } },
+    { "id": "core.functions.time.006", "formula": "[HOUR(NOW), MINUTE(NOW), SECOND(NOW), MILLISECOND(NOW)]", "expected": { "result": [10, 51, 20, 123] } },
+    { "id": "core.functions.time.007", "description": "Unix epoch", "formula": "[YEAR(0), MONTH(0), DAY(0), WEEKDAY(0)]", "expected": { "result": [1970, 1, 1, 4] } },
+    { "id": "core.functions.time.008", "description": "Negative time, before 1970", "formula": "[YEAR(-1), MONTH(-1), DAY(-1), HOUR(-1), MILLISECOND(-1), WEEKDAY(-1)]", "expected": { "result": [1969, 12, 31, 23, 999, 3] } },
+    { "id": "core.functions.time.009", "description": "time_offset moves to the next day", "environment": { "constants": { "NOW": 1795431080123 }, "variables": { "time_offset": 60 } }, "formula": "[MONTH(1709249400000), DAY(1709249400000), HOUR(1709249400000), WEEKDAY(1709249400000)]", "expected": { "result": [3, 1, 0, 5] } },
+    { "id": "core.functions.time.010", "description": "Time that is not a whole number", "formula": "YEAR(1.5)", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.time.011", "formula": "DATE(1970, 1, 1)", "expected": { "result": 0 } },
+    { "id": "core.functions.time.012", "formula": "DATE(2026, 11, 23, 10, 51, 20, 123)", "expected": { "result": 1795431080123 } },
+    { "id": "core.functions.time.013", "description": "DATE reads local time", "environment": { "variables": { "time_offset": 60 } }, "formula": "DATE(2026, 11, 23, 10, 51, 20, 123)", "expected": { "result": 1795427480123 } },
+    { "id": "core.functions.time.014", "description": "Leap day", "formula": "DATE(2024, 2, 29)", "expected": { "result": 1709164800000 } },
+    { "id": "core.functions.time.015", "description": "No leap day in 2023", "formula": "DATE(2023, 2, 29)", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.time.016", "description": "Parts are not carried over", "formula": "DATE(2026, 13, 1)", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.time.017", "description": "DATE is the inverse of the part functions", "formula": "DATE(YEAR(NOW), MONTH(NOW), DAY(NOW), HOUR(NOW), MINUTE(NOW), SECOND(NOW), MILLISECOND(NOW)) == NOW", "expected": { "result": true } },
+    { "id": "core.functions.time.018", "formula": "FORMAT_TIME(NOW, \"YYYY-MM-DD[T]hh:mm:ss.iii\")", "expected": { "result": "2026-11-23T10:51:20.123" } },
+    { "id": "core.functions.time.019", "formula": "FORMAT_TIME(NOW, \"DD/MM/YYYY, hh:mm\")", "expected": { "result": "23/11/2026, 10:51" } },
+    { "id": "core.functions.time.020", "description": "T is not a token", "formula": "FORMAT_TIME(NOW, \"YYYY-MM-DDThh:mm\")", "expected": { "result": "2026-11-23T10:51" } },
+    { "id": "core.functions.time.021", "description": "FORMAT_TIME with time_offset", "environment": { "constants": { "NOW": 1795431080123 }, "variables": { "time_offset": 60 } }, "formula": "FORMAT_TIME(NOW, \"hh:mm\")", "expected": { "result": "11:51" } },
+    { "id": "core.functions.time.022", "description": "Text in brackets is copied", "formula": "FORMAT_TIME(0, \"[Year] YYYY\")", "expected": { "result": "Year 1970" } },
+    { "id": "core.functions.time.023", "description": "Single letters are not tokens", "formula": "FORMAT_TIME(0, \"Y-M-D\")", "expected": { "result": "Y-M-D" } },
+    { "id": "core.functions.time.024", "description": "Unclosed bracket", "formula": "FORMAT_TIME(0, \"[YYYY\")", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.time.025", "description": "Days until the next year", "formula": ["$today = DATE(YEAR(NOW), MONTH(NOW), DAY(NOW))", "(DATE(YEAR(NOW) + 1, 1, 1) - $today) / (24 * 60 * 60 * 1000)"], "expected": { "result": 39 } }
+  ]
+}

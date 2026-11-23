@@ -1,6 +1,6 @@
 # LEQ
 
-Comparison [**Core**](../README.md) standard function. Checks if `a` is lesser than or equal to `b`.
+Comparison [**Core**](../README.md) standard function. Checks if `a` is less than or equal to `b`.
 
 ## Overloads
 

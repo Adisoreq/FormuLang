@@ -52,7 +52,7 @@ Licensed under **CC BY 4.0**: anyone can implement, extend and redistribute it.
 
 ### 1. Alpha-stage specification
 
-The project is at version **0.1.0-alpha** (Core standard `0.3`). The specification is not stable yet, so breaking changes can still occur.
+The first release of the specification is version **1.0** (Core standard `core-1.0`, Stock standard `stock-1.0`). Within the 1.x versions, changes are backward compatible.
 
 ### 2. No reference implementation
 

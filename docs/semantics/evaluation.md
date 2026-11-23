@@ -105,8 +105,8 @@ Continuing the [parsing example](./parsing.md#example):
 
 | Expression | Primitive type | Base type | Value |
 | :--------- | :------------- | :-------- | :---- |
-| `"core-0.2+"` | Value | `Text` | core-0.2+ |
-| `REQUIRE("core-0.2+")` | Function | `Error` | |
+| `"core-1+"` | Value | `Text` | core-1+ |
+| `REQUIRE("core-1+")` | Function | `Error` | |
 | `$a` | Variable | `Undefined` | |
 | `4` | Value | `Number` | 4.0 |
 | `SET($a,4)` | Function | `Error` | |
@@ -125,8 +125,8 @@ Continuing the [parsing example](./parsing.md#example):
 
 | Expression | Primitive type | Base type | Value |
 | :--------- | :------------- | :-------- | :---- |
-| `"core-0.2+"` | Value | `Text` | core-0.2+ |
-| `REQUIRE("core-0.2+")` | Function | `Error` | `SUCCESS` |
+| `"core-1+"` | Value | `Text` | core-1+ |
+| `REQUIRE("core-1+")` | Function | `Error` | `SUCCESS` |
 | `$a` | Variable | `Number` | 4.0 |
 | `4` | Value | `Number` | 4.0 |
 | `SET($a,4)` | Function | `Error` | `SUCCESS` |

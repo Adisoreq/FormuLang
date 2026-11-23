@@ -2,7 +2,7 @@
 
 Text [**Core**](../README.md) standard function. Returns a part of the text that starts at the specified position.
 
-Positions of characters follow `@array_indexing`, in the same way as array indices: with the default `@array_indexing` = `0`, the first character is at position `0`.
+Characters are Unicode code points (see [Text](../types/Text.md#characters)). Positions of characters follow `@array_indexing`, in the same way as array indices: with the default `@array_indexing` = `0`, the first character is at position `0`.
 
 ## Overloads
 

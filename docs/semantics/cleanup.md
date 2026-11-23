@@ -14,9 +14,16 @@ Replaces every `[Tab]` (`\t`) with `[Space]`, and every carriage return (`\r`) c
 
 #### Description
 
-Removes each **comment sigil** (`#`) that is located outside a [text literal](../syntax/literals.md#4-text), and the remaining characters on that line. The newline is retained as a line boundary. Thus, a semicolon to the left of `#` can separate sequences, but a semicolon to its right is part of the comment and is ignored.
+The formula is scanned from the start to the end, and comments located outside a [text literal](../syntax/literals.md#4-text) are removed:
 
-> **Note:** A text literal begins with a quotation mark (`"`) and ends with the next quotation mark that is not preceded by an escaping backslash (`\`), or at the end of the line. A `#` inside a text literal is an ordinary character, e.g. `"Item #1"`.
+1. **Scoped comment** - the sequence `<#` opens a scoped comment, which ends with the first following `#>`. The whole comment, including both markers, is replaced with:
+   - one `[New line]` if the comment contains a line break, so the lines around it stay separate sequences;
+   - one `[Space]` otherwise, so the tokens around it stay separate (`1<#x#>2` becomes `1 2`, not `12`).
+2. **Line comment** - any other **comment sigil** (`#`) is removed together with the remaining characters on that line. The newline is retained as a line boundary. Thus, a semicolon to the left of `#` can separate sequences, but a semicolon to its right is part of the comment and is ignored.
+
+Inside a line comment, `<#` and `#>` are ordinary characters. Inside a scoped comment, `#` and `"` are ordinary characters. Scoped comments cannot be nested: the first `#>` closes the comment. A scoped comment that is not closed is reported by the [validation](./validation.md), so it never reaches the clean-up.
+
+> **Note:** A text literal begins with a quotation mark (`"`) and ends with the next quotation mark that is not preceded by an escaping backslash (`\`), or at the end of the line. A `#` inside a text literal is an ordinary character, e.g. `"Item #1"`, and so are `"<#"` and `"#>"`.
 
 #### Example
 
@@ -25,8 +32,13 @@ Initial formula:
 # First comment
 
 $x = 4 # Second comment
+$y = <# Scoped comment #> 2
 
-$x ^ 2 # Third comment
+<#
+Multi-line
+comment
+#>
+$x ^ $y # Third comment
 ```
 
 Result:
@@ -34,8 +46,11 @@ Result:
 
 
 $x = 4 
+$y =   2
 
-$x ^ 2 
+
+
+$x ^ $y 
 ```
 
 ### 3. White space compression

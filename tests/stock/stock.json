@@ -1,0 +1,76 @@
+{
+  "$schema": "../schema.json",
+  "description": "Stock standard: candle functions, indicators and patterns from the formula registry. Candles (open -> close): 10 -> 12, 12 -> 11, 10.5 -> 13, 13 -> 14.",
+  "standards": ["core-1.0", "stock-1.0"],
+  "defaults": {
+    "context": {
+      "type": "Stock",
+      "candles": [
+        { "open": 10, "high": 12.5, "low": 9.5, "close": 12 },
+        { "open": 12, "high": 12.5, "low": 10.8, "close": 11 },
+        { "open": 10.5, "high": 13.2, "low": 10.4, "close": 13 },
+        { "open": 13, "high": 14.5, "low": 12.9, "close": 14 }
+      ]
+    },
+    "registry": {
+      "indicators": [
+        {
+          "id": "SMA",
+          "parameters": { "period": 14 },
+          "formula": [
+            "$period = PARAMETERS.period",
+            "$window = RANGE(SOURCE, MAX(I - $period + 1, @array_indexing), I)",
+            "$complete = AND(LEN($window) == $period, LEN(FILTER($window, (e) => ISNULL(e))) == 0)",
+            "IF($complete, AVG($window), null)"
+          ]
+        },
+        {
+          "id": "SELF",
+          "formula": "LOAD_INDICATOR(\"SELF\")[I]"
+        }
+      ],
+      "patterns": [
+        {
+          "id": "ENGULFING",
+          "formula": [
+            "$prev = CANDLES[MAX(I - 1, @array_indexing)]",
+            "$curr = CANDLES[I]",
+            "$covers = AND($curr.open <= $prev.close, $curr.close >= $prev.open)",
+            "AND(I > @array_indexing, AND(IS_BEARISH($prev), AND(IS_BULLISH($curr), $covers)))"
+          ]
+        },
+        {
+          "id": "BIG_BODY",
+          "parameters": { "min_body": 2 },
+          "formula": "ABS(CLOSE[I] - OPEN[I]) >= PARAMETERS.min_body"
+        },
+        {
+          "id": "NOT_BOOLEAN",
+          "formula": "1"
+        }
+      ]
+    }
+  },
+  "cases": [
+    { "id": "stock.context.001", "description": "Candle constants", "formula": "[CLOSE[I], OPEN[I], N]", "expected": { "results": [[12, 10, 4], [11, 12, 4], [13, 10.5, 4], [14, 13, 4]] } },
+    { "id": "stock.functions.IS_BULLISH.001", "formula": "IS_BULLISH(CANDLES[I])", "expected": { "results": [true, false, true, true] } },
+    { "id": "stock.functions.IS_BEARISH.001", "formula": "IS_BEARISH(CANDLES[I])", "expected": { "results": [false, true, false, false] } },
+    { "id": "stock.functions.IS_BULLISH.002", "description": "A doji is neither bullish nor bearish", "context": { "type": "Default" }, "formula": ["$c = CANDLE({ open: 10, high: 12, low: 9, close: 10 })", "[IS_BULLISH($c), IS_BEARISH($c)]"], "expected": { "result": [false, false] } },
+    { "id": "stock.functions.IS_BULLISH.003", "description": "An Object that is not a candle", "context": { "type": "Default" }, "formula": "IS_BULLISH({ open: 10, close: 11 })", "expected": { "error": { "code": "ARGUMENT_ERROR" } } },
+    { "id": "stock.functions.LOAD_INDICATOR.001", "description": "SMA with period 2 for the current candle", "formula": "LOAD_INDICATOR(\"SMA\", { period: 2 })[I]", "expected": { "results": [null, 11.5, 12, 13.5] } },
+    { "id": "stock.functions.LOAD_INDICATOR.002", "description": "SMA of another source", "formula": "LOAD_INDICATOR(\"SMA\", { period: 2 }, [10, 20, 30, 40])[I]", "expected": { "results": [null, 15, 25, 35] } },
+    { "id": "stock.functions.LOAD_INDICATOR.003", "description": "Unknown indicator", "formula": "LOAD_INDICATOR(\"XYZ\")", "expected": { "results": [ { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_INDICATOR.004", "description": "Unknown parameter", "formula": "LOAD_INDICATOR(\"SMA\", { length: 3 })", "expected": { "results": [ { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_INDICATOR.005", "description": "Source with a wrong length", "formula": "LOAD_INDICATOR(\"SMA\", { period: 2 }, [1, 2])", "expected": { "results": [ { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_INDICATOR.006", "description": "An indicator that loads itself", "formula": "LOAD_INDICATOR(\"SELF\")", "expected": { "results": [ { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_INDICATOR.007", "description": "Called outside of a Stock Context", "context": { "type": "Default" }, "formula": "LOAD_INDICATOR(\"SMA\")", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "stock.pattern.001", "description": "Engulfing pattern executed directly in a Pattern Context", "context": { "type": "Pattern", "parameters": {}, "candles": [ { "open": 10, "high": 12.5, "low": 9.5, "close": 12 }, { "open": 12, "high": 12.5, "low": 10.8, "close": 11 }, { "open": 10.5, "high": 13.2, "low": 10.4, "close": 13 }, { "open": 13, "high": 14.5, "low": 12.9, "close": 14 } ] }, "formula": ["$prev = CANDLES[MAX(I - 1, @array_indexing)]", "$curr = CANDLES[I]", "$covers = AND($curr.open <= $prev.close, $curr.close >= $prev.open)", "AND(I > @array_indexing, AND(IS_BEARISH($prev), AND(IS_BULLISH($curr), $covers)))"], "expected": { "results": [false, false, true, false] } },
+    { "id": "stock.functions.LOAD_PATTERN.001", "description": "The whole series", "formula": "LOAD_PATTERN(\"ENGULFING\")", "expected": { "results": [[false, false, true, false], [false, false, true, false], [false, false, true, false], [false, false, true, false]] } },
+    { "id": "stock.functions.LOAD_PATTERN.002", "description": "Pattern in a strategy", "context": { "type": "Strategy", "candles": [ { "open": 10, "high": 12.5, "low": 9.5, "close": 12 }, { "open": 12, "high": 12.5, "low": 10.8, "close": 11 }, { "open": 10.5, "high": 13.2, "low": 10.4, "close": 13 }, { "open": 13, "high": 14.5, "low": 12.9, "close": 14 } ] }, "formula": "IF(LOAD_PATTERN(\"ENGULFING\")[I], BUY, NEUTRAL)", "expected": { "results": [0, 0, 1, 0] } },
+    { "id": "stock.functions.LOAD_PATTERN.003", "description": "Default parameters", "formula": "LOAD_PATTERN(\"BIG_BODY\")[I]", "expected": { "results": [true, false, true, false] } },
+    { "id": "stock.functions.LOAD_PATTERN.004", "description": "Given parameters", "formula": "LOAD_PATTERN(\"BIG_BODY\", { min_body: 1 })[I]", "expected": { "results": [true, true, true, true] } },
+    { "id": "stock.functions.LOAD_PATTERN.005", "description": "Unknown pattern", "formula": "LOAD_PATTERN(\"XYZ\")", "expected": { "results": [ { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_PATTERN.006", "description": "A pattern that does not return a Boolean", "formula": "LOAD_PATTERN(\"NOT_BOOLEAN\")", "expected": { "results": [ { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" } ] } },
+    { "id": "stock.functions.LOAD_PATTERN.007", "description": "Indicators and patterns are in separate parts of the registry", "formula": "LOAD_PATTERN(\"SMA\")", "expected": { "results": [ { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" }, { "$error": "INVALID_KEY_ERROR" } ] } }
+  ]
+}

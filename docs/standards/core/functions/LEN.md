@@ -39,7 +39,7 @@ Collection template:
 
 Algorithm:
 
-- Returns the number of characters in `text`, the same as `LEN(SPLIT(text, ""))`
+- Returns the number of characters (Unicode code points, see [Text](../types/Text.md#characters)) in `text`, the same as `LEN(SPLIT(text, ""))`
 
 Examples:
 

@@ -10,10 +10,10 @@
     Mathematical, formula-based scripting language for managed, real-time mathematical operations.
 </p>
 
-[![Status](https://img.shields.io/badge/status-under%20development-orange)](#project-status)
+[![Version](https://img.shields.io/badge/version-1.0-green)](#project-status)
 [![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](LICENSE.txt)
 
-[**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Changelog**](CHANGELOG.md)
+[**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Conformance tests**](tests/README.md) · [**Changelog**](CHANGELOG.md)
 
 </div>
 
@@ -29,6 +29,8 @@ FormuLang is a language standard for parsers and interpreters that calculate the
 - **Types** - `Null`, `Boolean`, `Number`, `Text`, `Array`, `Object`, `Delegate` (functions and lambdas) and `Error`.
 - **Two variable scopes** - `$` marks context variables of the formula, `@` marks environment variables of the host application.
 - **Errors as values** - an error is a value that a formula can check, e.g. with `ISERR`. An error that is not handled stops the execution and becomes the result.
+- **Context types** - the host application runs a formula once, once per element of a collection (**Iteration Context**), or once per frame as time passes (**Time Context**).
+- **Standards** - the **Core** standard is the basis; extensions such as **Stock** (candles, indicators, patterns, strategies) add their own types, functions and contexts.
 
 ### Execution pipeline
 
@@ -44,6 +46,10 @@ The technical documentation is in the [docs](docs) directory.
 ```php
 # Comment
 # Comments are ignored by parser
+<#
+  Scoped comment:
+  it can span multiple lines
+#>
 
 # Variables
 $a = 1
@@ -64,6 +70,8 @@ $hexadecimal_integer = 0x40C # 1036
 # Text
 $message = "Hello, world!"
 $special_text = "This text includes:\n- new line\n-\ttabulator\n- special characters: \\, \", #"
+$unicode_text = "Zażółć gęślą jaźń" # Unicode characters are allowed inside text
+$formatted = FORMAT("{} has {:.1} points", [ "Ann", 9.25 ]) # "Ann has 9.3 points"
 
 # Arithmetic
 $sum = ADD(4, 5) # 9
@@ -93,6 +101,10 @@ $squared = $square(5) # 25
 $div_by_3 = (n) => EQU(MOD(n, 3), 0) # Checks if number is divisible by 3
 $filtered = FILTER($arr, $div_by_3) # [ 6, 9 ]
 
+# Time (Unix time in milliseconds, UTC)
+$year = YEAR(NOW) # e.g. 2026
+$date = FORMAT_TIME(NOW, "DD.MM.YYYY hh:mm") # e.g. "23.11.2026 10:51"
+
 # Errors
 $is_err = ISERR(ERROR("Division by zero (0) is not permitted!")) # true; an unhandled error would abort the execution
 
@@ -105,13 +117,15 @@ $result
 
 ## Project Status
 
-Current stage: **Prototyping & Specification**
+Current version: **1.0** - Core standard `core-1.0`, Stock standard `stock-1.0`.
 
-This project is currently under active development. The syntax specification is stabilizing, but breaking changes may still occur.
+The specification is stable: changes within the `1.x` versions are backward compatible.
 
 - [x] **Core syntax specification**
 - [x] **Core semantic specification**
-- [ ] **Extension standards specification**
+- [x] **Extension standards specification** (Stock)
+- [x] **Conformance tests**
+- [ ] **Reference implementations** (FormuLang.NET, npm `formulang`)
 
 
 ## Trivia

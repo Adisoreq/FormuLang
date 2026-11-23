@@ -9,6 +9,23 @@ Main language changes: syntax, semantics, functionality and implementation struc
 </div>
 
 
+## 2026-11-23
+
+Preparation of the first release, **1.0**. Standard changes are in the [Core changelog](./docs/standards/core/CHANGELOG.md) (`core-1.0`) and the [Stock changelog](./docs/standards/stock/CHANGELOG.md) (`stock-1.0`).
+
+### Added
+- Scoped comments `<# ... #>` in [Operators](./docs/syntax/operators.md#1-formula-and-line-structure), [Clean-up](./docs/semantics/cleanup.md#2-removing-comments) and [Core Validation](./docs/standards/core/semantics/validation.md).
+- Unicode characters inside text literals: [Text characters](./docs/syntax/symbols.md#text-characters); [Tokenization](./docs/semantics/tokenization.md) and validation check the characters by mode.
+- [Time Context](./docs/core/context.md#3-time-context) and the `NOW` constant in [Pre-execution](./docs/semantics/pre-execution.md).
+- [Conformance tests](./tests/README.md): JSON test cases with a [schema](./tests/schema.json) and a validation script.
+
+### Changed
+- The documentation refers to `core-1.0` and `stock-1.0`: the [standards](./docs/standards/README.md) list, examples of `REQUIRE`, [Environment](./docs/core/environment.md), [Comparison](./docs/misc/comparison.md) and [Future plans](./docs/misc/future_plans.md).
+- `README.md`: status, badge and the syntax example.
+
+### Fixed
+- Typos in [Literals](./docs/syntax/literals.md), [Symbols](./docs/syntax/symbols.md) and [Tokenization](./docs/semantics/tokenization.md).
+
 ## 2026-11-09
 
 Core standard changes of this date are in the [Core changelog](./docs/standards/core/CHANGELOG.md) (version `0.3`).

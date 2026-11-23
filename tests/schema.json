@@ -1,0 +1,214 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FormuLang conformance test file",
+  "type": "object",
+  "required": ["standards", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "description": { "type": "string" },
+    "standards": {
+      "description": "Standards required by every case of the file, e.g. [\"core-1.0\"].",
+      "$ref": "#/definitions/standards"
+    },
+    "defaults": {
+      "description": "Values used by every case that does not define them.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "context": { "$ref": "#/definitions/context" },
+        "environment": { "$ref": "#/definitions/environment" },
+        "registry": { "$ref": "#/definitions/registry" }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/case" }
+    }
+  },
+  "definitions": {
+    "standards": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*-\\d+\\.\\d+$" }
+    },
+    "formula": {
+      "description": "Formula text, or its lines (joined with a new line).",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "value": {
+      "description": "FormuLang value in JSON form: Number -> number, Text -> string, Boolean -> boolean, Null -> null, Array -> array, Object -> object. An extended type is an object with the \"$type\" key, e.g. { \"$type\": \"Stock.Candle\", ... }."
+    },
+    "error": {
+      "type": "object",
+      "required": ["code"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "SUCCESS", "CUSTOM_ERROR", "SYNTAX_ERROR", "OPERATION_ERROR", "TYPE_ERROR",
+            "UNKNOWN_SYMBOL_ERROR", "ARGUMENT_ERROR", "INVALID_INDEX_ERROR", "INVALID_KEY_ERROR",
+            "INVALID_IDENTIFIER_ERROR", "ENVIRONMENT_ERROR", "NOT_SUPPORTED_ERROR", "UNDEFINED_ERROR"
+          ]
+        },
+        "message": {
+          "description": "Exact detail text. Only checked when present.",
+          "type": "string"
+        }
+      }
+    },
+    "candle": {
+      "type": "object",
+      "required": ["open", "high", "low", "close"],
+      "additionalProperties": false,
+      "properties": {
+        "open": { "type": "number" },
+        "high": { "type": "number" },
+        "low": { "type": "number" },
+        "close": { "type": "number" },
+        "volume": { "type": ["number", "null"] },
+        "time": { "type": ["number", "null"] }
+      }
+    },
+    "frame": {
+      "type": "object",
+      "required": ["time_s", "dtime_s"],
+      "additionalProperties": false,
+      "properties": {
+        "time_s": { "type": "number", "minimum": 0 },
+        "dtime_s": { "type": "number", "minimum": 0 },
+        "now": { "type": "integer" }
+      }
+    },
+    "context": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Default", "Iteration", "Time", "Stock", "Indicator", "Pattern", "Strategy"]
+        },
+        "n": {
+          "description": "Iteration: number of iterations.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Time: the frames, in order.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/frame" }
+        },
+        "candles": {
+          "description": "Stock contexts: the CANDLES constant, from the oldest to the newest.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/candle" }
+        },
+        "parameters": {
+          "description": "Indicator and Pattern: the PARAMETERS constant.",
+          "type": "object"
+        },
+        "source": {
+          "description": "Indicator: the SOURCE constant (CLOSE when omitted).",
+          "type": "array",
+          "items": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "constants": {
+          "description": "Environment constants that replace the initial values, e.g. { \"NOW\": 0 }.",
+          "type": "object"
+        },
+        "variables": {
+          "description": "Environment variables that replace the initial values, e.g. { \"array_indexing\": 1 }.",
+          "type": "object"
+        },
+        "omit": {
+          "description": "Names of environment elements removed before the execution (to test the environment checks).",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "definition": {
+      "type": "object",
+      "required": ["id", "formula"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z_]\\w*$" },
+        "formula": { "$ref": "#/definitions/formula" },
+        "parameters": { "type": "object" }
+      }
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "indicators": { "type": "array", "items": { "$ref": "#/definitions/definition" } },
+        "patterns": { "type": "array", "items": { "$ref": "#/definitions/definition" } }
+      }
+    },
+    "expected": {
+      "description": "Exactly one of: result, results, error, errors.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1,
+      "properties": {
+        "result": {
+          "description": "Result of a single execution.",
+          "$ref": "#/definitions/value"
+        },
+        "results": {
+          "description": "Results of every iteration or frame, in order. An element can be { \"$error\": \"<CODE>\" }.",
+          "type": "array"
+        },
+        "error": {
+          "description": "The execution results in this error.",
+          "$ref": "#/definitions/error"
+        },
+        "errors": {
+          "description": "The validation returns exactly these errors, in this order.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/error" }
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "required": ["id", "formula", "expected"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Unique identifier, e.g. core.functions.FORMAT.001.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[A-Za-z0-9_]+)+$"
+        },
+        "description": { "type": "string" },
+        "standards": {
+          "description": "Additional standards required by this case.",
+          "$ref": "#/definitions/standards"
+        },
+        "spec": {
+          "description": "Relative link to the part of the specification that the case checks.",
+          "type": "string"
+        },
+        "context": { "$ref": "#/definitions/context" },
+        "environment": { "$ref": "#/definitions/environment" },
+        "registry": { "$ref": "#/definitions/registry" },
+        "formula": { "$ref": "#/definitions/formula" },
+        "expected": { "$ref": "#/definitions/expected" }
+      }
+    }
+  }
+}
