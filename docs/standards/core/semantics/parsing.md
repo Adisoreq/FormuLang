@@ -40,7 +40,7 @@ Binding power of a token is the number from the **Priority** column of the [bind
 | Multiplicative `*` `/` `%` | 7 | 7 | Left-associative. |
 | Exponential `^` | 8 | 7 | Right-associative. |
 | Prefix unary `!` `-` | 9 | 9 | Prefix operand is parsed with this value. |
-| Member access, indexing `.` `[` | 10 | 10 | Left-associative. |
+| Member access, indexing, delegate call `.` `[` `(` | 10 | 10 | Left-associative. |
 
 The right binding power is the value passed to `ParseExpression` when the right operand is parsed. It equals the priority for left-associative and non-associative operators, and the priority decreased by 1 for right-associative operators. Variable scope sigils (priority 11) have no infix behaviour; they are consumed by the prefix step.
 
@@ -98,9 +98,9 @@ The prefix step consumes the next token as the start of an operand. If there is 
 | **Number** | Create a **Value** node. The token content must match a [number literal](../../../syntax/literals.md#3-number) pattern; otherwise return a **syntax error**. |
 | `"` | Consume the following **Text** token and the closing `"` operator. Create a **Value** node of type `Text`. |
 | **Identifier** `null` `true` `false` | Create the **Value** node of the corresponding [literal](../../../syntax/literals.md). |
-| **Identifier** followed by `(` | Parse a [function call](#function-call). |
+| **Identifier** followed by `(`, not contained in any entry of **Lambda scopes** | Parse a [function call](#function-call). |
 | **Identifier** naming a procedure of the active standard, not followed by `(` | Parse a [procedure call](#procedure-call-without-parentheses). |
-| **Identifier** (any other) | If any entry of **Lambda scopes** contains the name, create a **Parameter** reference node. Otherwise, create a **Constant** reference node, resolved later against the context and environment. |
+| **Identifier** (any other) | If any entry of **Lambda scopes** contains the name, create a **Parameter** reference node (a `(` that follows it is then a [delegate call](#delegate-call)). Otherwise, create a **Constant** reference node, resolved later against the context and environment. |
 | `$` or `@` | The next token must be an **Identifier**; otherwise return a **syntax error**. Create a **Variable** node with the user (`$`) or environment (`@`) scope. |
 | `(` | Parse a [lambda parameter list](#lambda-parameter-list) if the matching `)` is directly followed by `=>`. Otherwise, parse a **grouped expression**: call `ParseExpression(0)`, then consume `)`. |
 | `[` | Parse an **array literal**: zero or more items, each parsed with `ParseExpression(0)` and separated by `,`, followed by `]`. Create an operator node `[ ]` with the items as children. |
@@ -121,6 +121,7 @@ The step is selected by the next token and is applied to the already parsed **le
 | `>` `<` `>=` `<=` `==` `<>` `!=` | Like the previous row. After the right operand is parsed, if the next token is also a comparison operator, stop the process and return a **syntax error** (comparison operators are non-associative). |
 | `.` | The next token must be an **Identifier**; otherwise return a **syntax error**. Consume both tokens and create a member access node whose key is the identifier's text. |
 | `[` | Consume the token, parse the index with `ParseExpression(0)`, then consume `]`. Create an index node. |
+| `(` | Parse a [delegate call](#delegate-call) of **left**. |
 
 The `,`, `:`, `;` tokens and closing delimiters have no infix or postfix behaviour. Any other token that is not listed in the table (for example **Number** or **Identifier**) also ends the expression.
 
@@ -137,12 +138,22 @@ The `,`, `:`, `;` tokens and closing delimiters have no infix or postfix behavio
 The parser does not check the number or types of the arguments. They are matched against the function's [argument collection template](../../../implementation/argument_collection_template.md) during [evaluation](../../../semantics/evaluation.md).
 
 
+### Delegate call
+
+A `(` in an operator position calls the value of the expression before it, e.g. `$f(2)`, `f(x)` where `f` is a lambda parameter, `$obj.handler(1)`, `$handlers[0](1)` or `((x) => x * 2)(3)`. The value must be a [Delegate](../types/Delegate.md) when the formula is evaluated.
+
+1. Consume the `(` token.
+2. Parse the arguments like the arguments of a [function call](#function-call): none if the next token is `)`, otherwise expressions parsed with `ParseExpression(0)` and separated by `,`, followed by `)`.
+3. Create a delegate call node with **left** as the callee and the arguments as its children.
+
+A `(` directly after an identifier that is not a lambda parameter is a [function call](#function-call), so `ABS(-1)` calls the named function. A named function stored in a variable is called through the variable: `$f = ABS` then `$f(-1)`.
+
 ### Procedure call without parentheses
 
 Procedures of the active standard (in Core: `SET`, `INIT`, `COND_SET`, `REQUIRE`) may be written without parentheses, with their arguments separated by white space instead of commas, e.g. `REQUIRE "core-1+"` or `SET $x 100`.
 
 1. Consume the **Identifier**. Let **n** be the number of parameters of the procedure.
-2. Parse the first **n − 1** arguments with `ParseExpression(10)`. Only a single operand (literal, variable, grouped expression, array or object literal) is consumed, so the next argument can start right after it.
+2. Parse the first **n − 1** arguments with `ParseExpression(10)`. Only a single operand (literal, variable, grouped expression, array or object literal) is consumed, so the next argument can start right after it. Postfix operators of priority 10 (`.`, `[`, `(`) are not applied, so `SET $x (1 + 2)` assigns `3` to `$x`.
 3. Parse the last argument with `ParseExpression(0)`.
 4. Create a **Function** node with the identifier as its name and the arguments as its children. The node is identical to the one created from `NAME(arg1, arg2)`.
 
@@ -187,6 +198,7 @@ In the table, `a`, `b`, `i` and `body` are placeholders for operand expressions;
 | `a[i]` | `GET(a,i)` |
 | `a["key"]` | `GET(a,"key")` |
 | `a.key` | `GET(a,"key")` |
+| `f(a, b)` (delegate call) | `CALL(f,a,b)` |
 | `[a, b, c]` | `ARRAY(a,b,c)` |
 | `{ k1: a, "k2": b }` | `OBJECT("k1",a,"k2",b)` |
 | `(p1, p2) => body` | **Lambda** primitive (not translated into a call) |

@@ -67,12 +67,13 @@
     },
     {
       "id": "core.syntax.unicode.011",
-      "description": "Unicode is not allowed in identifiers",
+      "description": "Unicode is not allowed in identifiers; every invalid symbol is reported",
       "spec": "../../../docs/standards/core/semantics/validation.md#validation-algorithm",
       "formula": "$zółw = 1",
       "expected": {
         "errors": [
-          { "code": "SYNTAX_ERROR", "message": "Invalid symbol \"ó\" at line 1, column 3." }
+          { "code": "SYNTAX_ERROR", "message": "Invalid symbol \"ó\" at line 1, column 3." },
+          { "code": "SYNTAX_ERROR", "message": "Invalid symbol \"ł\" at line 1, column 4." }
         ]
       }
     },

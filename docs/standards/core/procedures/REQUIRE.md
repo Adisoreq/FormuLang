@@ -73,14 +73,15 @@ Every segment is checked on its own. A `+` raises the lower limit of its own seg
 
 ## Examples
 
-Assuming `STANDARDS` is `[ "core-1.0" ]`:
+Assuming `STANDARDS` is `[ "core-1.0", "core-1.1" ]` (an environment of `core-1.1`):
 
 | Formula | Result |
 | :------ | :----- |
 | `REQUIRE "core-1+"` | `SUCCESS` |
 | `REQUIRE(["core-1.x", "core-1.0"])` | `SUCCESS` |
 | `REQUIRE "stock-5.2+"` | `[NOT_SUPPORTED_ERROR (11)] Standard "stock-5.2+" is not supported.` |
-| `REQUIRE "core-1.1+"` | `[NOT_SUPPORTED_ERROR (11)] Standard "core-1.1+" is not supported.` |
+| `REQUIRE "core-1.0"` | `SUCCESS` |
+| `REQUIRE "core-1.2+"` | `[NOT_SUPPORTED_ERROR (11)] Standard "core-1.2+" is not supported.` |
 | `REQUIRE "core"` | `[OPERATION_ERROR (3)] "core" is not a valid standard requirement.` |
 
 > **Note:** `REQUIRE` is meant to be placed at the beginning of a formula. If the requirement is not satisfied, its error reaches the root of the sequence and aborts the execution, so none of the following sequences is evaluated.

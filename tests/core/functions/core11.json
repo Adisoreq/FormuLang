@@ -1,0 +1,30 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Core 1.1 functions: FIRST, LAST, IFNULL, IFERR, ISINT, ISEVEN, ISODD, MEDIAN, VAR_P, VAR_S, STDEV_P, STDEV_S, MERGE and the optional precision of ROUND, FLOOR, CEIL and TRUNC.",
+  "standards": ["core-1.1"],
+  "cases": [
+    { "id": "core.functions.core11.001", "description": "FIRST and LAST without a handler", "formula": "[FIRST([3, 5, 8]), LAST([3, 5, 8]), FIRST([]), LAST([])]", "expected": { "result": [3, 8, null, null] } },
+    { "id": "core.functions.core11.002", "description": "FIRST and LAST with a lambda", "formula": "[FIRST([1, 4, 6, 7], (e) => MOD(e, 2) == 0), LAST([1, 4, 6, 7], (e) => MOD(e, 2) == 0), FIRST([1, 3], (e) => e > 5)]", "expected": { "result": [4, 6, null] } },
+    { "id": "core.functions.core11.003", "description": "FIRST and LAST with a named function as the handler", "formula": "[FIRST([null, \"a\", 3, 4], ISNUM), LAST([1, \"a\", null], ISNUM)]", "expected": { "result": [3, 1] } },
+    { "id": "core.functions.core11.004", "description": "FIRST with a handler that does not return a Boolean", "formula": "FIRST([1], (e) => 1)", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.core11.005", "description": "FIRST stops at the first match, so a later Error of the handler is not reached", "formula": "FIRST([1, 0], (e) => 1 / e > 0)", "expected": { "result": 1 } },
+    { "id": "core.functions.core11.006", "description": "IFNULL", "formula": "[IFNULL(null, 0), IFNULL(5, 0), IFNULL(FIND(\"abc\", \"z\"), -1)]", "expected": { "result": [0, 5, -1] } },
+    { "id": "core.functions.core11.007", "description": "IFNULL returns an Error value unchanged", "formula": "IFNULL(ERROR(\"a\"), 0)", "expected": { "error": { "code": "CUSTOM_ERROR", "message": "a" } } },
+    { "id": "core.functions.core11.008", "description": "IFERR", "formula": "[IFERR(DIV(1, 0), 0), IFERR(5, 0), IFERR([1, 2][5], null)]", "expected": { "result": [0, 5, null] } },
+    { "id": "core.functions.core11.009", "description": "ISINT", "formula": "[ISINT(4), ISINT(-4), ISINT(4.5), ISINT(\"4\"), ISINT(null)]", "expected": { "result": [true, true, false, false, false] } },
+    { "id": "core.functions.core11.010", "description": "ISEVEN", "formula": "[ISEVEN(4), ISEVEN(0), ISEVEN(-3), ISEVEN(2.5), ISEVEN(null)]", "expected": { "result": [true, true, false, false, false] } },
+    { "id": "core.functions.core11.011", "description": "ISODD", "formula": "[ISODD(3), ISODD(-3), ISODD(4), ISODD(2.5), ISODD(\"3\")]", "expected": { "result": [true, true, false, false, false] } },
+    { "id": "core.functions.core11.012", "description": "ISINT accepts an Error as a value", "formula": "ISINT(ERROR(\"a\"))", "expected": { "result": false } },
+    { "id": "core.functions.core11.013", "description": "The precision of rounding is 0 by default", "formula": "[ROUND(4.5), ROUND(-4.5), FLOOR(4.7), FLOOR(-4.2), CEIL(4.2), TRUNC(-7.9)]", "expected": { "result": [5, -5, 4, -5, 5, -7] } },
+    { "id": "core.functions.core11.014", "description": "MEDIAN", "formula": "[MEDIAN([3, 1, 2]), MEDIAN([4, 1, 3, 2]), MEDIAN([7])]", "expected": { "result": [2, 2.5, 7] } },
+    { "id": "core.functions.core11.015", "description": "MEDIAN of an empty array", "formula": "MEDIAN([])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.core11.016", "description": "Population variance and standard deviation", "formula": "[VAR_P([2, 4, 4, 4, 5, 5, 7, 9]), STDEV_P([2, 4, 4, 4, 5, 5, 7, 9]), VAR_P([5]), STDEV_P([5])]", "expected": { "result": [4, 2, 0, 0] } },
+    { "id": "core.functions.core11.017", "description": "Sample variance and standard deviation", "formula": "[VAR_S([1, 3]), STDEV_S([1, 3])]", "expected": { "result": [2, 1.4142135623730951] } },
+    { "id": "core.functions.core11.018", "description": "The sample variance needs 2 numbers", "formula": "VAR_S([5])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.core11.019", "description": "The population variance of an empty array", "formula": "STDEV_P([])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.core11.020", "description": "MERGE: the value of the second object wins, the keys keep their order", "formula": "MERGE({ a: 1, b: 2 }, { b: 3, c: 4 })", "expected": { "result": { "a": 1, "b": 3, "c": 4 } } },
+    { "id": "core.functions.core11.021", "description": "MERGE keeps the order of the keys", "formula": "KEYS(MERGE({ b: 1, a: 2 }, { c: 3, b: 4 }))", "expected": { "result": ["b", "a", "c"] } },
+    { "id": "core.functions.core11.022", "description": "MERGE is shallow", "formula": "MERGE({ a: { x: 1 } }, { a: { y: 2 } })", "expected": { "result": { "a": { "y": 2 } } } },
+    { "id": "core.functions.core11.023", "description": "MERGE of values that are not Objects", "formula": "MERGE({ a: 1 }, [1])", "expected": { "error": { "code": "ARGUMENT_ERROR" } } }
+  ]
+}

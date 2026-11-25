@@ -24,12 +24,12 @@ Functions responsible for mathematical calculations on **Number** values.
 | `LN(value)` | | Calculates the natural logarithm of value. Alias for `LOG(value, E)` [[Read more]](LN.md) | `Number` |
 | `ABS(num)` | | Returns the absolute value. [[Read more]](ABS.md) | `Number` |
 | `NEG(num)` | `-` | Negates the number. [[Read more]](NEG.md) | `Number` |
-| `CEIL(number, precision)` | | Rounds the number up to the specific precision. [[Read more]](CEIL.md) | `Number` |
-| `FLOOR(number, precision)` | | Rounds the number down to the specific precision. [[Read more]](FLOOR.md) | `Number` |
-| `ROUND(number, precision)` | | Rounds the number automatically to the specific precision. [[Read more]](ROUND.md) | `Number` |
+| `CEIL(number, precision?)` | | Rounds the number up to the specific precision (`0` by default). [[Read more]](CEIL.md) | `Number` |
+| `FLOOR(number, precision?)` | | Rounds the number down to the specific precision (`0` by default). [[Read more]](FLOOR.md) | `Number` |
+| `ROUND(number, precision?)` | | Rounds the number automatically to the specific precision (`0` by default). [[Read more]](ROUND.md) | `Number` |
 | `CLAMP(value, min, max)` | | Clamps the value to the range between min and max. [[Read more]](CLAMP.md) | `Number` |
 | `SIGN(num)` | | Returns `1` for a positive number, `-1` for a negative number and `0` for zero. [[Read more]](SIGN.md) | `Number` |
-| `TRUNC(number, precision)` | | Cuts off the digits after the specific precision (rounds towards zero). [[Read more]](TRUNC.md) | `Number` |
+| `TRUNC(number, precision?)` | | Cuts off the digits after the specific precision, `0` by default (rounds towards zero). [[Read more]](TRUNC.md) | `Number` |
 
 ### 2. Logic & Comparison Functions
 
@@ -56,6 +56,9 @@ Functions used for conditional logic and error handling.
 | :--- | :--- | :--- |
 | `IF(condition, then, else)` | Returns `then` value if condition is `TRUE`, otherwise `else`. [[Read more]](IF.md) | `IF($x > 10, "High", "Low")` |
 | `ERROR(message)` | Returns an error with a custom message. The error aborts the execution if it reaches the root of a sequence. [[Read more]](ERROR.md) | `ERROR("Invalid input")` |
+| `IFNULL(value, fallback)` | Returns `value`, or `fallback` if `value` is `null`. [[Read more]](IFNULL.md) | `IFNULL(PREV, 0)` |
+| `IFERR(value, fallback)` | Returns `value`, or `fallback` if `value` is an **Error**. [[Read more]](IFERR.md) | `IFERR($a / $b, 0)` |
+| `CALL(function, arguments...)` | Calls a delegate. Operator form: `delegate(arguments)`, e.g. `$f(2)`. [[Read more]](CALL.md) | `CALL($double, 4)` |
 
 ### 4. Text Functions
 
@@ -105,6 +108,8 @@ Functions operating on **Arrays** and collections.
 | `HAS(array, index)` | Checks if the array has an element at the index (follows `@array_indexing`). Checks the index, not the value. [[Read more]](HAS.md) | `Boolean` |
 | `SORT(array)` / `SORT(array, handler)` | Returns the elements in ascending order: numbers, texts, or elements ordered by the handler results. The sort is stable. [[Read more]](SORT.md) | `Array` |
 | `REVERSE(array)` | Returns the elements in the reverse order. [[Read more]](REVERSE.md) | `Array` |
+| `FIRST(array)` / `FIRST(array, handler)` | Returns the first element, or the first element that satisfies the handler; `null` if there is none. [[Read more]](FIRST.md) | `Any` |
+| `LAST(array)` / `LAST(array, handler)` | Returns the last element, or the last element that satisfies the handler; `null` if there is none. [[Read more]](LAST.md) | `Any` |
 
 ### 6. Type Functions
 
@@ -120,6 +125,9 @@ Type-related functions.
 | `ISARR(value)` | Checks if value's base type is `Array` [[Read more]](ISARR.md) | `Boolean` |
 | `ISOBJ(value)` | Checks if value's base type is `Object` [[Read more]](ISOBJ.md) | `Boolean` |
 | `ISDEL(value)` | Checks if value's base type is `Delegate` [[Read more]](ISDEL.md) | `Boolean` |
+| `ISINT(value)` | Checks if the value is a whole number (`false` for other types) [[Read more]](ISINT.md) | `Boolean` |
+| `ISEVEN(value)` | Checks if the value is an even whole number (`false` for other types) [[Read more]](ISEVEN.md) | `Boolean` |
+| `ISODD(value)` | Checks if the value is an odd whole number (`false` for other types) [[Read more]](ISODD.md) | `Boolean` |
 
 ### 7. Conversion Functions
 
@@ -153,6 +161,7 @@ Functions operating on **Objects**.
 | :------- | :---------- | :---------: |
 | `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. [[Read more]](KEYS.md) | `Array` |
 | `HAS(object, key)` | Checks if the object has a value stored under the key. [[Read more]](HAS.md) | `Boolean` |
+| `MERGE(object1, object2)` | Returns a new object with the keys of both objects; the value of `object2` wins. [[Read more]](MERGE.md) | `Object` |
 
 ### 10. Time Functions
 
@@ -172,6 +181,18 @@ Functions operating on points in time. A point in time is a **Number**: Unix tim
 | `FORMAT_TIME(time, format)` | Converts a point in time to text, e.g. `"YYYY-MM-DD hh:mm:ss.iii"`. [[Read more]](FORMAT_TIME.md) | `Text` |
 
 Durations are plain numbers of milliseconds, so they are computed with arithmetic: `$t + 24 * 60 * 60 * 1000` is one day later, `($end - $start) / 1000` is a duration in seconds.
+
+### 11. Statistical Functions
+
+Functions describing a set of **Number** values. The mean is computed with [`AVG`](AVG.md). The `_P` functions treat the numbers as a whole population, the `_S` functions as a sample of a larger population.
+
+| Function | Description | Return Type |
+| :------- | :---------- | :---------: |
+| `MEDIAN(numbers)` | Returns the middle value (the mean of the two middle values for an even count). [[Read more]](MEDIAN.md) | `Number` |
+| `VAR_P(numbers)` | Calculates the population variance. [[Read more]](VAR_P.md) | `Number` |
+| `VAR_S(numbers)` | Calculates the sample variance. [[Read more]](VAR_S.md) | `Number` |
+| `STDEV_P(numbers)` | Calculates the population standard deviation (used e.g. by Bollinger Bands). [[Read more]](STDEV_P.md) | `Number` |
+| `STDEV_S(numbers)` | Calculates the sample standard deviation. [[Read more]](STDEV_S.md) | `Number` |
 
 
 ## Reference

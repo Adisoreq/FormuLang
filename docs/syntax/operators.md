@@ -65,7 +65,7 @@ Structural operators group or divide sub-expressions.
 
 | Operator | Symbol | Description | Example |
 | :------- | :----: | :---------- | :------ |
-| Parentheses | `( )` | Group expressions and enforce precedence. | `($a + $b) * $c` |
+| Parentheses | `( )` | Group expressions and enforce precedence, or call a function or a delegate. | `($a + $b) * $c`, `ABS(-1)`, `$f(2)` |
 | Brackets | `[ ]` | Define arrays or access an indexed element or an object property. | `[1, 2, 3]`, `$arr[$index]`, `$obj["value"]` |
 | Braces | `{ }` | Define objects. | `{ x: 1, y: 2 }`, `{ "x": 1, "y": 2 }` |
 | Comma | `,` | Separates arguments or collection items. | `ADD(1, 2)`, `[1, 2, 3]` |
@@ -73,6 +73,8 @@ Structural operators group or divide sub-expressions.
 | Dot | `.` | Accesses an object property. | `$obj.value` |
 
 In **Core**, `array[index]`, `object["key"]` and `object.key` are equivalent to the corresponding [GET](../standards/core/functions/GET.md) overloads. `object.key` is a shorthand for `object["key"]`.
+
+In **Core**, a call of an expression that is not a function name, e.g. `$f(2)` or `$obj.handler(1)`, is equivalent to [CALL](../standards/core/functions/CALL.md): `$f(2)` is `CALL($f, 2)`.
 
 ### 5. Arithmetic operators
 

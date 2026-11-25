@@ -6,7 +6,7 @@ Plans for enhancements in the future
 
 ### 1. Stock Extension
 
-Specified as the [**Stock**](../standards/stock/README.md) standard (`stock-1.0`).
+Specified as the [**Stock**](../standards/stock/README.md) standard (`stock-1.1`).
 
 ### 2. Time (Core)
 

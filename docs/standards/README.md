@@ -9,13 +9,13 @@ Core standard
 
 | Name | Latest version | Description |
 | :--- | :------------: | :---------- |
-| `core` | `1.0` | Basic mathematical, logical, text and array operations. Basis of every other extension. [[Read more]](./core/README.md) |
+| `core` | `1.1` | Basic mathematical, logical, text and array operations. Basis of every other extension. [[Read more]](./core/README.md) |
 
 Extension standards
 
 | Name | Latest version | Requires | Description |
 | :--- | :------------: | :------: | :---------- |
-| `stock` | `1.0` | `core-1+` | Market data: candles, technical indicators, candle patterns and trading strategies. [[Read more]](./stock/README.md) |
+| `stock` | `1.1` | `core-1+` | Market data: candles, technical indicators, candle patterns and trading strategies. [[Read more]](./stock/README.md) |
 
 ## Dependency tree
 
@@ -23,15 +23,15 @@ An arrow points from a standard to the standard it requires, with the required v
 
 ```mermaid
 graph BT
-    core["core-1.0"]
-    stock["stock-1.0"]
+    core["core-1.1"]
+    stock["stock-1.1"]
 
     stock -- "core-1+" --> core
 ```
 
 ```
-core-1.0
-└── stock-1.0      (requires core-1+)
+core-1.1
+└── stock-1.1      (requires core-1+)
 ```
 
 ## Reference

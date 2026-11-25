@@ -7,9 +7,9 @@
 
 **Name**: `Stock`
 
-**Latest version**: `1.0`
+**Latest version**: `1.1`
 
-**Identifier**: `stock-1.0`
+**Identifier**: `stock-1.1`
 
 **Requires**: `core-1+`
 
@@ -99,7 +99,7 @@ All context variables are defined by user. As in every Iteration Context, they a
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | contains `"stock-1.0"` | The Core constant must contain the identifier of the Stock standard (and of the required Core standard). |
+| `STANDARDS` | `Array` | contains `"stock-1.0"` and `"stock-1.1"` | The Core constant must contain the identifiers of the supported Stock standard versions (and of the required Core standard). |
 
 ### 2. Formula registry
 
@@ -139,6 +139,8 @@ How the host application stores the definitions is not specified.
 | [`IS_BEARISH(candle)`](functions/IS_BEARISH.md) | Checks if the candle closed lower than it opened (`close < open`). | `Boolean` |
 | [`LOAD_INDICATOR(id, parameters, source)`](functions/LOAD_INDICATOR.md) | Computes an indicator from the registry for every candle. | `Array` |
 | [`LOAD_PATTERN(id, parameters)`](functions/LOAD_PATTERN.md) | Checks a pattern from the registry for every candle. | `Array<Boolean>` |
+| [`LAG(series, offset)`](functions/LAG.md) | Returns the value `offset` candles before the current one (`1` by default), or `null` if that candle does not exist yet. | `Any` |
+| [`WINDOW(series, length, handler)`](functions/WINDOW.md) | Returns the last `length` values up to the current candle, or the result of `handler` for them; `null` if there are not enough candles yet. | `Array` / `Any` |
 
 
 ## Examples

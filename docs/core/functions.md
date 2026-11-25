@@ -26,7 +26,7 @@ Native functions and procedures are **named** functions; lambda functions are **
 
 | | Named function (native function, procedure) | Anonymous function (lambda) |
 | :-- | :------------------------------------------ | :-------------------------- |
-| Identifier | Unique [identifier](../syntax/naming.md), used to call the function | None; created inline by a [lambda expression](../syntax/functions.md#lambda-function-expression) and usually passed as a [Delegate](../standards/core/types/Delegate.md) argument |
+| Identifier | Unique [identifier](../syntax/naming.md), used to call the function | None; created inline by a [lambda expression](../syntax/functions.md#lambda-function-expression) and passed as a [Delegate](../standards/core/types/Delegate.md) argument, or stored in a variable and [called](../syntax/functions.md#calling-delegates): `$f(x)` |
 | Parameters | Described by [argument collection templates](../implementation/argument_collection_template.md): count, base and extended types, optional and multiple arguments | A plain list of parameter names without types; the function is indirectly typed |
 | Overloads | One or more. Arguments are matched against the overloads in order, and the first matching overload is executed | None; there is nothing to match |
 | Call resolution | If no overload matches, the function is not executed and the call resolves to the leftmost **Error** argument or to `ARGUMENT_ERROR` (see [Evaluation](../semantics/evaluation.md#3-function-call)) | No overloads. The number of arguments must equal the number of parameters, otherwise the call resolves to `ARGUMENT_ERROR`; argument types are not validated (see [lambda invocation](../semantics/evaluation.md#lambda-invocation)) |

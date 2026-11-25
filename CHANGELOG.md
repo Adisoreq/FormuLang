@@ -11,13 +11,19 @@ Main language changes: syntax, semantics, functionality and implementation struc
 
 ## 2026-11-25
 
-The standards do not change: the new note describes an optimization that gives the same results.
+New versions of the standards: Core `1.1` ([Core changelog](./docs/standards/core/CHANGELOG.md)) and Stock `1.1` ([Stock changelog](./docs/standards/stock/CHANGELOG.md)), both backward compatible.
 
 ### Added
+- [Calling delegates](./docs/syntax/functions.md#calling-delegates) in the function syntax, the delegate call in [Operators](./docs/syntax/operators.md), [Operator parsing](./docs/semantics/operator-parsing.md) and [Core parsing](./docs/standards/core/semantics/parsing.md#delegate-call), and the [invocation depth](./docs/semantics/evaluation.md#invocation-depth) in Evaluation.
+- Conformance tests for Core `1.1` ([calls](./tests/core/functions/calls.json), [new functions](./tests/core/functions/core11.json)) and Stock `1.1` ([LAG and WINDOW](./tests/stock/stock11.json)).
 - [`IF`, "Performance"](./docs/standards/core/functions/IF.md#performance): an implementation may skip the computation of the branch that is not selected when it has no side effects and the result of the formula is the same (a Boolean condition, no procedures, no functions with side effects, no delegates with unknown bodies). [Evaluation](./docs/semantics/evaluation.md#4-result-propagation) links to it.
 - Conformance tests `core.functions.basics.031` - `034`: `IF` with a condition that is not a Boolean.
 
+### Changed
+- The documentation refers to `core-1.1` and `stock-1.1`: the [standards](./docs/standards/README.md) list, [Environment](./docs/core/environment.md), [Future plans](./docs/misc/future_plans.md) and the Core and Stock READMEs.
+
 ### Fixed
+- Conformance case `core.syntax.unicode.011` expected only the first error for `$zółw = 1`, but step 3.3 of the [validation algorithm](./docs/standards/core/semantics/validation.md#validation-algorithm) reports every invalid symbol. The case now expects both (`ó` at column 3 and `ł` at column 4), as both implementations already report.
 - [`IF`, "Errors"](./docs/standards/core/functions/IF.md#errors) described only `ARGUMENT_ERROR` and an **Error** in `condition`. As for every [function call](./docs/semantics/evaluation.md#3-function-call) that matches no overload, a condition that is not a Boolean gives the leftmost **Error** argument, also one in `then` or `else`, and `ARGUMENT_ERROR` only if there is none. The section now says so, with examples; a condition is never converted implicitly (`BOOL` converts it). The behavior of `core-1.0` does not change.
 
 ## 2026-11-23

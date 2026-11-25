@@ -1,0 +1,40 @@
+{
+  "$schema": "../schema.json",
+  "description": "Stock 1.1: LAG and WINDOW. Candles (open -> close): 10 -> 12, 12 -> 11, 10.5 -> 13, 13 -> 14, so CLOSE is [12, 11, 13, 14].",
+  "standards": ["core-1.1", "stock-1.1"],
+  "defaults": {
+    "context": {
+      "type": "Stock",
+      "candles": [
+        { "open": 10, "high": 12.5, "low": 9.5, "close": 12 },
+        { "open": 12, "high": 12.5, "low": 10.8, "close": 11 },
+        { "open": 10.5, "high": 13.2, "low": 10.4, "close": 13 },
+        { "open": 13, "high": 14.5, "low": 12.9, "close": 14 }
+      ]
+    },
+    "registry": {
+      "indicators": [
+        { "id": "SMA2", "formula": "WINDOW(SOURCE, 2, AVG)" },
+        { "id": "CHANGE", "formula": "SOURCE[I] - IFNULL(LAG(SOURCE), SOURCE[I])" }
+      ]
+    }
+  },
+  "cases": [
+    { "id": "stock.functions.LAG.001", "description": "The previous value, null on the first candle", "formula": "LAG(CLOSE)", "expected": { "results": [null, 12, 11, 13] } },
+    { "id": "stock.functions.LAG.002", "description": "A value 2 candles before", "formula": "LAG(CLOSE, 2)", "expected": { "results": [null, null, 12, 11] } },
+    { "id": "stock.functions.LAG.003", "description": "An offset of 0 is the current value", "formula": "LAG(CLOSE, 0)", "expected": { "results": [12, 11, 13, 14] } },
+    { "id": "stock.functions.LAG.004", "description": "A future value cannot be read", "formula": "LAG(CLOSE, -1)", "expected": { "results": [{ "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }] } },
+    { "id": "stock.functions.LAG.005", "description": "The offset must be a whole number", "formula": "LAG(CLOSE, 1.5)", "expected": { "results": [{ "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }] } },
+    { "id": "stock.functions.LAG.006", "description": "The series must have N elements", "formula": "LAG([1, 2])", "expected": { "results": [{ "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }] } },
+    { "id": "stock.functions.LAG.007", "description": "The position does not depend on @array_indexing", "environment": { "variables": { "array_indexing": 1 } }, "formula": "LAG(CLOSE)", "expected": { "results": [null, 12, 11, 13] } },
+    { "id": "stock.functions.LAG.008", "description": "LAG in an indicator of the registry", "formula": "LOAD_INDICATOR(\"CHANGE\")[I]", "expected": { "results": [0, -1, 2, 1] } },
+    { "id": "stock.functions.LAG.009", "description": "LAG outside of a Stock Context", "context": { "type": "Default" }, "formula": "LAG([1])", "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "stock.functions.WINDOW.001", "description": "The last values, null while there are not enough", "formula": "WINDOW(CLOSE, 2)", "expected": { "results": [null, [12, 11], [11, 13], [13, 14]] } },
+    { "id": "stock.functions.WINDOW.002", "description": "A named function as the handler", "formula": "WINDOW(CLOSE, 2, AVG)", "expected": { "results": [null, 11.5, 12, 13.5] } },
+    { "id": "stock.functions.WINDOW.003", "description": "A lambda as the handler", "formula": "WINDOW(CLOSE, 3, (w) => MAX(w) - MIN(w))", "expected": { "results": [null, null, 2, 3] } },
+    { "id": "stock.functions.WINDOW.004", "description": "A window longer than the chart is always null", "formula": "WINDOW(CLOSE, 5, AVG)", "expected": { "results": [null, null, null, null] } },
+    { "id": "stock.functions.WINDOW.005", "description": "The length must be at least 1", "formula": "WINDOW(CLOSE, 0)", "expected": { "results": [{ "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }, { "$error": "OPERATION_ERROR" }] } },
+    { "id": "stock.functions.WINDOW.006", "description": "The handler is not called while the window is null", "formula": "WINDOW(CLOSE, 2, (a, b) => a)", "expected": { "results": [null, { "$error": "ARGUMENT_ERROR" }, { "$error": "ARGUMENT_ERROR" }, { "$error": "ARGUMENT_ERROR" }] } },
+    { "id": "stock.functions.WINDOW.007", "description": "WINDOW in an indicator of the registry (a 2-candle SMA)", "formula": "LOAD_INDICATOR(\"SMA2\")[I]", "expected": { "results": [null, 11.5, 12, 13.5] } }
+  ]
+}

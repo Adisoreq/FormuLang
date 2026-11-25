@@ -1,0 +1,29 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Core 1.1: delegate calls (docs/syntax/functions.md, 'Calling delegates'), the CALL function and the invocation depth (docs/semantics/evaluation.md).",
+  "standards": ["core-1.1"],
+  "cases": [
+    { "id": "core.functions.calls.001", "description": "A lambda stored in a variable is called", "formula": ["$double = (x) => x * 2", "$double(4)"], "expected": { "result": 8 } },
+    { "id": "core.functions.calls.002", "description": "A lambda parameter is called", "formula": ["$apply = (f, x) => f(x)", "$apply((v) => v + 1, 1)"], "expected": { "result": 2 } },
+    { "id": "core.functions.calls.003", "description": "A named function stored in a variable is called", "formula": ["$f = ABS", "$f(-3)"], "expected": { "result": 3 } },
+    { "id": "core.functions.calls.004", "description": "A lambda stored in an object is called", "formula": ["$ops = { inc: (x) => x + 1 }", "$ops.inc(1)"], "expected": { "result": 2 } },
+    { "id": "core.functions.calls.005", "description": "A lambda stored in an array is called", "formula": ["$handlers = [(x) => x + 1, (x) => x * 10]", "$handlers[1](2)"], "expected": { "result": 20 } },
+    { "id": "core.functions.calls.006", "description": "A lambda expression in parentheses is called", "formula": "((x) => x * 2)(4)", "expected": { "result": 8 } },
+    { "id": "core.functions.calls.007", "description": "CALL with several arguments", "formula": "CALL((x, y) => x + y, 1, 2)", "expected": { "result": 3 } },
+    { "id": "core.functions.calls.008", "description": "The result of a call is called (a lambda returning a lambda)", "formula": ["$adder = (a) => (b) => a + b", "$adder(1)(2)"], "expected": { "result": 3 } },
+    { "id": "core.functions.calls.009", "description": "A lambda parameter wins over a function with the same name", "formula": ["$g = (ABS) => ABS(-1)", "$g((x) => 7)"], "expected": { "result": 7 } },
+    { "id": "core.functions.calls.010", "description": "An Error argument is bound like any other value", "formula": ["$f = (x) => ISERR(x)", "$f(ERROR(\"a\"))"], "expected": { "result": true } },
+    { "id": "core.functions.calls.011", "description": "A lambda called with a wrong number of arguments", "formula": ["$double = (x) => x * 2", "$double(1, 2)"], "expected": { "error": { "code": "ARGUMENT_ERROR" } } },
+    { "id": "core.functions.calls.012", "description": "A value that is not a Delegate cannot be called", "formula": ["$n = 5", "$n(1)"], "expected": { "error": { "code": "ARGUMENT_ERROR" } } },
+    { "id": "core.functions.calls.013", "description": "A named function called with arguments that match no overload", "formula": ["$f = ABS", "$f(\"a\")"], "expected": { "error": { "code": "ARGUMENT_ERROR" } } },
+    { "id": "core.functions.calls.014", "description": "An Error in the place of the delegate is returned", "formula": "CALL(ERROR(\"a\"), 1)", "expected": { "error": { "code": "CUSTOM_ERROR", "message": "a" } } },
+    { "id": "core.functions.calls.015", "description": "The first arguments of a procedure without parentheses are not called", "formula": ["SET $x (1 + 2)", "$x"], "expected": { "result": 3 } },
+    { "id": "core.functions.calls.016", "description": "A recursion that stops by itself, 200 invocations deep", "formula": ["$depth = (n) => SUM(MAP(FILTER([n - 1], (k) => k > 0), $depth)) + 1", "$depth(200)"], "expected": { "result": 200 } },
+    { "id": "core.functions.calls.017", "description": "A recursion deeper than 256 invocations", "formula": ["$depth = (n) => SUM(MAP(FILTER([n - 1], (k) => k > 0), $depth)) + 1", "$depth(300)"], "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.calls.018", "description": "A recursion that never stops reaches the depth limit", "formula": ["$f = (n) => $f(n + 1)", "$f(0)"], "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.calls.019", "description": "A recursion in IF goes down to the depth limit, and the Error of the deepest call is discarded by IF", "formula": ["$f = (n) => IF(n <= 0, 0, $f(n - 1))", "$f(3)"], "expected": { "result": 0 } },
+    { "id": "core.functions.calls.021", "description": "A factorial written with IF", "formula": ["$fact = (n) => IF(n <= 1, 1, n * $fact(n - 1))", "$fact(5)"], "expected": { "result": 120 } },
+    { "id": "core.functions.calls.022", "description": "A recursion in IF whose base case is deeper than the limit", "formula": ["$fact = (n) => IF(n <= 1, 1, n * $fact(n - 1))", "$fact(300)"], "expected": { "error": { "code": "OPERATION_ERROR" } } },
+    { "id": "core.functions.calls.020", "description": "A recursion through MAP, already possible in core-1.0, reaches the depth limit", "formula": ["$f = (n) => MAP([n], $f)", "$f(1)"], "expected": { "error": { "code": "OPERATION_ERROR" } } }
+  ]
+}

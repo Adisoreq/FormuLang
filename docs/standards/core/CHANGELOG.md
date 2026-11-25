@@ -2,6 +2,23 @@
 
 Changes of the [**Core**](README.md) standard. Changes of the language itself (syntax, semantics, implementation structures) are in the [main changelog](../../../CHANGELOG.md).
 
+## 1.1
+
+Identifier: `core-1.1`. Backward compatible with `1.0`: every formula valid in `1.0` gives the same result; only formulas that were a `SYNTAX_ERROR` or an `ARGUMENT_ERROR` in `1.0` can give a value now.
+
+### Added
+- [Delegate calls](../../syntax/functions.md#calling-delegates): a `(` after an operand that is not a function name calls its value, e.g. `$double(4)`, `f(x)` for a lambda parameter `f`, `$ops.inc(1)`, `$handlers[0](1)`, `((x) => x * 2)(4)`. [Parsing](semantics/parsing.md#delegate-call) gives `(` the postfix priority `10` (like `.` and `[`) and translates the call into the new function [`CALL(function, arguments...)`](functions/CALL.md). A named function stored in a variable is called the same way (`$f = ABS`, `$f(-3)`); a procedure cannot be called through a delegate.
+- [Invocation depth](../../semantics/evaluation.md#invocation-depth): lambda invocations nested more than 256 deep give an `OPERATION_ERROR` in every implementation, instead of an implementation-defined failure (a recursion through `MAP` was already possible in `1.0`).
+- Array functions [`FIRST`](functions/FIRST.md) and [`LAST`](functions/LAST.md): the first or last element, or the first or last element that satisfies a handler; `null` if there is none. A named function can be the handler: `FIRST([$a, $b, 0], ISNUM)`.
+- Control flow functions [`IFNULL(value, fallback)`](functions/IFNULL.md) and [`IFERR(value, fallback)`](functions/IFERR.md).
+- Type functions [`ISINT`](functions/ISINT.md), [`ISEVEN`](functions/ISEVEN.md) and [`ISODD`](functions/ISODD.md): like the other `IS` functions they accept any value and give `false` for another type instead of an **Error**.
+- [Statistical functions](functions/README.md#11-statistical-functions) [`MEDIAN`](functions/MEDIAN.md), [`VAR_P`](functions/VAR_P.md), [`VAR_S`](functions/VAR_S.md), [`STDEV_P`](functions/STDEV_P.md) and [`STDEV_S`](functions/STDEV_S.md) (population and sample).
+- Object function [`MERGE(object1, object2)`](functions/MERGE.md): a shallow merge, the value of `object2` wins.
+
+### Changed
+- The `precision` of [`ROUND`](functions/ROUND.md), [`FLOOR`](functions/FLOOR.md), [`CEIL`](functions/CEIL.md) and [`TRUNC`](functions/TRUNC.md) is optional and `0` by default: `ROUND(4.5)` is `5`.
+- The version is `1.1` (identifier `core-1.1`). The `STANDARDS` constant contains `core-1.0` and `core-1.1`: an implementation of a backward compatible version lists the earlier versions too, so `REQUIRE "core-1.0"` (an exact version) keeps working.
+
 ## 1.0 (unreleased)
 
 Identifier: `core-1.0`. First stable release. It contains the work of version `0.3`, which was never released on its own. From this version on, changes within the `1.x` versions are backward compatible.

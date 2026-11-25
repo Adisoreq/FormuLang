@@ -6,17 +6,18 @@ Arithmetical [**Core**](../README.md) standard function. Rounds the number autom
 
 ### Overload 1
 
-Signature: `ROUND(number <Number>, precision <Number>)`
+Signature: `ROUND(number <Number>, precision? <Number>)`
 
 Collection template:
 
 | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | number | | Number | - | false | false | false |
-| 2 | precision | | Number | - | false | false | false |
+| 2 | precision | | Number | - | false | false | true |
 
 Algorithm:
 
+- If `precision` is omitted, it is `0`: the result is a whole number, e.g. `ROUND(4.5)` is the same as `ROUND(4.5, 0)`
 - If `precision` is not a whole number, returns an `OPERATION_ERROR`
 - Returns the number with no more than `precision` decimal places that is nearest to `number`
 - If two numbers are equally near, returns the one farther from zero, e.g. `ROUND(4.5, 0)` is `5` and `ROUND(-4.5, 0)` is `-5`
@@ -29,6 +30,7 @@ Examples:
 | 4.21 | 1 | 4.2 |
 | 4.26 | 1 | 4.3 |
 | 4.5 | 0 | 5 |
+| 4.5 | (omitted) | 5 |
 
 ## Errors
 

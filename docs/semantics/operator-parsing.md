@@ -33,7 +33,7 @@ The parser determines an operator's role from its spelling and its position in t
 | Infix binary | `+` `-` `*` `/` `%` `^` `>` `<` `>=` `<=` `==` `<>` `!=` `&&` `\|\|` | 2 | Infix | Yes | Yes | `-` means subtraction in an operator position. |
 | Member access | `.` | 2 | Infix | Yes | Yes | The right operand must be an identifier, which is used as a text key. In Core, normalizes to `GET(object, "key")`, as does `object["key"]`. |
 | Indexing | `[` `]` | 2 | Postfix | Yes | Yes | `[` in an operator position opens an index expression. In Core, normalizes to `GET(value, index)`. |
-| Function call | `(` `)` | n | Postfix | Yes | Yes | `(` directly after an identifier opens the argument list of a function or procedure call. |
+| Function call | `(` `)` | n | Postfix | Yes | Yes | `(` directly after an identifier opens the argument list of a function or procedure call. In an operator position after any other operand (a variable, a lambda parameter, a member access, an index, a grouped expression), it calls the value of that operand, which must be a Delegate. In Core, normalizes to `CALL(delegate, ...arguments)`. |
 | Item separator | `,` | - | Separator | - | - | Separates arguments, parameters, or collection items within an open delimiter. |
 | Key-value separator | `:` | - | Separator | - | - | Separates an object key from its value within braces. |
 | Opening delimiter | `(` `[` `{` `"` | - | - | No | No | Opens a parser context and requires a matching closing delimiter. |

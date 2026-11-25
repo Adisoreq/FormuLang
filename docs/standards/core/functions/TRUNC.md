@@ -6,17 +6,18 @@ Arithmetical [**Core**](../README.md) standard function. Cuts off the digits of 
 
 ### Overload 1
 
-Signature: `TRUNC(number <Number>, precision <Number>)`
+Signature: `TRUNC(number <Number>, precision? <Number>)`
 
 Collection template:
 
 | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | number | | Number | - | false | false | false |
-| 2 | precision | | Number | - | false | false | false |
+| 2 | precision | | Number | - | false | false | true |
 
 Algorithm:
 
+- If `precision` is omitted, it is `0`: the result is a whole number, e.g. `TRUNC(4.5)` is the same as `TRUNC(4.5, 0)`
 - If `precision` is not a whole number, returns an `OPERATION_ERROR`
 - Returns the number with no more than `precision` decimal places that is nearest to `number` and not farther from zero than `number`
 - For a positive `number` the result is the same as `FLOOR(number, precision)`, for a negative one the same as `CEIL(number, precision)`
@@ -30,6 +31,7 @@ Examples:
 | -4.29 | 1 | -4.2 |
 | 7.9 | 0 | 7 |
 | -7.9 | 0 | -7 |
+| -7.9 | (omitted) | -7 |
 
 ## Errors
 

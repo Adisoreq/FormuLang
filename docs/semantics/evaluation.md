@@ -60,12 +60,20 @@ Procedures (for example `SET`) never accept **Error** arguments. A procedure cal
 
 #### Lambda invocation
 
-A lambda function has no overloads, so no argument matching is performed. It is invoked by the function it was passed to (for example [`MAP`](../standards/core/functions/MAP.md) or [`FILTER`](../standards/core/functions/FILTER.md)), through the same [function call](../implementation/function_call.md) structure:
+A lambda function has no overloads, so no argument matching is performed. It is invoked by the function it was passed to (for example [`MAP`](../standards/core/functions/MAP.md) or [`FILTER`](../standards/core/functions/FILTER.md)), or by a [delegate call](../syntax/functions.md#calling-delegates) (`$f(x)`, the [`CALL`](../standards/core/functions/CALL.md) function), through the same [function call](../implementation/function_call.md) structure:
 
 1. The number of arguments must be equal to the number of the lambda's parameters. Otherwise the body is not evaluated and the call resolves to an `ARGUMENT_ERROR` **Error** value. Argument types are not validated, and an **Error** argument is bound like any other value.
 2. The arguments are bound to the **Parameter** leaves of the stored lambda tree. The binding belongs to this invocation only, so separate invocations don't affect each other.
 3. Only the evaluation of the stored tree is performed: its parsing queue is traversed bottom-up exactly as described in the phases above, and function calls inside the body follow the rules of this phase. Clean-up, tokenization and parsing are **not** repeated.
 4. The value of the body's root expression is the result of the call, returned directly and stored as the **Result** of the function call.
+
+#### Invocation depth
+
+A lambda can invoke another lambda, or itself through a variable: `$f = (n) => $f(n - 1)`. The **invocation depth** is the number of lambda invocations that are running, one inside another, in the current execution: the outermost invocation has depth `1`.
+
+- An invocation that would have a depth greater than **256** is not performed. The call resolves to an `OPERATION_ERROR` **Error** value, which is propagated like any other **Error**.
+- The limit is the same in every implementation, so a formula gives the same result everywhere; an implementation must never stop with an unhandled error (for example a stack overflow) before reaching it.
+- Both branches of [`IF`](../standards/core/functions/IF.md) are computed, so a lambda that calls itself in one branch calls itself also when the other branch is selected, until the limit. The `OPERATION_ERROR` of the deepest invocation is then discarded by the `IF` that selects the other branch, like any **Error** of a branch that is not selected. For example, with `$fact = (n) => IF(n <= 1, 1, n * $fact(n - 1))`, `$fact(5)` is `120`: the invocations go down to the depth `256`, and every `IF` with `n <= 1` selects `1`. A recursion whose base case is reached only deeper than the limit, e.g. `$fact(300)`, results in the `OPERATION_ERROR`.
 
 ### 4. Result propagation
 

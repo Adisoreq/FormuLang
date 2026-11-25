@@ -34,7 +34,7 @@ The environment must provide the following elements of the [Core environment str
 
 | Element | Kind | Required type | Additional requirement |
 | :------ | :--- | :------------ | :--------------------- |
-| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifier of the **Core** standard (`core-1.0`). |
+| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifiers of the supported **Core** standard versions (`core-1.0`, `core-1.1`). |
 | `E` | Constant | `Number` | - |
 | `PI` | Constant | `Number` | - |
 | `PHI` | Constant | `Number` | - |

@@ -6,17 +6,18 @@ Arithmetical [**Core**](../README.md) standard function. Rounds the number up to
 
 ### Overload 1
 
-Signature: `CEIL(number <Number>, precision <Number>)`
+Signature: `CEIL(number <Number>, precision? <Number>)`
 
 Collection template:
 
 | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | number | | Number | - | false | false | false |
-| 2 | precision | | Number | - | false | false | false |
+| 2 | precision | | Number | - | false | false | true |
 
 Algorithm:
 
+- If `precision` is omitted, it is `0`: the result is a whole number, e.g. `CEIL(4.5)` is the same as `CEIL(4.5, 0)`
 - If `precision` is not a whole number, returns an `OPERATION_ERROR`
 - Returns the smallest number that is greater than or equal to `number` and has no more than `precision` decimal places
 - A negative `precision` rounds to tens, hundreds, etc., e.g. `CEIL(123, -1)` is `130`
@@ -28,6 +29,7 @@ Examples:
 | 4.21 | 1 | 4.3 |
 | 4.2 | 0 | 5 |
 | -4.26 | 1 | -4.2 |
+| 4.2 | (omitted) | 5 |
 
 ## Errors
 

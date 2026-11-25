@@ -4,7 +4,7 @@
 
 ## Description
 
-Delegate is a type storing a reference to a function — either a **named native function** or an **anonymous lambda** — instead of its returned value. Used to pass functions as arguments to higher-order functions. A delegate referring to a lambda holds the [lambda tree](../../../semantics/parsing.md#lambda-trees) built during parsing.
+Delegate is a type storing a reference to a function — either a **named native function** or an **anonymous lambda** — instead of its returned value. Used to pass functions as arguments to higher-order functions, or stored in a variable and [called](../../../syntax/functions.md#calling-delegates) like a function: `$f(x)`. A delegate referring to a lambda holds the [lambda tree](../../../semantics/parsing.md#lambda-trees) built during parsing.
 
 ## Literal
 
@@ -21,10 +21,13 @@ Defined using a [lambda function expression](../../../syntax/functions.md#lambda
 
 - Follows **pass-by-reference** semantics.
 - Invoking a lambda delegate with a number of arguments different from the number of its parameters results in [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md).
+- A delegate is called with [`CALL`](../functions/CALL.md) or with the call syntax `delegate(arguments)`, e.g. `$f(2)`.
+- Lambda invocations nested in each other are limited to a [depth of 256](../../../semantics/evaluation.md#invocation-depth); a deeper invocation results in [`OPERATION_ERROR`](../errors/OPERATION_ERROR.md).
 
 ## Related functions
 
 - [`ISDEL`](../functions/ISDEL.md)
+- [`CALL`](../functions/CALL.md)
 - [`MAP`](../functions/MAP.md)
 - [`FILTER`](../functions/FILTER.md)
 

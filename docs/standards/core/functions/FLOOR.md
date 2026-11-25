@@ -6,17 +6,18 @@ Arithmetical [**Core**](../README.md) standard function. Rounds the number down 
 
 ### Overload 1
 
-Signature: `FLOOR(number <Number>, precision <Number>)`
+Signature: `FLOOR(number <Number>, precision? <Number>)`
 
 Collection template:
 
 | # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | number | | Number | - | false | false | false |
-| 2 | precision | | Number | - | false | false | false |
+| 2 | precision | | Number | - | false | false | true |
 
 Algorithm:
 
+- If `precision` is omitted, it is `0`: the result is a whole number, e.g. `FLOOR(4.5)` is the same as `FLOOR(4.5, 0)`
 - If `precision` is not a whole number, returns an `OPERATION_ERROR`
 - Returns the greatest number that is less than or equal to `number` and has no more than `precision` decimal places
 - A negative `precision` rounds to tens, hundreds, etc., e.g. `FLOOR(129, -1)` is `120`
@@ -28,6 +29,7 @@ Examples:
 | 4.29 | 1 | 4.2 |
 | 4.8 | 0 | 4 |
 | -4.21 | 1 | -4.3 |
+| 4.7 | (omitted) | 4 |
 
 ## Errors
 
