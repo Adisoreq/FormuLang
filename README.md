@@ -11,8 +11,6 @@
 </p>
 
 [![Version](https://img.shields.io/badge/version-1.1-green)](#project-status)
-[![FormuLang.NET](https://img.shields.io/nuget/v/FormuLang.NET.Core?label=FormuLang.NET&logo=nuget)](https://github.com/Adisoreq/formulang-dotnet)
-[![FormuLang-TS](https://img.shields.io/npm/v/formulang-ts?label=FormuLang-TS&logo=npm)](https://github.com/Adisoreq/formulang-ts)
 [![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](LICENSE.txt)
 
 [**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Implementations**](#implementations) · [**Conformance tests**](tests/README.md) · [**Changelog**](CHANGELOG.md)
