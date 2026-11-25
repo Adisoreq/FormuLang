@@ -32,6 +32,10 @@
     { "id": "core.functions.basics.027", "description": "KEYS keeps the order of definition", "formula": "KEYS({ b: 1, a: 2 })", "expected": { "result": ["b", "a"] } },
     { "id": "core.functions.basics.028", "description": "Reading an unknown context variable", "formula": "$nope + 1", "expected": { "error": { "code": "UNKNOWN_SYMBOL_ERROR" } } },
     { "id": "core.functions.basics.029", "description": "Initial assignment does not override a value", "formula": ["$x = 1", "$x := 2", "$x"], "expected": { "result": 1 } },
-    { "id": "core.functions.basics.030", "description": "Trigonometry and constants", "formula": "[ROUND(SIN(PI / 2), 6), DEG(PI)]", "expected": { "result": [1, 180] } }
+    { "id": "core.functions.basics.030", "description": "Trigonometry and constants", "formula": "[ROUND(SIN(PI / 2), 6), DEG(PI)]", "expected": { "result": [1, 180] } },
+    { "id": "core.functions.basics.031", "description": "IF does not convert a condition that is not a Boolean", "formula": "IF(1, 2, 3)", "expected": { "error": { "code": "ARGUMENT_ERROR" } } },
+    { "id": "core.functions.basics.032", "description": "IF with a condition converted by BOOL", "formula": "IF(BOOL(1), 2, 3)", "expected": { "result": 2 } },
+    { "id": "core.functions.basics.033", "description": "IF that matches no overload returns the leftmost Error argument: the condition", "formula": "IF(ERROR(\"c\"), ERROR(\"a\"), 2)", "expected": { "error": { "code": "CUSTOM_ERROR", "message": "c" } } },
+    { "id": "core.functions.basics.034", "description": "IF that matches no overload returns the leftmost Error argument: a branch", "formula": "IF(1, ERROR(\"a\"), 2)", "expected": { "error": { "code": "CUSTOM_ERROR", "message": "a" } } }
   ]
 }

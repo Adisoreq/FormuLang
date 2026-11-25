@@ -73,7 +73,7 @@ A lambda function has no overloads, so no argument matching is performed. It is 
 
 Once computed, a function's result is written back into the primitive map under its expression key, making it available to any parent expression that depends on it. An **Error** result is stored like any other value; it affects only the expressions that receive it as an argument, according to the [function call](#3-function-call) rule above.
 
-Because the queue is processed bottom-up, **all** arguments of a call are computed before the call itself. The arguments of `IF` that are not selected are therefore computed too: an **Error** they produce is discarded by `IF`, but any side effect (for example, an assignment) is executed anyway.
+Because the queue is processed bottom-up, **all** arguments of a call are computed before the call itself. The arguments of `IF` that are not selected are therefore computed too: an **Error** they produce is discarded by `IF`, but any side effect (for example, an assignment) is executed anyway. An implementation may skip a branch that has no side effects, as long as the result is the same ([`IF`, "Performance"](../standards/core/functions/IF.md#performance)).
 
 ### 5. Sequence result
 

@@ -9,6 +9,17 @@ Main language changes: syntax, semantics, functionality and implementation struc
 </div>
 
 
+## 2026-11-25
+
+The standards do not change: the new note describes an optimization that gives the same results.
+
+### Added
+- [`IF`, "Performance"](./docs/standards/core/functions/IF.md#performance): an implementation may skip the computation of the branch that is not selected when it has no side effects and the result of the formula is the same (a Boolean condition, no procedures, no functions with side effects, no delegates with unknown bodies). [Evaluation](./docs/semantics/evaluation.md#4-result-propagation) links to it.
+- Conformance tests `core.functions.basics.031` - `034`: `IF` with a condition that is not a Boolean.
+
+### Fixed
+- [`IF`, "Errors"](./docs/standards/core/functions/IF.md#errors) described only `ARGUMENT_ERROR` and an **Error** in `condition`. As for every [function call](./docs/semantics/evaluation.md#3-function-call) that matches no overload, a condition that is not a Boolean gives the leftmost **Error** argument, also one in `then` or `else`, and `ARGUMENT_ERROR` only if there is none. The section now says so, with examples; a condition is never converted implicitly (`BOOL` converts it). The behavior of `core-1.0` does not change.
+
 ## 2026-11-23
 
 Preparation of the first release, **1.0**. Standard changes are in the [Core changelog](./docs/standards/core/CHANGELOG.md) (`core-1.0`) and the [Stock changelog](./docs/standards/stock/CHANGELOG.md) (`stock-1.0`).

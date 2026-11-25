@@ -36,9 +36,28 @@ Examples:
 >
 > All arguments are computed before `IF` is called, so side effects in both branches (for example, assignments) are executed regardless of the condition. Use `IF` only to select a value.
 
+## Performance
+
+The branch that is not selected is computed only for its side effects: its value, even an **Error**, is discarded. A formula executed once per iteration often computes a costly value in one branch and uses it only once, e.g. the first value of an indicator: `IF(ISNULL(PREV), AVG(RANGE(SOURCE, 0, I)), PREV + ...)`. Computing both branches in every iteration does the costly work every time.
+
+An implementation **may** therefore skip the computation of the branch that is not selected, as long as the result of the formula and every side effect are the same as when both branches are computed. In practice, this holds when:
+
+- `condition` is a **Boolean**. For any other value, `IF` matches no overload and the [function call](../../../semantics/evaluation.md#3-function-call) rules may return an **Error** from one of the branches, so both branches are needed;
+- the branch has no side effects: it calls no procedure (`SET`, `INIT`, `COND_SET`, also through the operators `=`, `:=` and `?=`), no function that changes the context, the environment or the host application, and no **Delegate** whose body is not known when the branch is skipped (e.g. a lambda stored in a variable and passed to `MAP`);
+- skipping the branch, or computing the selected one in another order than the [parsing queue](../../../semantics/parsing.md#1-parsing-queue), cannot change a value read by another part of the formula. For example, an implementation can apply it only to sequences, or values of assignments, without side effects.
+
+The functions of the Core and Stock standards have no side effects. Functions added by the host application may have them (e.g. a function that records diagnostics), so an implementation treats them as functions with side effects unless the host application states otherwise.
+
 ## Errors
 
-- [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) - `condition` is not a **Boolean**. If `condition` is an **Error**, that **Error** is returned instead.
+- [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) - `condition` is not a **Boolean** (there is no implicit conversion; use [`BOOL`](BOOL.md) to convert a value). If one of the arguments is an **Error**, the leftmost **Error** argument is returned instead, as for every [function call](../../../semantics/evaluation.md#3-function-call) that matches no overload: the **Error** in `condition`, or else an **Error** in `then` or `else`.
+
+| Formula | Result |
+| :------ | :----- |
+| `IF(1, 2, 3)` | `[ARGUMENT_ERROR (6)] ...` |
+| `IF(BOOL(1), 2, 3)` | `2` |
+| `IF(ERROR("c"), ERROR("a"), 2)` | `[CUSTOM_ERROR (1)] c` |
+| `IF(1, ERROR("a"), 2)` | `[CUSTOM_ERROR (1)] a` |
 
 
 ## Reference
