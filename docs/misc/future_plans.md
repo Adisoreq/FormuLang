@@ -123,12 +123,6 @@ Result:
 
 Provides calculations with new types: Vector, Matrix.
 
-## Future Implementations
+## Implementations
 
-### 1. FormuLang.NET
-
-NuGet library for C# .NET 8.0+
-
-### 2. formulang
-
-npm library for JavaScript and TypeScript solutions
+Done: the standard is implemented by [FormuLang.NET](https://github.com/Adisoreq/formulang-dotnet) (NuGet, C# .NET 8.0+) and [FormuLang-TS](https://github.com/Adisoreq/formulang-ts) (npm `formulang-ts`, TypeScript and JavaScript). See [Implementations](../../README.md#implementations).

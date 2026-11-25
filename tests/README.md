@@ -1,6 +1,6 @@
 # FormuLang conformance tests
 
-Language-independent tests of the **FormuLang** standards. Each test is data, not code: a formula, the context and environment it runs in, and the expected result. Every implementation (e.g. FormuLang.NET, the npm `formulang` package) can read these files with a small test runner of its own and check that it follows the specification.
+Language-independent tests of the **FormuLang** standards. Each test is data, not code: a formula, the context and environment it runs in, and the expected result. Every implementation (e.g. [FormuLang.NET](https://github.com/Adisoreq/formulang-dotnet) or the npm package [`formulang-ts`](https://github.com/Adisoreq/formulang-ts)) can read these files with a small test runner of its own and check that it follows the specification.
 
 An implementation **conforms** to a standard (e.g. `core-1.0`) if it passes every case whose required standards it supports.
 

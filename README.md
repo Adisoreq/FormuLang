@@ -10,10 +10,12 @@
     Mathematical, formula-based scripting language for managed, real-time mathematical operations.
 </p>
 
-[![Version](https://img.shields.io/badge/version-1.0-green)](#project-status)
+[![Version](https://img.shields.io/badge/version-1.1-green)](#project-status)
+[![FormuLang.NET](https://img.shields.io/nuget/v/FormuLang.NET.Core?label=FormuLang.NET&logo=nuget)](https://github.com/Adisoreq/formulang-dotnet)
+[![FormuLang-TS](https://img.shields.io/npm/v/formulang-ts?label=FormuLang-TS&logo=npm)](https://github.com/Adisoreq/formulang-ts)
 [![License](https://img.shields.io/badge/license-CC%20BY%204.0-blue.svg)](LICENSE.txt)
 
-[**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Conformance tests**](tests/README.md) · [**Changelog**](CHANGELOG.md)
+[**Documentation**](docs/README.md) · [**Examples**](docs/standards/core/examples/common_formulas.md) · [**Implementations**](#implementations) · [**Conformance tests**](tests/README.md) · [**Changelog**](CHANGELOG.md)
 
 </div>
 
@@ -37,6 +39,32 @@ FormuLang is a language standard for parsers and interpreters that calculate the
 A formula goes through these stages: **validation** → **clean-up** → **tokenization** → **parsing** → **evaluation** → **finalization**. The result is a single value.
 
 The technical documentation is in the [docs](docs) directory.
+
+
+## Implementations
+
+FormuLang is ready to use: two libraries implement the standard and pass all of its [conformance tests](tests/README.md). Both give identical results for the same formula.
+
+<table>
+  <tr>
+    <th width="50%"><a href="https://github.com/Adisoreq/formulang-dotnet">FormuLang.NET</a></th>
+    <th width="50%"><a href="https://github.com/Adisoreq/formulang-ts">FormuLang-TS</a></th>
+  </tr>
+  <tr>
+    <td>C# library for .NET 8.0 or newer. The reference implementation of the standard.</td>
+    <td>TypeScript and JavaScript library for Node.js 20 or newer and the browser.</td>
+  </tr>
+  <tr>
+    <td><pre lang="bash">dotnet add package FormuLang.NET.Core</pre></td>
+    <td><pre lang="bash">npm install formulang-ts</pre></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://adisoreq.github.io/formulang-dotnet/"><img src="https://img.shields.io/badge/%E2%96%B6-Web%20Preview-512BD4?style=for-the-badge&labelColor=2E1A87" alt="FormuLang.NET Web Preview" /></a></td>
+    <td align="center"><a href="https://adisoreq.github.io/formulang-ts/"><img src="https://img.shields.io/badge/%E2%96%B6-Web%20Preview-3178c6?style=for-the-badge&labelColor=1e4f8a" alt="FormuLang-TS Web Preview" /></a></td>
+  </tr>
+</table>
+
+Both libraries support the **Core** and **Stock** standards. To write an implementation for another language, follow the [documentation](docs/README.md) and run the [conformance tests](tests/README.md): an implementation **conforms** to a standard if it passes every test case that requires only the standards it supports.
 
 
 ## Syntax
@@ -117,7 +145,7 @@ $result
 
 ## Project Status
 
-Current version: **1.0** - Core standard `core-1.0`, Stock standard `stock-1.0`.
+Current version: **1.1** - Core standard `core-1.1`, Stock standard `stock-1.1`.
 
 The specification is stable: changes within the `1.x` versions are backward compatible.
 
@@ -125,7 +153,7 @@ The specification is stable: changes within the `1.x` versions are backward comp
 - [x] **Core semantic specification**
 - [x] **Extension standards specification** (Stock)
 - [x] **Conformance tests**
-- [ ] **Reference implementations** (FormuLang.NET, npm `formulang`)
+- [x] **Implementations** ([FormuLang.NET](https://github.com/Adisoreq/formulang-dotnet), [FormuLang-TS](https://github.com/Adisoreq/formulang-ts))
 
 
 ## Trivia

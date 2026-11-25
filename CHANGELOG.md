@@ -20,6 +20,7 @@ New versions of the standards: Core `1.1` ([Core changelog](./docs/standards/cor
 - Conformance tests `core.functions.basics.031` - `034`: `IF` with a condition that is not a Boolean.
 
 ### Changed
+- `README.md`: an [Implementations](./README.md#implementations) section with FormuLang.NET and FormuLang-TS (packages, installation, web previews); the version is `1.1` and the implementations are done. [Future plans](./docs/misc/future_plans.md) and the [conformance tests](./tests/README.md) link to the libraries; the npm package is `formulang-ts`.
 - The documentation refers to `core-1.1` and `stock-1.1`: the [standards](./docs/standards/README.md) list, [Environment](./docs/core/environment.md), [Future plans](./docs/misc/future_plans.md) and the Core and Stock READMEs.
 
 ### Fixed
