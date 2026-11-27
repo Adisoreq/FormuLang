@@ -188,7 +188,7 @@
       "enum": ["UNUSED_VALUE", "CONTINUED_LINE", "METADATA_TYPE", "METADATA_CONTEXT"]
     },
     "expected": {
-      "description": "Exactly one of: result, results, error, errors, metadata, warnings.",
+      "description": "Exactly one of: result, results, error, errors, metadata, warnings, definition, invalid, parameters, problems, outputs, matches, signals.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -220,6 +220,70 @@
           "description": "core-1.2: the preparation succeeds and gives exactly these warnings (codes), in the order of their positions. An empty array means no warnings.",
           "type": "array",
           "items": { "$ref": "#/definitions/warning" }
+        },
+        "definition": {
+          "description": "Formula models: the formula is a valid definition with these properties (parameters, outputs and checks as their keys, null for none).",
+          "type": "object",
+          "required": ["kind", "id", "name", "category", "parameters", "outputs", "checks"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "enum": ["Indicator", "Pattern", "Strategy"] },
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "category": { "type": ["string", "null"] },
+            "parameters": { "type": "array", "items": { "type": "string" } },
+            "outputs": { "type": ["array", "null"], "items": { "type": "string" } },
+            "checks": { "type": ["array", "null"], "items": { "type": "string" } }
+          }
+        },
+        "invalid": {
+          "description": "Formula models: the formula is not a valid definition, for this reason.",
+          "enum": ["ERROR", "METADATA_TYPE", "ID", "CONTEXT"]
+        },
+        "parameters": {
+          "description": "Formula models: the normalization of `given` gives this Object.",
+          "type": "object"
+        },
+        "problems": {
+          "description": "Formula models: the normalization of `given` gives exactly these problems, in order.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["key", "code"],
+            "additionalProperties": false,
+            "properties": {
+              "key": { "type": "string" },
+              "code": { "enum": ["UNKNOWN", "MISSING", "TYPE", "MIN", "MAX", "OPTION"] }
+            }
+          }
+        },
+        "outputs": {
+          "description": "Formula models: the run of an indicator instance gives these outputs (the order of the keys is checked).",
+          "type": "object",
+          "additionalProperties": { "type": "array" }
+        },
+        "matches": {
+          "description": "Formula models: the run of a pattern instance gives this series.",
+          "type": "array",
+          "items": { "type": "boolean" }
+        },
+        "signals": {
+          "description": "Formula models: the run of a strategy instance gives these signals. A missing reason or checks means none, a missing extra means { }.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "time", "signal"],
+            "additionalProperties": false,
+            "properties": {
+              "index": { "type": "integer", "minimum": 0 },
+              "time": { "type": ["number", "null"] },
+              "signal": { "type": "number", "minimum": -1, "maximum": 1 },
+              "reason": { "type": "string" },
+              "checks": { "type": "object", "additionalProperties": { "type": "boolean" } },
+              "extra": { "type": "object" }
+            }
+          }
         }
       }
     },
@@ -246,6 +310,10 @@
         "environment": { "$ref": "#/definitions/environment" },
         "registry": { "$ref": "#/definitions/registry" },
         "formula": { "$ref": "#/definitions/formula" },
+        "given": {
+          "description": "Formula models: the parameter values given by the host application, for parameters, problems and the runs ({ } by default).",
+          "type": "object"
+        },
         "expected": { "$ref": "#/definitions/expected" }
       }
     }

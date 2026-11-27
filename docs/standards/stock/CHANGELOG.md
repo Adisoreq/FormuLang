@@ -20,6 +20,7 @@ Identifier: `stock-1.2`. Requires `core-1.2+`. Backward compatible with `1.1`: f
 
 ### Changed
 - The key of the [stored series of `LOAD_INDICATOR`](functions/LOAD_INDICATOR.md#performance) includes the timeframe; `output` and `align` are not a part of it. An implementation may compute a registry definition by other means than its formula when the result is the same.
+- The identifier of a [registry definition](README.md#2-formula-registry) follows the rule of the `id` of the metadata: it may contain `-` (e.g. `"macd-ema200"`), because it is always a **Text**, never an identifier token.
 - The version is `1.2` (identifier `stock-1.2`), and it requires `core-1.2+` (metadata, memory, short circuit of `&&` and `||`).
 
 ## 1.1

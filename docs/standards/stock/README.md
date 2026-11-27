@@ -182,7 +182,7 @@ Every definition contains:
 
 | Element | Description |
 | :------ | :---------- |
-| **Identifier** | **Text** used to load the definition, e.g. `"SMA"` or `"ENGULFING"`. It follows the [identifier naming restrictions](../../syntax/naming.md#naming-restrictions), and is unique within its part of the registry (an indicator and a pattern may have the same identifier). |
+| **Identifier** | **Text** used to load the definition, e.g. `"SMA"`, `"ENGULFING"` or `"macd-ema200"`: letters, digits, `_` and `-`, starting with a letter or `_`, like the `id` of the [metadata](../core/README.md#metadata). It is always written as a **Text** literal (`LOAD_INDICATOR("macd-ema200")`), never as an identifier token, so it may contain `-`. It is unique within its part of the registry (an indicator and a pattern may have the same identifier). |
 | **Formula** | Formula executed in the context of its part. |
 | **Parameters** | Names of the parameters with their default values, e.g. `period` = `14`. May be empty. |
 

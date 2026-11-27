@@ -9,6 +9,11 @@ Main language changes: syntax, semantics, functionality and implementation struc
 </div>
 
 
+## 2026-11-27 (formula models)
+
+### Added
+- [Formula models](./docs/implementation/formula_models.md): definitions of indicators, patterns and strategies read from the metadata, parameter specifications with one normalization algorithm and its problems, instances, runs and live runs, given by the implementations to host applications. They are implementation structures, not a part of the language, so the versions of the standards do not change. Conformance tests: [tests/stock/models.json](./tests/stock/models.json), with the new outcomes `definition`, `invalid`, `parameters`, `problems`, `outputs`, `matches` and `signals` and the case key `given`.
+
 ## 2026-11-27
 
 New versions of the standards: Core `1.2` ([Core changelog](./docs/standards/core/CHANGELOG.md)) and Stock `1.2` ([Stock changelog](./docs/standards/stock/CHANGELOG.md)), both backward compatible. They are specified; the implementations follow. The design is in [Proposals for the 1.2 standards](./docs/misc/proposals.md).

@@ -43,6 +43,7 @@ Every file is a JSON object:
 | `environment` | no | Changes to the initial environment. |
 | `registry` | no | Formula registry (Stock). |
 | `formula` | yes | The formula: a text, or an array of lines joined with a new line (`\n`). |
+| `given` | no | [Formula models](../docs/implementation/formula_models.md): the parameter values given by the host application (default `{ }`). |
 | `expected` | yes | The expected outcome (see below). |
 
 A `context`, `environment` or `registry` given in a case **replaces** the one from `defaults` entirely; the two are not merged.
@@ -89,6 +90,18 @@ If `NOW` is not given, the runner sets it to `0`, so that the tests are determin
 | `errors` | The [validation](../docs/semantics/validation.md) returns exactly these errors, in this order. |
 | `metadata` | Since `core-1.2`: the [metadata reading](../docs/core/metadata.md#metadata-reading) gives this Object (`{ }` for a formula without a metadata block). The formula is not evaluated. |
 | `warnings` | Since `core-1.2`: the preparation gives exactly these [warning](../docs/standards/core/semantics/warnings.md) codes, in the order of their positions (`[]` for none). The formula is not evaluated. |
+
+The [formula models](../docs/implementation/formula_models.md) of the Stock standard have their own outcomes ([tests/stock/models.json](stock/models.json)); the formula is read as a definition:
+
+| Key | Meaning |
+| :-- | :------ |
+| `definition` | The formula is a valid definition: `{ kind, id, name, category, parameters, outputs, checks }`, with the keys of the parameters, outputs and checks (`null` for none). |
+| `invalid` | The formula is not a valid definition, for this reason (`ERROR`, `METADATA_TYPE`, `ID`, `CONTEXT`). |
+| `parameters` | The normalization of `given` gives this Object. |
+| `problems` | The normalization of `given` gives exactly these problems (`{ key, code }`), in order. |
+| `outputs` | An instance with `given` run over the candles of the `context` gives these outputs; the order of the keys is checked. |
+| `matches` | The same for a pattern: its series. |
+| `signals` | The same for a strategy: its signals `{ index, time, signal, reason?, checks?, extra? }`. A missing `reason` or `checks` means none, a missing `extra` means `{ }`. |
 
 For `results`, the runner executes **all** iterations or frames, even after an iteration results in an **Error**.
 
