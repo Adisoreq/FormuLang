@@ -2,6 +2,29 @@
 
 Changes of the [**Core**](README.md) standard. Changes of the language itself (syntax, semantics, implementation structures) are in the [main changelog](../../../CHANGELOG.md).
 
+## 1.2
+
+Identifier: `core-1.2`. Backward compatible with `1.1`: every formula valid in `1.1` gives the same result; only formulas whose result was an **Error** in `1.1` can give a value now. The design and the motivation of the changes are in [Proposals for the 1.2 standards](../../misc/proposals.md).
+
+### Added
+- [Metadata](../../core/metadata.md): a formula may start with a metadata block `<@ { ... } @>`, one Object literal of constant values, read by the new [metadata reading](../../core/metadata.md#metadata-reading) step and removed before the evaluation. The [Core metadata keys](README.md#metadata) are `id`, `name`, `description`, `author`, `version`, `context`, `result`, `requires` and `parameters` (with parameter descriptions: `type`, `default`, `name`, `description`, `min`, `max`, `options`). Every extension standard owns one top-level key (its name in lowercase), host applications use `x`, and unknown keys are kept and ignored. `<@` at the beginning of a formula was a `SYNTAX_ERROR` in `1.1`; elsewhere it is still `<` followed by an environment variable.
+- [Execution modes](../../semantics/execution.md#execution-modes): the preparation (validation, metadata reading, clean-up, tokenization, parsing) gives a **prepared formula**, which a **hot execution** evaluates again without preparing it; a **cold execution** is the full pipeline. A hot execution gives the same result as a cold one.
+- The context constant `HISTORY` of the [Iteration Context](../../core/context.md#2-iteration-context): the results of all the previous iterations.
+- The [memory](../../core/context.md#memory) of the Iteration and Time Contexts, with the procedures [`STORE(key, value)`](procedures/STORE.md) and [`CLEAR(key)` / `CLEAR()`](procedures/CLEAR.md) and the function [`RECALL(key, fallback)`](functions/RECALL.md). `RECALL` reads the memory as it was at the start of the iteration; writes are applied after the iteration, only if they were executed in the selected branch of `IF` or in a deciding argument of `AND` / `OR`, and only if the iteration did not result in an **Error**.
+- [Resumed iterations](../../core/context.md#resumed-iterations): a host application may keep `PREV`, `HISTORY` and the memory and continue the iterations on a longer collection, with the same results as executing all of them again.
+- The overloads `AND(...values)` and `OR(...values)` with more than two arguments.
+- [Warnings](semantics/warnings.md): `UNUSED_VALUE`, `CONTINUED_LINE`, `METADATA_TYPE` and `METADATA_CONTEXT`. They never change a result. A sequence that starts with a binary operator (e.g. `&&` at the beginning of a line) stays a `SYNTAX_ERROR` with a message that explains that a new line ends the previous sequence.
+
+### Changed
+- [`AND`](functions/AND.md#short-circuit) and [`OR`](functions/OR.md#short-circuit) short-circuit: the first `false` (`AND`) or `true` (`OR`) decides the result, and an **Error** or a value that is not a **Boolean** in a later argument is discarded: `false && ERROR("x")` is `false`. An **Error** before the deciding argument is still returned. An implementation may skip the computation of the later arguments, as for the branch of [`IF`](functions/IF.md#performance) that is not selected.
+- [`IF`](functions/IF.md): the writes to the memory in the branch that is not selected are discarded, and `STORE` and `CLEAR` do not prevent skipping that branch.
+- The [execution steps](../../semantics/execution.md#execution-steps) have the metadata reading as step 2; clean-up, tokenization, parsing, evaluation and finalization are steps 3 - 7.
+- The version is `1.2` (identifier `core-1.2`). The `STANDARDS` constant contains `core-1.0`, `core-1.1` and `core-1.2`.
+
+### Planned for 2.0
+- Lazy `IF`, `AND`, `OR`, `&&` and `||`, which do not compute the branch or the arguments that are not needed, assignments included.
+- `MAX([])`, `MIN([])`, `AVG([])` and `MEDIAN([])` give `null` instead of an `OPERATION_ERROR`.
+
 ## 1.1
 
 Identifier: `core-1.1`. Backward compatible with `1.0`: every formula valid in `1.0` gives the same result; only formulas that were a `SYNTAX_ERROR` or an `ARGUMENT_ERROR` in `1.0` can give a value now.

@@ -7,6 +7,11 @@ While context and environment are application-restricted elements, editing the f
 Single formula may be split into sequences using `[New line]` and `;` symbols.
 
 
+## Metadata
+
+A formula may start with a [metadata block](metadata.md) `<@ { ... } @>`: an Object literal with information about the formula (identifier, description, parameters) that the host application reads without executing the formula. The block is not a sequence and does not take part in the evaluation.
+
+
 ## Formula sequences
 
 A **sequence** is one top-level expression in a formula. A new line (`\n`) or semicolon (`;`) ends the current sequence and starts the next one. These separators divide the formula; they are not operators within an expression. A separator inside a nested expression or literal does not end the surrounding sequence.
@@ -63,5 +68,6 @@ MUL($r, $two_pi)
 ## Reference
 
 - [Context](./context.md)
+- [Metadata](./metadata.md)
 - [Environment](./environment.md)
 - [Execution](../semantics/execution.md)

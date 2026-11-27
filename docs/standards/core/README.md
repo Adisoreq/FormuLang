@@ -7,13 +7,13 @@
 
 **Name**: `Core`
 
-**Latest version**: `1.1`
+**Latest version**: `1.2`
 
-**Identifier**: `core-1.1`
+**Identifier**: `core-1.2`
 
 **Description**: Elementary standard defining core **FormuLang** concepts and structures. Basis of every other extension.
 
-The Core [validation](semantics/validation.md) and [parsing](semantics/parsing.md) algorithms define how formulas are validated and parsed.
+The Core [validation](semantics/validation.md) and [parsing](semantics/parsing.md) algorithms define how formulas are validated and parsed. The [warnings](semantics/warnings.md) point out formulas that are valid but probably wrong.
 
 Changes between versions: [Core changelog](CHANGELOG.md).
 
@@ -26,7 +26,7 @@ The **Core** standard defines three [context types](../../core/context.md#contex
 | Context type | Base type | Context constants | Expected result |
 | :----------- | :-------- | :---------------- | :-------------- |
 | [Default Context](../../core/context.md#1-default-context) | - | none | any value |
-| [Iteration Context](../../core/context.md#2-iteration-context) | Default Context | `I`, `N`, `PREV` | any value |
+| [Iteration Context](../../core/context.md#2-iteration-context) | Default Context | `I`, `N`, `PREV`, `HISTORY` | any value |
 | [Time Context](../../core/context.md#3-time-context) | Default Context | `TIME_S`, `TIME_MS`, `DTIME_S`, `DTIME_MS`, `FRAME`, `PREV` | any value |
 
 ### 2. Context constants
@@ -36,6 +36,7 @@ The **Core** standard defines three [context types](../../core/context.md#contex
 | `I` | Iteration Context | `Number` | Index of the current iteration. Follows `@array_indexing`: the first iteration is `@array_indexing`. |
 | `N` | Iteration Context | `Number` | Number of iterations. Does not depend on `@array_indexing`. |
 | `PREV` | Iteration Context | `Any` | Result of the previous iteration, `null` in the first iteration. |
+| `HISTORY` | Iteration Context | `Array` | Results of all the previous iterations, from the first one; empty in the first iteration (since `core-1.2`). |
 | `TIME_S` | Time Context | `Number` | Total time from the first frame to the current frame, in seconds. |
 | `TIME_MS` | Time Context | `Number` | Total time from the first frame to the current frame, in milliseconds. |
 | `DTIME_S` | Time Context | `Number` | Delta (frame) time, in seconds. `0` in the first frame. |
@@ -47,13 +48,48 @@ The **Core** standard defines three [context types](../../core/context.md#contex
 
 All context variables are defined by user.
 
+### 4. Memory
+
+The Iteration Context and the Time Context have a [memory](../../core/context.md#memory) (since `core-1.2`): a map from **Text** keys to values that keeps a state between iterations, used with [`STORE`](procedures/STORE.md), [`RECALL`](functions/RECALL.md) and [`CLEAR`](procedures/CLEAR.md). Writes are visible from the next iteration.
+
+
+## Metadata
+
+Keys of the [metadata block](../../core/metadata.md) defined by the **Core** standard (since `core-1.2`). All of them are optional. Extension standards add one top-level key each (e.g. `stock`), and host applications use `x`.
+
+| Key | Type | Description |
+| :-- | :--: | :---------- |
+| `id` | `Text` | Identifier of the formula, e.g. in a registry. Letters, digits, `_` and `-`, starting with a letter or `_` (e.g. `"macd-ema200"`). |
+| `name` | `Text` | Name for the user. |
+| `description` | `Text` | Description for the user. |
+| `author` | `Text` | Author of the formula. |
+| `version` | `Text` | Version of the formula (not of a standard), e.g. `"1.0.0"`. |
+| `context` | `Text` | Name of the context type the formula is written for: `"Default"`, `"Iteration"`, `"Time"`, or a type of an extension standard, prefixed with the name of the standard (e.g. `"Stock.Indicator"`). |
+| `result` | `Text` or `Array` of `Text` | Base or extended type (or types) of the expected result, e.g. `"Number"`, `["Number", "Object"]`, `"Stock.Candle"`. |
+| `requires` | `Text` or `Array` of `Text` | Standards required by the formula, with the syntax of [`REQUIRE`](procedures/REQUIRE.md). It is informational and does not replace `REQUIRE`. |
+| `parameters` | `Object` | Parameters of the formula: a key for every parameter, with a **parameter description** as its value. |
+
+A **parameter description** is an **Object** with these optional keys:
+
+| Key | Type | Description |
+| :-- | :--: | :---------- |
+| `type` | `Text` | Base or extended type of the parameter, e.g. `"Number"`, `"Text"`, `"Boolean"`. |
+| `default` | any | Default value. |
+| `name` | `Text` | Name for the user. |
+| `description` | `Text` | Description for the user. |
+| `min` | `Number` | Lowest allowed value of a **Number** parameter. |
+| `max` | `Number` | Highest allowed value of a **Number** parameter. |
+| `options` | `Array` | Allowed values. |
+
+The metadata only describes the parameters; how a host application provides them (e.g. the `PARAMETERS` constant of a **Stock** context) is defined by the context type. A value of a wrong type in a known key is a [warning](semantics/warnings.md).
+
 ## Environment structure
 
 ### 1. Environment constants
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | `[ "core-1.0", "core-1.1" ]` | Stores the array of supported standards' identifiers. A version that is backward compatible with earlier versions of the same major version lists them too, so a formula with `REQUIRE "core-1.0"` keeps working. |
+| `STANDARDS` | `Array` | `[ "core-1.0", "core-1.1", "core-1.2" ]` | Stores the array of supported standards' identifiers. A version that is backward compatible with earlier versions of the same major version lists them too, so a formula with `REQUIRE "core-1.0"` keeps working. |
 | `E` | `Number` | `2.718281828459045` | Euler's number. Used in calculus, compound interest, and exponential growth calculations. |
 | `PI` | `Number` | `3.141592653589793` | Ratio of a circle's circumference to its diameter. Used in geometry and trigonometry. |
 | `PHI` | `Number` | `1.618033988749894` | Golden ratio. |
@@ -93,6 +129,8 @@ Procedures are part of the **Core** standard. They operate on context or environ
 | [`INIT`](procedures/INIT.md) | Context, Environment | Initializes a variable only if it does not exist yet or has no value. | `INIT $result 100` | `$result := 100` |
 | [`COND_SET`](procedures/COND_SET.md) | Context, Environment | Overrides a variable only if it already exists. | `COND_SET $result 100` | `$result ?= 100` |
 | [`REQUIRE`](procedures/REQUIRE.md) | Environment | Ensures that the environment supports the requested standard. | `REQUIRE "core-1+"` | |
+| [`STORE`](procedures/STORE.md) | Memory | Writes a value to the memory of the context, visible from the next iteration. | `STORE "sum" $sum` | |
+| [`CLEAR`](procedures/CLEAR.md) | Memory | Removes a key, or every key, from the memory of the context. | `CLEAR "sum"` | |
 
 
 ## Built-in Functions
@@ -129,8 +167,8 @@ Functions that evaluate conditions and return **Boolean** values.
 
 | Function | Operator | Description | Parameter Type | Return Type |
 | :------- | :------: | :---------- | :------------- | :---------: |
-| `AND(a, b)` | `&&` | Checks if both arguments are true. | `Boolean`, `Boolean` | `Boolean` |
-| `OR(a, b)` | `\|\|` | Checks if at least one argument is true. | `Boolean`, `Boolean` | `Boolean` |
+| `AND(a, b, ...)` | `&&` | Checks if all the arguments are true. Stops at the first `false`. | `Boolean`, `Boolean`, ... | `Boolean` |
+| `OR(a, b, ...)` | `\|\|` | Checks if at least one argument is true. Stops at the first `true`. | `Boolean`, `Boolean`, ... | `Boolean` |
 | `XOR(a, b)` | | Checks if only one argument is true. | `Boolean`, `Boolean` | `Boolean` |
 | `NOT(val)` | `!` | Inverts the boolean value. | `Boolean` | `Boolean` |
 | `EQU(a, b)` | `==` | Checks if values are identical. | `Any`, `Any` | `Boolean` |
@@ -148,6 +186,7 @@ Functions used for conditional logic and error handling.
 | :--- | :--- | :--- |
 | `IF(condition, then, else)` | Returns `then` value if condition is `TRUE`, otherwise `else`. | `IF($x > 10, "High", "Low")` |
 | `ERROR(message)` | Returns an error with a custom message. The error aborts the execution if it reaches the root of a sequence. | `ERROR("Invalid input")` |
+| `RECALL(key, fallback)` | Returns the value stored in the [memory](../../core/context.md#memory) of the context under the key, or `fallback` (`null` by default). | `RECALL("sum", 0)` |
 
 ### 4. Text Functions
 

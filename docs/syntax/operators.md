@@ -17,6 +17,7 @@ These markers operate before or at the boundary of a formula sequence; they are 
 | Line boundary | `[New line]` (`\n`) | Ends the current line and its sequence. | `$x = 1`<br/>`$y = 2` |
 | Line comment | `#` | Ignores the marker and all text to its right on the same line. A newline ends the comment. Inside a text literal `#` is an ordinary character. | `$x = 1 # note` |
 | Scoped comment | `<#` … `#>` | Ignores all text from `<#` up to and including the first following `#>`. The comment may span multiple lines and cannot be nested. Inside a text literal or a line comment, `<#` and `#>` are ordinary characters. | `$b = <# note #> 24` |
+| Metadata block | `<@` … `@>` | Contains one Object literal of constant values with the [metadata](../core/metadata.md) of the formula. Recognized only as the first element of the formula (after white space and comments); elsewhere `<@` is `<` followed by an environment variable. Removed before the evaluation (since `core-1.2`). | `<@ { id: "sma" } @>` |
 
 Scoped comment rules:
 

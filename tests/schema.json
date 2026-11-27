@@ -110,8 +110,34 @@
           "items": { "$ref": "#/definitions/candle" }
         },
         "parameters": {
-          "description": "Indicator and Pattern: the PARAMETERS constant.",
+          "description": "Indicator, Pattern and Strategy (stock-1.2): the PARAMETERS constant. A Strategy without it has PARAMETERS = { }.",
           "type": "object"
+        },
+        "timeframe": {
+          "description": "Stock contexts (stock-1.2): the TIMEFRAME constant (null when omitted).",
+          "type": "string"
+        },
+        "timeframe_length": {
+          "description": "Stock contexts (stock-1.2): the length of the main timeframe in milliseconds, needed with timeframes.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "instrument": {
+          "description": "Stock contexts (stock-1.2): the INSTRUMENT constant (null when omitted).",
+          "type": "string"
+        },
+        "timeframes": {
+          "description": "Stock contexts (stock-1.2): the candles of other timeframes provided by the host application, by name. A timeframe that is not listed is not provided.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["length", "candles"],
+            "additionalProperties": false,
+            "properties": {
+              "length": { "description": "Length of a candle of the timeframe in milliseconds.", "type": "integer", "minimum": 1 },
+              "candles": { "type": "array", "items": { "$ref": "#/definitions/candle" } }
+            }
+          }
         },
         "source": {
           "description": "Indicator: the SOURCE constant (CLOSE when omitted).",
@@ -157,8 +183,12 @@
         "patterns": { "type": "array", "items": { "$ref": "#/definitions/definition" } }
       }
     },
+    "warning": {
+      "type": "string",
+      "enum": ["UNUSED_VALUE", "CONTINUED_LINE", "METADATA_TYPE", "METADATA_CONTEXT"]
+    },
     "expected": {
-      "description": "Exactly one of: result, results, error, errors.",
+      "description": "Exactly one of: result, results, error, errors, metadata, warnings.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -181,6 +211,15 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/definitions/error" }
+        },
+        "metadata": {
+          "description": "core-1.2: the metadata reading succeeds and gives this Object ({ } without a metadata block).",
+          "type": "object"
+        },
+        "warnings": {
+          "description": "core-1.2: the preparation succeeds and gives exactly these warnings (codes), in the order of their positions. An empty array means no warnings.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/warning" }
         }
       }
     },

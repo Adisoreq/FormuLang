@@ -2,6 +2,8 @@
 
 Plans for enhancements in the future
 
+Concrete proposals for the next versions of the standards (Core 1.2, Stock 1.2), with drafts of the specification, and the changes kept for 2.0, are in [Proposals for the 1.2 standards](proposals.md).
+
 ## Future Extensions
 
 ### 1. Stock Extension

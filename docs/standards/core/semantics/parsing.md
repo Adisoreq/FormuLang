@@ -224,6 +224,8 @@ The process stops with a **syntax error** when:
 - an object key is neither an identifier nor a `Text` literal, or its text doesn't match the identifier pattern;
 - an object literal contains the same key more than once.
 
+Since `core-1.2`, the message of the error for a sequence that starts with a binary operator (e.g. `&&` at the beginning of a line) says that a new line ends the previous sequence; see [Messages of the parsing errors](warnings.md#messages-of-the-parsing-errors).
+
 
 ## Example
 

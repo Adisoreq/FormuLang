@@ -9,6 +9,21 @@ Main language changes: syntax, semantics, functionality and implementation struc
 </div>
 
 
+## 2026-11-27
+
+New versions of the standards: Core `1.2` ([Core changelog](./docs/standards/core/CHANGELOG.md)) and Stock `1.2` ([Stock changelog](./docs/standards/stock/CHANGELOG.md)), both backward compatible. They are specified; the implementations follow. The design is in [Proposals for the 1.2 standards](./docs/misc/proposals.md).
+
+### Added
+- [Metadata](./docs/core/metadata.md): the metadata block `<@ { ... } @>` at the beginning of a formula, in [Operators](./docs/syntax/operators.md#1-formula-and-line-structure) and [Formula](./docs/core/formula.md#metadata), and the new step [metadata reading](./docs/core/metadata.md#metadata-reading) of the [execution](./docs/semantics/execution.md).
+- [Execution modes](./docs/semantics/execution.md#execution-modes): preparation and evaluation, cold and hot execution, prepared formulas.
+- [Memory](./docs/core/context.md#memory), `HISTORY` and [resumed iterations](./docs/core/context.md#resumed-iterations) in [Context](./docs/core/context.md).
+- [Warnings](./docs/semantics/validation.md#warnings) in Validation, defined by [Core Warnings](./docs/standards/core/semantics/warnings.md).
+
+### Changed
+- The [execution steps](./docs/semantics/execution.md#execution-steps) are numbered 1 - 7: the metadata reading is step 2. [Clean-up](./docs/semantics/cleanup.md), [Tokenization](./docs/semantics/tokenization.md), [Parsing](./docs/semantics/parsing.md) and [Evaluation](./docs/semantics/evaluation.md) give their new step numbers.
+- [Proposals for the 1.2 standards](./docs/misc/proposals.md) describe the whole design of `1.2`, the changes kept for `2.0` and what stays in the host application.
+- The [standards](./docs/standards/README.md) list, [Environment](./docs/core/environment.md) and `README.md` refer to `core-1.2` and `stock-1.2`.
+
 ## 2026-11-25
 
 New versions of the standards: Core `1.1` ([Core changelog](./docs/standards/core/CHANGELOG.md)) and Stock `1.1` ([Stock changelog](./docs/standards/stock/CHANGELOG.md)), both backward compatible.

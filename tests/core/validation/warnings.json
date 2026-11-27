@@ -1,0 +1,17 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Core 1.2: warnings of the preparation. They never change the result.",
+  "standards": ["core-1.2"],
+  "cases": [
+    {"id": "core.validation.warnings.001", "description": "A value that is not used", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "$a + 1", "$a"], "expected": {"warnings": ["UNUSED_VALUE"]}},
+    {"id": "core.validation.warnings.002", "description": "The last sequence is the result, so its value is used", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "$a"], "expected": {"warnings": []}},
+    {"id": "core.validation.warnings.003", "description": "Procedures and assignments are not unused values", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "REQUIRE \"core-1+\"", "$a"], "expected": {"warnings": []}},
+    {"id": "core.validation.warnings.004", "description": "A line that starts with - after a complete expression", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "$b = 2", "$x = $a", "- $b"], "expected": {"warnings": ["CONTINUED_LINE"]}},
+    {"id": "core.validation.warnings.005", "description": "A line that starts with - and is not the last sequence", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "$x = $a", "- $a", "$x"], "expected": {"warnings": ["UNUSED_VALUE", "CONTINUED_LINE"]}},
+    {"id": "core.validation.warnings.006", "description": "A new line inside parentheses does not end the sequence", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["$a = 1", "$x = ($a", "- 1)", "$x"], "expected": {"warnings": []}},
+    {"id": "core.validation.warnings.007", "description": "A metadata key of a wrong type", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["<@ { id: 5 } @>", "1"], "expected": {"warnings": ["METADATA_TYPE"]}},
+    {"id": "core.validation.warnings.008", "description": "A metadata key of a wrong type does not change the result", "spec": "../../../docs/standards/core/semantics/warnings.md#principles", "formula": ["<@ { id: 5 } @>", "1"], "expected": {"result": 1}},
+    {"id": "core.validation.warnings.009", "description": "The context of the metadata differs from the context of the execution", "spec": "../../../docs/standards/core/semantics/warnings.md#warnings", "formula": ["<@ { context: \"Iteration\" } @>", "1"], "expected": {"warnings": ["METADATA_CONTEXT"]}},
+    {"id": "core.validation.warnings.010", "description": "A line that starts with && is a SYNTAX_ERROR", "spec": "../../../docs/standards/core/semantics/warnings.md#messages-of-the-parsing-errors", "formula": ["$a = true", "$b = $a", "&& true"], "expected": {"error": {"code": "SYNTAX_ERROR"}}}
+  ]
+}

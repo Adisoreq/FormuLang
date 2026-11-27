@@ -37,8 +37,8 @@ Functions that evaluate conditions and return **Boolean** values.
 
 | Function | Operator | Description | Return Type |
 | :------- | :------: | :---------- | :---------: |
-| `AND(a, b)` | `&&` | Checks if both arguments are true. [[Read more]](AND.md) | `Boolean` |
-| `OR(a, b)` | `\|\|` | Checks if at least one argument is true. [[Read more]](OR.md) | `Boolean` |
+| `AND(a, b, ...)` | `&&` | Checks if all the arguments are true; stops at the first `false`. [[Read more]](AND.md) | `Boolean` |
+| `OR(a, b, ...)` | `\|\|` | Checks if at least one argument is true; stops at the first `true`. [[Read more]](OR.md) | `Boolean` |
 | `XOR(a, b)` | | Checks if exactly one argument is true. [[Read more]](XOR.md) | `Boolean` |
 | `NOT(val)` | `!` | Inverts the boolean value. [[Read more]](NOT.md) | `Boolean` |
 | `EQU(a, b)` | `==` | Checks if values are identical. [[Read more]](EQU.md) | `Boolean` |
@@ -57,6 +57,7 @@ Functions used for conditional logic and error handling.
 | `IF(condition, then, else)` | Returns `then` value if condition is `TRUE`, otherwise `else`. [[Read more]](IF.md) | `IF($x > 10, "High", "Low")` |
 | `ERROR(message)` | Returns an error with a custom message. The error aborts the execution if it reaches the root of a sequence. [[Read more]](ERROR.md) | `ERROR("Invalid input")` |
 | `IFNULL(value, fallback)` | Returns `value`, or `fallback` if `value` is `null`. [[Read more]](IFNULL.md) | `IFNULL(PREV, 0)` |
+| `RECALL(key, fallback)` | Returns the value stored in the [memory](../../../core/context.md#memory) of the context under the key by [`STORE`](../procedures/STORE.md), or `fallback` (`null` by default). Since `core-1.2`. [[Read more]](RECALL.md) | `RECALL("sum", 0)` |
 | `IFERR(value, fallback)` | Returns `value`, or `fallback` if `value` is an **Error**. [[Read more]](IFERR.md) | `IFERR($a / $b, 0)` |
 | `CALL(function, arguments...)` | Calls a delegate. Operator form: `delegate(arguments)`, e.g. `$f(2)`. [[Read more]](CALL.md) | `CALL($double, 4)` |
 

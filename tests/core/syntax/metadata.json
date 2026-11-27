@@ -1,0 +1,23 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Core 1.2: metadata blocks <@ { ... } @> and the metadata reading.",
+  "standards": ["core-1.2"],
+  "cases": [
+    {"id": "core.syntax.metadata.001", "description": "A metadata block does not take part in the evaluation", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { id: \"a\" } @>", "1 + 1"], "expected": {"result": 2}},
+    {"id": "core.syntax.metadata.002", "description": "The metadata reading gives the Object of the block", "spec": "../../../docs/core/metadata.md#metadata-reading", "formula": ["<@ { id: \"a\", name: \"A\" } @>", "1 + 1"], "expected": {"metadata": {"id": "a", "name": "A"}}},
+    {"id": "core.syntax.metadata.003", "description": "A formula without a metadata block has the metadata { }", "spec": "../../../docs/core/metadata.md#metadata-reading", "formula": "1 + 1", "expected": {"metadata": {}}},
+    {"id": "core.syntax.metadata.004", "description": "White space and comments may be before the block", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["# comment", "<# scoped #>", "  <@ { id: \"x\" } @>", "5"], "expected": {"metadata": {"id": "x"}}},
+    {"id": "core.syntax.metadata.005", "description": "Code may follow the block on the same line", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": "<@ { id: \"x\" } @> 7", "expected": {"result": 7}},
+    {"id": "core.syntax.metadata.006", "description": "A text inside the block may contain @>, # and <#", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { d: \"a @> b # c <# d\" } @>", "3"], "expected": {"metadata": {"d": "a @> b # c <# d"}}},
+    {"id": "core.syntax.metadata.007", "description": "Nested Objects and Arrays, negative numbers, null and Booleans", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ {", "  parameters: { p: { type: \"Number\", default: -1.5, min: -10, options: [1, 2, null] } },", "  x: { app: true }", "} @>", "PI > 3"], "expected": {"metadata": {"parameters": {"p": {"type": "Number", "default": -1.5, "min": -10, "options": [1, 2, null]}}, "x": {"app": true}}}},
+    {"id": "core.syntax.metadata.008", "description": "Unknown keys are kept", "spec": "../../../docs/core/metadata.md#metadata-keys", "formula": ["<@ { future: { a: 1 } } @>", "0"], "expected": {"metadata": {"future": {"a": 1}}}},
+    {"id": "core.syntax.metadata.009", "description": "An operator inside the block is a SYNTAX_ERROR", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { a: 1 + 1 } @>", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.010", "description": "A constant inside the block is a SYNTAX_ERROR", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { a: -PI } @>", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.011", "description": "A function call inside the block is a SYNTAX_ERROR", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { a: ABS(1) } @>", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.012", "description": "The content must be an Object literal", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ [1, 2] @>", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.013", "description": "A block that is not closed is a SYNTAX_ERROR", "spec": "../../../docs/core/metadata.md#metadata-reading", "formula": ["<@ { a: 1 }", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.014", "description": "<@ after the first element is < followed by an environment variable", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": "1 <@array_indexing", "expected": {"result": false}},
+    {"id": "core.syntax.metadata.015", "description": "A second block is not a metadata block", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["<@ { a: 1 } @>", "<@ { b: 2 } @>", "1"], "expected": {"error": {"code": "SYNTAX_ERROR"}}},
+    {"id": "core.syntax.metadata.016", "description": "A multi-line block keeps the sequences around it apart", "spec": "../../../docs/core/metadata.md#metadata-block", "formula": ["$a = 2 <@", "{ } @>"], "expected": {"error": {"code": "SYNTAX_ERROR"}}}
+  ]
+}

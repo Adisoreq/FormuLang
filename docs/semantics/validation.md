@@ -27,9 +27,14 @@ Validation does not check grammar (operand and operator positions, assignments, 
 
 ## Result
 
-- If the output array is empty, the execution continues with the [clean-up](./cleanup.md).
+- If the output array is empty, the execution continues with the [metadata reading](../core/metadata.md#metadata-reading) and the [clean-up](./cleanup.md).
 - Otherwise, the execution is **aborted** before any other stage is run. The first error of the array becomes the result of the formula, and the whole array is returned to the host application.
 - Errors detected by validation always abort the execution, regardless of the `suppress_errors` environment variable.
+
+
+## Warnings
+
+Since [**Core**](../standards/core/README.md) `1.2`, the preparation of a formula may also produce **warnings**: messages about formulas that are valid but probably not what the author meant (for example, a line that starts with `-` after a complete expression). Warnings are not errors: they do not change the result and never abort the execution. They are returned to the host application, which can show them in an editor. The warnings of the **Core** standard are defined in [Core Warnings](../standards/core/semantics/warnings.md).
 
 
 ## Standards
@@ -45,4 +50,5 @@ The algorithm required by the **Core** standard is defined in [Core Validation](
 - [Clean-up](./cleanup.md)
 - [Environment](../core/environment.md)
 - [Core Validation](../standards/core/semantics/validation.md)
+- [Core Warnings](../standards/core/semantics/warnings.md)
 - [Core errors](../standards/core/errors/README.md)

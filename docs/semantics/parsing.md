@@ -1,6 +1,6 @@
 # Parsing
 
-**Parsing** is the fourth stage of the [execution](./execution.md) process. The token stream produced during [tokenization](./tokenization.md) is divided into [sequences](../core/formula.md#formula-sequences), and each sequence is parsed into its own expression tree. The trees are traversed to determine the processing order and to resolve expressions into their corresponding [primitives](../core/primitives.md).
+**Parsing** is the fifth stage of the [execution](./execution.md) process. The token stream produced during [tokenization](./tokenization.md) is divided into [sequences](../core/formula.md#formula-sequences), and each sequence is parsed into its own expression tree. The trees are traversed to determine the processing order and to resolve expressions into their corresponding [primitives](../core/primitives.md).
 
 | Parameter | Description |
 | :-- | :---------- |

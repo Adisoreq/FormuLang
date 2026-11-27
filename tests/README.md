@@ -54,7 +54,18 @@ A `context`, `environment` or `registry` given in a case **replaces** the one fr
 | `Default` | - | One execution. |
 | `Iteration` | `n` | `n` iterations. |
 | `Time` | `frames`: `[{ "time_s", "dtime_s", "now"? }]` | One execution per frame. `TIME_MS` and `DTIME_MS` are `time_s * 1000` and `dtime_s * 1000`. `now`, if given, is the `NOW` constant of the frame. |
-| `Stock`, `Indicator`, `Pattern`, `Strategy` | `candles`, `parameters` (Indicator, Pattern), `source` (Indicator, default `CLOSE`) | One iteration per candle. |
+| `Stock`, `Indicator`, `Pattern`, `Strategy` | `candles`, `parameters` (Indicator, Pattern, and Strategy since `stock-1.2`), `source` (Indicator, default `CLOSE`), `timeframe`, `instrument`, `timeframe_length` and `timeframes` (since `stock-1.2`, see below) | One iteration per candle. |
+
+### Other timeframes
+
+Since `stock-1.2`, a Stock context may give the data of [other timeframes](../docs/standards/stock/README.md#other-timeframes):
+
+| Key | Description |
+| :-- | :---------- |
+| `timeframe` | The `TIMEFRAME` constant (`null` when omitted). |
+| `instrument` | The `INSTRUMENT` constant (`null` when omitted). |
+| `timeframe_length` | Length of a candle of the main chart, in milliseconds. |
+| `timeframes` | Other timeframes by name: `{ "1h": { "length": 3600000, "candles": [ ... ] } }`. The candles need `time`. A timeframe that is not listed is not provided (`NOT_SUPPORTED_ERROR`). |
 
 ### Environment
 
@@ -76,6 +87,8 @@ If `NOW` is not given, the runner sets it to `0`, so that the tests are determin
 | `results` | The value of every iteration or frame, in order. An element `{ "$error": "<CODE>" }` means that this iteration results in an **Error** with the code. |
 | `error` | The execution results in this **Error**: `{ "code": "...", "message": "..." }`. `message` is checked only if it is given. |
 | `errors` | The [validation](../docs/semantics/validation.md) returns exactly these errors, in this order. |
+| `metadata` | Since `core-1.2`: the [metadata reading](../docs/core/metadata.md#metadata-reading) gives this Object (`{ }` for a formula without a metadata block). The formula is not evaluated. |
+| `warnings` | Since `core-1.2`: the preparation gives exactly these [warning](../docs/standards/core/semantics/warnings.md) codes, in the order of their positions (`[]` for none). The formula is not evaluated. |
 
 For `results`, the runner executes **all** iterations or frames, even after an iteration results in an **Error**.
 

@@ -34,7 +34,7 @@ The environment must provide the following elements of the [Core environment str
 
 | Element | Kind | Required type | Additional requirement |
 | :------ | :--- | :------------ | :--------------------- |
-| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifiers of the supported **Core** standard versions (`core-1.0`, `core-1.1`). |
+| `STANDARDS` | Constant | `Array` of `Text` | Contains the identifiers of the supported **Core** standard versions (`core-1.0`, `core-1.1`, `core-1.2`). |
 | `E` | Constant | `Number` | - |
 | `PI` | Constant | `Number` | - |
 | `PHI` | Constant | `Number` | - |
@@ -88,6 +88,8 @@ The environment must provide the following elements of the [Core environment str
 
 A new line inside an open delimiter is not an error: it is ignored by the [parser](parsing.md#splitting-into-sequences).
 
+The content of a [metadata block](../../../core/metadata.md) (`<@ ... @>`) is scanned in the **Code** mode like the rest of the formula, so its text literals and delimiters are checked by the same rules. Whether it contains only constant values is checked by the [metadata reading](../../../core/metadata.md#metadata-reading).
+
 
 ## Error messages
 
@@ -139,5 +141,6 @@ The errors listed in one row are returned together in one array; the first error
 - [Core standard](../README.md)
 - [Core errors](../errors/README.md)
 - [Core parsing](parsing.md)
+- [Core warnings](warnings.md)
 - [Symbols](../../../syntax/symbols.md)
 - [Clean-up](../../../semantics/cleanup.md)

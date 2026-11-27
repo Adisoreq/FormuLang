@@ -1,6 +1,6 @@
 # Evaluation
 
-**Evaluation** is the fifth stage of the [execution](./execution.md) process, where every entry of the [primitive map](./parsing.md#3-primitive-map) built during [parsing](./parsing.md) is resolved into a concrete value, following the processing order established by the [parsing queue](./parsing.md#1-parsing-queue).
+**Evaluation** is the sixth stage of the [execution](./execution.md) process, where every entry of the [primitive map](./parsing.md#3-primitive-map) built during [parsing](./parsing.md) is resolved into a concrete value, following the processing order established by the [parsing queue](./parsing.md#1-parsing-queue).
 
 ## Description
 

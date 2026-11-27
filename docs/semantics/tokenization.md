@@ -1,6 +1,6 @@
 # Tokenization
 
-**Tokenization** is the third stage of the [execution](./execution.md) process, where the formula string is being split into sequences, and sequences are being split into expressions identified by [tokens](./token.md).
+**Tokenization** is the fourth stage of the [execution](./execution.md) process, where the formula string is being split into sequences, and sequences are being split into expressions identified by [tokens](./token.md).
 
 
 ## Tokenization algorithm

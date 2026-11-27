@@ -1,6 +1,6 @@
 # Clean-up
 
-**Clean-up** is the second stage of the [execution](./execution.md) process, where the formula string is compressed by removing comments and unnecessary white spaces.
+**Clean-up** is the third stage of the [execution](./execution.md) process, after the [metadata reading](../core/metadata.md#metadata-reading), where the formula string is compressed by removing comments and unnecessary white spaces.
 
 ## Clean-up phases
 

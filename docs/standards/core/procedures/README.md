@@ -13,6 +13,8 @@ A [procedure](../../../core/functions.md#function-types) is a named function who
 | `INIT(variable, value)` | Context, Environment | `:=` | Initializes a variable only if it does not exist yet or has no value. [[Read more]](INIT.md) |
 | `COND_SET(variable, value)` | Context, Environment | `?=` | Overrides a variable only if it already exists. [[Read more]](COND_SET.md) |
 | `REQUIRE(standard)` | Environment | | Ensures that the environment supports the requested standard. [[Read more]](REQUIRE.md) |
+| `STORE(key, value)` | Memory | | Writes a value to the [memory](../../../core/context.md#memory) of the context, visible from the next iteration (since `core-1.2`). [[Read more]](STORE.md) |
+| `CLEAR(key)` / `CLEAR()` | Memory | | Removes a key, or every key, from the memory of the context (since `core-1.2`). [[Read more]](CLEAR.md) |
 
 
 ## Common rules
@@ -23,6 +25,7 @@ A [procedure](../../../core/functions.md#function-types) is a named function who
 - **Scope** - `SET`, `INIT` and `COND_SET` accept both context (`$`) and environment (`@`) variables and differ only in what they do with them; the scope of a variable never causes an `ARGUMENT_ERROR`. Context variables are changed only in the current context. Environment variables are changed [only for the current execution](../../../core/environment.md#overriding-environment-parameters), and cannot be created by a formula.
 - **Argument errors** - [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) is returned only when the number or types of the arguments don't match an overload, e.g. the first argument of `SET` is not a variable.
 - **Call notation** - A procedure can be called like any function, `SET($x, 100)`, or without parentheses, with arguments separated by white space: `SET $x 100` (see [Parsing](../semantics/parsing.md#procedure-call-without-parentheses)).
+- **Memory** - `STORE` and `CLEAR` change the [memory](../../../core/context.md#memory) of an Iteration or Time Context. Their writes are applied after the current iteration, and only if they were executed in the selected path of the formula (not in a branch of `IF` that is not selected, nor in an argument of `AND` or `OR` that does not decide the result).
 - **Operators** - `=`, `:=` and `?=` are translated by the parser into `SET`, `INIT` and `COND_SET` (see [Operators](../../../syntax/operators.md)).
 
 

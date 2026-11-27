@@ -35,6 +35,8 @@ Examples:
 > **Note:** `then` and `else` accept any value, including an **Error**. An **Error** in the branch that is not selected is discarded and does not affect the result. An **Error** in `condition` is propagated.
 >
 > All arguments are computed before `IF` is called, so side effects in both branches (for example, assignments) are executed regardless of the condition. Use `IF` only to select a value.
+>
+> Since `core-1.2`, the writes to the [memory](../../../core/context.md#memory) (`STORE`, `CLEAR`) executed in the branch that is not selected are discarded: `IF($cond, STORE("x", 1), 0)` writes only when `$cond` is `true`. The same holds for an `IF` nested in that branch. A lazy `IF` that does not compute the other branch at all, assignments included, is planned for `core-2.0`.
 
 ## Performance
 
@@ -43,10 +45,10 @@ The branch that is not selected is computed only for its side effects: its value
 An implementation **may** therefore skip the computation of the branch that is not selected, as long as the result of the formula and every side effect are the same as when both branches are computed. In practice, this holds when:
 
 - `condition` is a **Boolean**. For any other value, `IF` matches no overload and the [function call](../../../semantics/evaluation.md#3-function-call) rules may return an **Error** from one of the branches, so both branches are needed;
-- the branch has no side effects: it calls no procedure (`SET`, `INIT`, `COND_SET`, also through the operators `=`, `:=` and `?=`), no function that changes the context, the environment or the host application, and no **Delegate** whose body is not known when the branch is skipped (e.g. a lambda stored in a variable and passed to `MAP`);
+- the branch has no side effects: it calls no procedure (`SET`, `INIT`, `COND_SET`, also through the operators `=`, `:=` and `?=`; `STORE` and `CLEAR` are allowed, because their writes in a branch that is not selected are discarded), no function that changes the context, the environment or the host application, and no **Delegate** whose body is not known when the branch is skipped (e.g. a lambda stored in a variable and passed to `MAP`);
 - skipping the branch, or computing the selected one in another order than the [parsing queue](../../../semantics/parsing.md#1-parsing-queue), cannot change a value read by another part of the formula. For example, an implementation can apply it only to sequences, or values of assignments, without side effects.
 
-The functions of the Core and Stock standards have no side effects. Functions added by the host application may have them (e.g. a function that records diagnostics), so an implementation treats them as functions with side effects unless the host application states otherwise.
+The functions of the Core and Stock standards have no side effects. [`RECALL`](RECALL.md) reads the memory as it was at the start of the iteration, so it gives the same value wherever it is computed. Functions added by the host application may have them (e.g. a function that records diagnostics), so an implementation treats them as functions with side effects unless the host application states otherwise.
 
 ## Errors
 

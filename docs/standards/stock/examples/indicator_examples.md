@@ -114,9 +114,79 @@ IF(ISNULL($macd), null, $macd.histogram)
 
 The `EMA` of `$line` skips the `null` values at the beginning of the MACD line: its window is complete only when it contains `signal_period` values that are not `null`.
 
+## Example 4: Relative Strength Index (RSI)
+
+Wilder's RSI keeps two averages between the candles: the average gain and the average loss. They are not outputs of the indicator, so they are kept in the [memory](../../../core/context.md#memory) of the context (since `stock-1.2`), and the result is only the value of the RSI. The formula starts with its [metadata](../../../core/metadata.md), from which the host application can read the [registry definition](../README.md#2-formula-registry).
+
+**Identifier**: `RSI`
+
+**Parameters**: `period` = `14`
+
+**Result**: **Number** from `0` to `100`, or `null` until `period` changes of `SOURCE` are available.
+
+#### Formula:
+
+```php
+<@ {
+  id: "RSI",
+  name: "Relative Strength Index",
+  context: "Stock.Indicator",
+  result: ["Number", "Null"],
+  parameters: { period: { type: "Number", default: 14, min: 1, description: "Number of changes in the averages" } },
+  stock: { category: "Momentum", outputs: { value: { name: "RSI" } } }
+} @>
+REQUIRE "stock-1.2+"
+
+$p = PARAMETERS.period
+$n = I - @array_indexing              # number of changes up to the current candle
+$change = IF($n == 0, 0, SOURCE[I] - SOURCE[I - 1])
+$gain = MAX($change, 0)
+$loss = MAX(-$change, 0)
+
+# Warm-up: the sums of the first `period` changes
+$sumGain = RECALL("sumGain", 0) + $gain
+$sumLoss = RECALL("sumLoss", 0) + $loss
+STORE("sumGain", $sumGain)
+STORE("sumLoss", $sumLoss)
+
+# Wilder's averages: the mean of the first `period` changes, then a smoothing of the previous average
+$avgGain = IF($n < $p, null, IF($n == $p, $sumGain / $p, (RECALL("avgGain") * ($p - 1) + $gain) / $p))
+$avgLoss = IF($n < $p, null, IF($n == $p, $sumLoss / $p, (RECALL("avgLoss") * ($p - 1) + $loss) / $p))
+STORE("avgGain", $avgGain)
+STORE("avgLoss", $avgLoss)
+
+IF(ISNULL($avgGain), null, IF($avgLoss == 0, 100, 100 - 100 / (1 + $avgGain / $avgLoss)))
+```
+
+`RECALL` gives the values stored in the previous iteration, so `RECALL("avgGain")` is the previous average gain. The `IF` in `$change` discards the `INVALID_INDEX_ERROR` of `SOURCE[I - 1]` in the first iteration.
+
+#### Result:
+
+`LOAD_INDICATOR("RSI", { period: 2 })` with `CLOSE` = `[1, 2, 1, 3]`:
+
+```js
+[null, null, 50, 83.33333333333333]
+```
+
+| `I` | change | `$avgGain` | `$avgLoss` | Result |
+| :-: | :----: | :--------: | :--------: | :----- |
+| 0 | - | `null` | `null` | `null` |
+| 1 | `+1` | `null` | `null` | `null` |
+| 2 | `-1` | `(1 + 0) / 2` = `0.5` | `(0 + 1) / 2` = `0.5` | `50` |
+| 3 | `+2` | `(0.5 * 1 + 2) / 2` = `1.25` | `(0.5 * 1 + 0) / 2` = `0.25` | `100 - 100 / 6` |
+
+#### Usage:
+
+```php
+$rsi = LOAD_INDICATOR("RSI", { period: 14 })
+IF(CROSSOVER($rsi, 30), BUY, NEUTRAL)   # RSI leaves the oversold zone
+```
+
 ## Reference
 
 - [Stock standard](../README.md)
 - [`LOAD_INDICATOR`](../functions/LOAD_INDICATOR.md)
+- [Memory](../../../core/context.md#memory)
+- [Metadata](../../../core/metadata.md)
 - [Iteration Context](../../../core/context.md#2-iteration-context)
 - [Strategy examples](strategy_examples.md)

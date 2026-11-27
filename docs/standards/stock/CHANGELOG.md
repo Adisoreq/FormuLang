@@ -2,6 +2,26 @@
 
 Changes of the [**Stock**](README.md) standard.
 
+## 1.2
+
+Identifier: `stock-1.2`. Requires `core-1.2+`. Backward compatible with `1.1`: formulas valid in `1.1` give the same results; only formulas whose result was an **Error** in `1.1` can give a value now. `STANDARDS` contains `stock-1.0`, `stock-1.1` and `stock-1.2`. The design and the motivation are in [Proposals for the 1.2 standards](../../misc/proposals.md).
+
+### Added
+- `PARAMETERS` in the [Strategy Context](README.md#strategy-context), provided by the host application and completed with the `default` values of the metadata.
+- The constants `TIMEFRAME` and `INSTRUMENT` of the [Stock Context](README.md#stock-context) (**Text** or `null`, named by the host application).
+- The [signal object](README.md#strategy-context): a strategy may return an **Object** `{ signal, reason?, checks?, ... }` instead of a **Number**. `checks` holds named **Boolean** conditions; other keys are passed to the host application unchanged.
+- [Other timeframes](README.md#other-timeframes): the host application may provide the candles of other timeframes. Series of another timeframe are **aligned** with the main chart (`N` elements, the last candle closed at every candle) or **native** (`align: false`). A candle that is not closed at the current candle is never visible.
+- [`LOAD_CANDLES(timeframe, options)`](functions/LOAD_CANDLES.md).
+- The [options overload of `LOAD_INDICATOR`](functions/LOAD_INDICATOR.md#overload-4-options) (`source`, `timeframe`, `output`, `align`) and of [`LOAD_PATTERN`](functions/LOAD_PATTERN.md#overload-3-options) (`timeframe`, `align`). `output` takes the series of one key of an indicator with Object results.
+- [Series functions](functions/README.md#series-functions) with common rules (a `null` or not enough candles give `false` or `null`, never an **Error**): [`READY`](functions/READY.md), [`CROSSOVER`](functions/CROSSOVER.md), [`CROSSUNDER`](functions/CROSSUNDER.md), [`HIGHEST`](functions/HIGHEST.md), [`LOWEST`](functions/LOWEST.md), [`RISING`](functions/RISING.md), [`FALLING`](functions/FALLING.md), [`BARS_SINCE`](functions/BARS_SINCE.md) and [`VALUE_WHEN`](functions/VALUE_WHEN.md).
+- The strategy function [`SCORE(conditions, weights)`](functions/SCORE.md): the share of `true` values of an Object or an Array of Booleans, optionally weighted (a condition without a weight has the weight `1`; a weight of a key that is not a condition is an `INVALID_KEY_ERROR`).
+- The `stock` key of the [metadata](README.md#metadata) (`category`, `outputs`, `checks`), and [registry definitions](README.md#2-formula-registry) read from the metadata of their formulas (`id`, `context`, `parameters`).
+- Examples: [RSI](examples/indicator_examples.md#example-4-relative-strength-index-rsi) with the memory instead of internal keys of the result, and strategies with the [series functions](examples/strategy_examples.md#example-5-moving-average-crossover-with-the-series-functions), the [signal object](examples/strategy_examples.md#example-6-macd--ema200-with-the-stop-loss-behind-the-swing) and [another timeframe](examples/strategy_examples.md#example-7-trend-of-another-timeframe).
+
+### Changed
+- The key of the [stored series of `LOAD_INDICATOR`](functions/LOAD_INDICATOR.md#performance) includes the timeframe; `output` and `align` are not a part of it. An implementation may compute a registry definition by other means than its formula when the result is the same.
+- The version is `1.2` (identifier `stock-1.2`), and it requires `core-1.2+` (metadata, memory, short circuit of `&&` and `||`).
+
 ## 1.1
 
 Identifier: `stock-1.1`. Requires `core-1+`. Backward compatible with `1.0`: formulas valid in `1.0` give the same results. `STANDARDS` contains `stock-1.0` and `stock-1.1`.

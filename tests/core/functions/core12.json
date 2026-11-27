@@ -1,0 +1,27 @@
+{
+  "$schema": "../../schema.json",
+  "description": "Core 1.2: AND and OR with many arguments and their short circuit; the memory functions outside of an Iteration or Time Context.",
+  "standards": ["core-1.2"],
+  "cases": [
+    {"id": "core.functions.core12.001", "description": "AND with three arguments", "spec": "../../../docs/standards/core/functions/AND.md#overload-2", "formula": "AND(true, true, true)", "expected": {"result": true}},
+    {"id": "core.functions.core12.002", "description": "AND with a false argument among many", "spec": "../../../docs/standards/core/functions/AND.md#overload-2", "formula": "AND(true, false, true)", "expected": {"result": false}},
+    {"id": "core.functions.core12.003", "description": "OR with three arguments", "spec": "../../../docs/standards/core/functions/OR.md#overload-2", "formula": "OR(false, false, true)", "expected": {"result": true}},
+    {"id": "core.functions.core12.004", "description": "OR with only false arguments", "spec": "../../../docs/standards/core/functions/OR.md#overload-2", "formula": "OR(false, false, false)", "expected": {"result": false}},
+    {"id": "core.functions.core12.005", "description": "false && discards an Error on the right", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "false && ERROR(\"x\")", "expected": {"result": false}},
+    {"id": "core.functions.core12.006", "description": "true || discards an Error on the right", "spec": "../../../docs/standards/core/functions/OR.md#short-circuit", "formula": "true || 1 / 0", "expected": {"result": true}},
+    {"id": "core.functions.core12.007", "description": "AND decided by false discards a value that is not a Boolean", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "AND(false, 1)", "expected": {"result": false}},
+    {"id": "core.functions.core12.008", "description": "OR decided by true discards a value that is not a Boolean", "spec": "../../../docs/standards/core/functions/OR.md#short-circuit", "formula": "OR(true, \"x\")", "expected": {"result": true}},
+    {"id": "core.functions.core12.009", "description": "An Error before the deciding argument is returned", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "ERROR(\"x\") && false", "expected": {"error": {"code": "CUSTOM_ERROR", "message": "x"}}},
+    {"id": "core.functions.core12.010", "description": "An Error after true in AND is returned", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "true && ERROR(\"x\")", "expected": {"error": {"code": "CUSTOM_ERROR", "message": "x"}}},
+    {"id": "core.functions.core12.011", "description": "An Error after false in OR is returned", "spec": "../../../docs/standards/core/functions/OR.md#short-circuit", "formula": "false || ERROR(\"x\")", "expected": {"error": {"code": "CUSTOM_ERROR", "message": "x"}}},
+    {"id": "core.functions.core12.012", "description": "AND that is not decided and has a value that is not a Boolean", "spec": "../../../docs/standards/core/functions/AND.md#errors", "formula": "AND(true, 1)", "expected": {"error": {"code": "ARGUMENT_ERROR"}}},
+    {"id": "core.functions.core12.013", "description": "AND with one argument matches no overload", "spec": "../../../docs/standards/core/functions/AND.md#errors", "formula": "AND(true)", "expected": {"error": {"code": "ARGUMENT_ERROR"}}},
+    {"id": "core.functions.core12.014", "description": "A false in the middle of many arguments discards the rest", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "AND(true, false, ERROR(\"y\"), 1)", "expected": {"result": false}},
+    {"id": "core.functions.core12.015", "description": "A chain of && gives the same result as AND with many arguments", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": "true && false && ERROR(\"z\")", "expected": {"result": false}},
+    {"id": "core.functions.core12.016", "description": "A guard with && avoids an Error of a comparison with null", "spec": "../../../docs/standards/core/functions/AND.md#short-circuit", "formula": ["$v = null", "NOT(ISNULL($v)) && $v > 10"], "expected": {"result": false}},
+    {"id": "core.functions.core12.017", "description": "A guard with || avoids an Error of a comparison with null", "spec": "../../../docs/standards/core/functions/OR.md#short-circuit", "formula": ["$v = null", "ISNULL($v) || $v > 10"], "expected": {"result": true}},
+    {"id": "core.functions.core12.018", "description": "STORE in the Default Context", "spec": "../../../docs/standards/core/procedures/STORE.md#errors", "formula": "STORE(\"x\", 1)", "expected": {"error": {"code": "OPERATION_ERROR"}}},
+    {"id": "core.functions.core12.019", "description": "RECALL in the Default Context", "spec": "../../../docs/standards/core/functions/RECALL.md#errors", "formula": "RECALL(\"x\")", "expected": {"error": {"code": "OPERATION_ERROR"}}},
+    {"id": "core.functions.core12.020", "description": "CLEAR in the Default Context", "spec": "../../../docs/standards/core/procedures/CLEAR.md#errors", "formula": "CLEAR()", "expected": {"error": {"code": "OPERATION_ERROR"}}}
+  ]
+}
