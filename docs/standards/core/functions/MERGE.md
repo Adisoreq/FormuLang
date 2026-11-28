@@ -1,6 +1,6 @@
 # MERGE
 
-Object [**Core**](../README.md) standard function. Returns a new object with the keys of two objects; the value of the second object wins.
+Object [**Core**](../README.md) standard function. Returns a new object with the keys of the given objects; the value of a later object wins.
 
 ## Overloads
 
@@ -30,6 +30,30 @@ Examples:
 | `MERGE({ a: 1 }, { })` | `{ a: 1 }` |
 | `MERGE(PREV, { count: PREV.count + 1 })` | the previous state with a new `count` |
 
+---
+
+### Overload 2
+
+Since `core-1.3`. Signature: `MERGE(...objects <Object>)`, with more than two arguments.
+
+Collection template:
+
+| # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
+| - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
+| 1 | objects | | Object | - | false | true | false |
+
+Algorithm:
+
+- Returns `MERGE(MERGE(object1, object2), object3)` and so on, from the left: the value of the last object that has a key wins, and the keys keep the order in which they first appear
+
+Examples:
+
+| Formula | Result |
+| :------ | :----- |
+| `MERGE({ a: 1 }, { b: 2 }, { c: 3 })` | `{ a: 1, b: 2, c: 3 }` |
+| `MERGE({ a: 1, b: 1 }, { b: 2 }, { a: 3 })` | `{ a: 3, b: 2 }` |
+| `MERGE($trendBuy, $trendSell, $entryBuy, $entrySell)` | all the checks of a strategy in one object |
+
 ## Errors
 
 - [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) - the arguments match no overload. If one of the arguments is an **Error**, that **Error** is returned instead (see [Evaluation](../../../semantics/evaluation.md#3-function-call)).
@@ -39,3 +63,4 @@ Examples:
 
 - [Core standard](../README.md)
 - [`KEYS`](KEYS.md)
+- [`PUT`](PUT.md)

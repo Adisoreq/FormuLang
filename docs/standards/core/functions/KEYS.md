@@ -28,7 +28,7 @@ Examples:
 | `KEYS({})` | `[ ]` |
 | `$o = { a: 1, b: 2 }` <br> `MAP(KEYS($o), (k) => $o[k])` | `[ 1, 2 ]` |
 
-The last example returns the values of the object.
+The last example returns the values of the object; since `core-1.3`, [`VALUES`](VALUES.md) does the same.
 
 ## Errors
 
@@ -38,5 +38,5 @@ The last example returns the values of the object.
 ## Reference
 
 - [Core standard](../README.md)
-- [`HAS`](HAS.md), [`GET`](GET.md)
+- [`HAS`](HAS.md), [`GET`](GET.md), [`VALUES`](VALUES.md), [`ENTRIES`](ENTRIES.md)
 - [Object type](../types/Object.md)

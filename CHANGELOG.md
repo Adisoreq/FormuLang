@@ -9,6 +9,19 @@ Main language changes: syntax, semantics, functionality and implementation struc
 </div>
 
 
+## 2026-11-28
+
+New versions of the standards: Core `1.3` ([Core changelog](./docs/standards/core/CHANGELOG.md)) and Stock `1.3` ([Stock changelog](./docs/standards/stock/CHANGELOG.md)), both backward compatible. The design and the proposals that were not taken are in [Proposals for the 1.3 standards](./docs/misc/proposals_1.3.md).
+
+### Added
+- [Missing values](./docs/standards/core/README.md#missing-values): comparisons with `null` give `false`, arithmetic and aggregates with `null` give `null`, and a key of `null` is `null`.
+- Array and object functions that return a copy: `APPEND`, `INSERT`, `PUT`, `REMOVE`, `VALUES`, `ENTRIES`, `FROM_ENTRIES`, `CONCAT` of arrays, `MERGE` of many objects, and `GET` with a fallback.
+- The Stock function [`SIGNAL_SCORE(buy, sell, weights)`](./docs/standards/stock/functions/SIGNAL_SCORE.md), the signal `SCORE(buy) - SCORE(sell)` of a strategy, and the [formula results](./docs/standards/stock/README.md#formula-results) of the Stock standard.
+- Conformance tests: [tests/core/functions/core13.json](./tests/core/functions/core13.json) and [tests/stock/stock13.json](./tests/stock/stock13.json).
+
+### Changed
+- The [standards](./docs/standards/README.md) list, [Environment](./docs/core/environment.md) and `README.md` refer to `core-1.3` and `stock-1.3`.
+
 ## 2026-11-27 (formula models)
 
 ### Added

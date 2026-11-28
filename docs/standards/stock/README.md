@@ -7,11 +7,11 @@
 
 **Name**: `Stock`
 
-**Latest version**: `1.2`
+**Latest version**: `1.3`
 
-**Identifier**: `stock-1.2`
+**Identifier**: `stock-1.3`
 
-**Requires**: `core-1.2+`
+**Requires**: `core-1.3+`
 
 **Description**: Extension standard for market data: candles, technical indicators, candle patterns and trading strategies. Formulas are executed once for every candle of a chart, in an [Iteration Context](../../core/context.md#2-iteration-context).
 
@@ -30,6 +30,8 @@ Every Stock context type derives from the Core [Iteration Context](../../core/co
 | [Indicator Context](#indicator-context) | Stock Context | `PARAMETERS`, `SOURCE` | `Null`, `Number` or `Object` |
 | [Pattern Context](#pattern-context) | Stock Context | `PARAMETERS` | `Boolean` |
 | [Strategy Context](#strategy-context) | Stock Context | `BUY`, `NEUTRAL`, `SELL`, `PARAMETERS` | `Number` from `-1` to `1`, or an `Object` with a `signal` |
+
+The results are summarized in [Formula results](#formula-results).
 
 The names of the context types in the `context` key of the [metadata](#metadata) are `"Stock"`, `"Stock.Indicator"`, `"Stock.Pattern"` and `"Stock.Strategy"`.
 
@@ -98,7 +100,9 @@ A strategy is not loaded from the formula registry, so the host application prov
 The result of every iteration is:
 
 - a **Number** from `SELL` to `BUY` (`-1` to `1`). Values between express the strength of the signal, e.g. `0.5` is a weak buy signal. A value outside of that range is clamped by the host application.
-- or, since `stock-1.2`, an **Object** (the **signal object**) with these keys:
+- or, since `stock-1.2`, an **Object** (the [signal object](#signal-object)) with the keys below.
+
+#### Signal object
 
 | Key | Type | Required | Description |
 | :-- | :--: | :------: | :---------- |
@@ -114,6 +118,14 @@ The signal object is a plain **Object**, not an extended type. An Object without
 ```php
 $buy = { aboveEma: CLOSE[I] > $ema[I], macdUp: CROSSOVER($macd, $signal) }
 { signal: SCORE($buy), checks: $buy }
+```
+
+Since `stock-1.3`, [`SIGNAL_SCORE`](functions/SIGNAL_SCORE.md) computes a signal from the buy and the sell conditions, `SCORE(buy) - SCORE(sell)`, from `-1` to `1`:
+
+```php
+$buy = { aboveEma: CLOSE[I] > $ema[I], rsiUp: $rsi[I] > 50 }
+$sell = { belowEma: CLOSE[I] < $ema[I], rsiDown: $rsi[I] < 50 }
+{ signal: SIGNAL_SCORE($buy, $sell), checks: MERGE($buy, $sell) }
 ```
 
 ### Context variables
@@ -165,7 +177,7 @@ A timeframe shorter than the main one is allowed: the aligned element is the las
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | contains `"stock-1.0"`, `"stock-1.1"` and `"stock-1.2"` | The Core constant must contain the identifiers of the supported Stock standard versions (and of the required Core standard). |
+| `STANDARDS` | `Array` | contains `"stock-1.0"`, `"stock-1.1"`, `"stock-1.2"` and `"stock-1.3"` | The Core constant must contain the identifiers of the supported Stock standard versions (and of the required Core standard). |
 
 ### 2. Formula registry
 
@@ -220,6 +232,20 @@ Since `stock-1.2`, the **Stock** standard owns the `stock` key of the [metadata]
 ```
 
 
+## Formula results
+
+What every kind of formula returns in every iteration. The results are plain values (**Null**, **Number**, **Boolean**, **Object**), not [extended types](#extended-types): an Object result is a literal, built and combined like any other Object (e.g. with `MERGE`).
+
+| Name | Context | Shape | Since |
+| :--- | :------ | :---- | :---: |
+| Indicator value | [Indicator](#indicator-context) | `null`, a **Number**, or an **Object** of **Number** values with the same keys in every iteration (e.g. `{ macd, signal, histogram }`) | `stock-1.0` |
+| Pattern result | [Pattern](#pattern-context) | a **Boolean** | `stock-1.0` |
+| Signal strength | [Strategy](#strategy-context) | a **Number** from `SELL` (`-1`) to `BUY` (`1`), e.g. the result of [`SIGNAL_SCORE`](functions/SIGNAL_SCORE.md) | `stock-1.0` |
+| [Signal object](#signal-object) | Strategy | `{ signal, checks?, reason?, ... }`: `signal` a **Number** from `-1` to `1`, `checks` an **Object** of **Boolean** values, `reason` a **Text**, other keys for the host application | `stock-1.2` |
+
+A result of another shape is an `OPERATION_ERROR` of the iteration. A formula of the [Stock Context](#stock-context) itself may return any value.
+
+
 ## Extended types
 
 | Type | Description |
@@ -272,7 +298,8 @@ Common rules of the series functions (see [Stock functions](functions/README.md#
 
 | Function | Description | Return Type |
 | :------- | :---------- | :---------: |
-| [`SCORE(conditions, weights)`](functions/SCORE.md) | Returns the share of `true` values of an Object of Booleans (e.g. `checks`) or of an `Array<Boolean>`, from `0` to `1`, optionally weighted (`weights`: the weight of every condition, `1` by default). Since `stock-1.2`. | `Number` |
+| [`SCORE(conditions, weights)`](functions/SCORE.md) | Returns the share of `true` values of an Object of Booleans (e.g. `checks`) or of an `Array<Boolean>`, from `0` to `1`, optionally weighted (`weights`: the weight of every condition, `1` by default). Since `stock-1.2`; `null` conditions since `stock-1.3`. | `Number` |
+| [`SIGNAL_SCORE(buy, sell, weights)`](functions/SIGNAL_SCORE.md) | Returns `SCORE(buy) - SCORE(sell)`: the strength of a signal from `-1` (all the sell conditions) to `1` (all the buy conditions), optionally weighted (`weights`: one Object for the keys of both sides). Since `stock-1.3`. | `Number` |
 
 
 ## Examples

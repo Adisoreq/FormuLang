@@ -51,6 +51,31 @@ Examples:
 | "Hello, " | "world!" | "Hello, world!" |
 | "" | "test" | "test" |
 
+---
+
+### Overload 3: Missing values
+
+Since `core-1.3`. Signature: `ADD(a <Number | Null>, b <Number | Null>)`, with at least one argument `null`. Operator form: `a + b`.
+
+Collection template:
+
+| # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
+| - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
+| 1 | a | | Number, Null | - | false | false | false |
+| 2 | b | | Number, Null | - | false | false | false |
+
+Algorithm:
+
+- Returns `null` (see [Missing values](../README.md#missing-values))
+- A **Text** and `null` match no overload: `"a" + null` is an `ARGUMENT_ERROR`
+
+Examples:
+
+|  a  |  b  | ADD(a, b) |
+| :-: | :-: | :-------: |
+| null | 1 | null |
+| 1 | null | null |
+| null | null | null |
 
 ## Errors
 

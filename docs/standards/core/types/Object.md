@@ -19,7 +19,7 @@ Both notations are equivalent. Every key must match the [identifier pattern](../
 
 ## Access
 
-Values are accessed with [`GET`](../functions/GET.md) using the `object.key` or `object["key"]` operator. A non-existent key results in [`INVALID_KEY_ERROR`](../errors/INVALID_KEY_ERROR.md).
+Values are accessed with [`GET`](../functions/GET.md) using the `object.key` or `object["key"]` operator. A non-existent key results in [`INVALID_KEY_ERROR`](../errors/INVALID_KEY_ERROR.md); since `core-1.3`, `GET(object, key, fallback)` gives `fallback` instead, and a key of `null` (`null.key`) is `null`. Since `core-1.3`, [`PUT`](../functions/PUT.md), [`REMOVE`](../functions/REMOVE.md), [`VALUES`](../functions/VALUES.md), [`ENTRIES`](../functions/ENTRIES.md) and [`FROM_ENTRIES`](../functions/FROM_ENTRIES.md) work with objects; `PUT` and `REMOVE` return a copy.
 
 ## Serialization
 

@@ -7,9 +7,9 @@
 
 **Name**: `Core`
 
-**Latest version**: `1.2`
+**Latest version**: `1.3`
 
-**Identifier**: `core-1.2`
+**Identifier**: `core-1.3`
 
 **Description**: Elementary standard defining core **FormuLang** concepts and structures. Basis of every other extension.
 
@@ -89,7 +89,7 @@ The metadata only describes the parameters; how a host application provides them
 
 | Constant | Type | Initial value | Description |
 | :------- | :--: | :------------ | :---------- |
-| `STANDARDS` | `Array` | `[ "core-1.0", "core-1.1", "core-1.2" ]` | Stores the array of supported standards' identifiers. A version that is backward compatible with earlier versions of the same major version lists them too, so a formula with `REQUIRE "core-1.0"` keeps working. |
+| `STANDARDS` | `Array` | `[ "core-1.0", "core-1.1", "core-1.2", "core-1.3" ]` | Stores the array of supported standards' identifiers. A version that is backward compatible with earlier versions of the same major version lists them too, so a formula with `REQUIRE "core-1.0"` keeps working. |
 | `E` | `Number` | `2.718281828459045` | Euler's number. Used in calculus, compound interest, and exponential growth calculations. |
 | `PI` | `Number` | `3.141592653589793` | Ratio of a circle's circumference to its diameter. Used in geometry and trigonometry. |
 | `PHI` | `Number` | `1.618033988749894` | Golden ratio. |
@@ -118,6 +118,29 @@ Environment variables that control [serialization](semantics/serialization.md#se
 | `include_object_class` | `Boolean` | `false` | Precedes serialized objects with their class notation. |
 | `max_array_preview` | `Number` | `-1` | Maximal number of serialized array elements. Longer arrays are abbreviated with ` ... `. A negative value does not limit arrays. |
 
+
+## Missing values
+
+`null` is a value that does not exist (yet): e.g. an indicator during its warm-up, or a candle before the first one. Since `core-1.3`, the most common operations accept `null` and give a value instead of an `ARGUMENT_ERROR`, so a formula does not need to check every value before it uses it.
+
+| Operation | With `null` | Example |
+| :-------- | :---------- | :------ |
+| Comparisons `<` `<=` `>` `>=` ([`LES`](functions/LES.md), [`LEQ`](functions/LEQ.md), [`GRE`](functions/GRE.md), [`GEQ`](functions/GEQ.md)), `null` on either side | `false` | `null > 1` is `false`, `null >= null` is `false` |
+| Arithmetic `+` `-` `*` `/` ([`ADD`](functions/ADD.md), [`SUB`](functions/SUB.md), [`MUL`](functions/MUL.md), [`DIV`](functions/DIV.md)), unary `-` ([`NEG`](functions/NEG.md)), [`ABS`](functions/ABS.md) | `null` | `null + 1` is `null`, `null * 2 > 0` is `false` |
+| [`MIN`](functions/MIN.md), [`MAX`](functions/MAX.md), [`SUM`](functions/SUM.md), [`AVG`](functions/AVG.md) of an array with a `null` element | `null`: one missing element makes the result unknown, it is not skipped | `MIN([1, null])` is `null` |
+| [`MIN([])`](functions/MIN.md), [`MAX([])`](functions/MAX.md) | `null`, like [`FIRST`](functions/FIRST.md) and [`LAST`](functions/LAST.md) | |
+| A key of `null` ([`GET`](functions/GET.md)) | `null` | `null.close` is `null` |
+
+Nothing else changes:
+
+- `==` and `!=` compare `null` as before: `null == null` is `true`, `null != 1` is `true`.
+- `null` is not a **Boolean**: `NOT(null)`, `null && x` and `IF(null, a, b)` are still an `ARGUMENT_ERROR`. A comparison never gives `null`, so a condition built from comparisons is always a **Boolean**.
+- A `null` with a value of another type (e.g. `"a" + null`, `null > "a"`) still matches no overload.
+- An index outside of an array is still an `INVALID_INDEX_ERROR`; [`GET(array, index, fallback)`](functions/GET.md#overload-4-array-index-with-a-fallback) gives a fallback instead.
+
+With `null`, a comparison and its negation can both be `false`: `null > 1` is `false` and `null <= 1` is `false`, so `!(a > b)` is not the same as `a <= b`. Write the opposite condition directly (`CLOSE[I] < $ema[I]`), not as a negation (`!(CLOSE[I] > $ema[I])`), or the negation is `true` while the value is missing.
+
+These rules change only formulas whose result was an **Error** in `core-1.2`. A formula that catches that **Error** with [`IFERR`](functions/IFERR.md) or [`ISERR`](functions/ISERR.md) sees the value now: `IFERR(null + 1, 0)` is `null`, and `ISERR(null > 1)` is `false`.
 
 ## Built-in Procedures
 
@@ -217,7 +240,7 @@ Functions operating on **Arrays** and collections.
 | Function | Description | Return Type |
 | :------- | :---------- | :---------: |
 | `ARRAY(elements...)` | Creates an array from provided arguments. Alias for `[...]`. | `Array` |
-| `GET(array, index)` / `GET(object, key)` | Returns the array element at the index or the object value at the key. Operator forms: `array[index]` and `object.key`. [[Read more]](functions/GET.md) | `Any` |
+| `GET(array, index)` / `GET(object, key)` / `GET(x, index_or_key, fallback)` | Returns the array element at the index or the object value at the key. Operator forms: `array[index]` and `object.key`. Since `core-1.3`, a `fallback` for a missing index or key, and `null.key` is `null`. [[Read more]](functions/GET.md) | `Any` |
 | `SUM(array)` | Calculates the sum of all elements in the array. | `Number` |
 | `PROD(array)` | Calculates the product of all elements in the array. | `Number` |
 | `AVG(array)` | Calculates the mean average value of numbers in an array. | `Number` |
@@ -236,6 +259,11 @@ Functions operating on **Arrays** and collections.
 | `HAS(array, index)` | Checks if the array has an element at the index (follows `@array_indexing`). Checks the index, not the value. | `Boolean` |
 | `SORT(array)` / `SORT(array, handler)` | Returns the elements in ascending order: numbers, texts, or elements ordered by the handler results. The sort is stable. | `Array` |
 | `REVERSE(array)` | Returns the elements in the reverse order. | `Array` |
+| `APPEND(array, value)` | Returns a copy of the array with `value` at the end. Since `core-1.3`. [[Read more]](functions/APPEND.md) | `Array` |
+| `INSERT(array, index, value)` | Returns a copy of the array with `value` inserted at `index`. Since `core-1.3`. [[Read more]](functions/INSERT.md) | `Array` |
+| `PUT(array, index, value)` | Returns a copy of the array with the element at `index` replaced. Since `core-1.3`. [[Read more]](functions/PUT.md) | `Array` |
+| `REMOVE(array, index)` | Returns a copy of the array without the element at `index`. Since `core-1.3`. [[Read more]](functions/REMOVE.md) | `Array` |
+| `CONCAT(array1, array2)` | Joins two arrays. Since `core-1.3`. [[Read more]](functions/CONCAT.md#overload-2-arrays) | `Array` |
 
 ### 6. Type Functions
 
@@ -285,6 +313,12 @@ Functions operating on **Objects**.
 | :------- | :---------- | :---------: |
 | `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. | `Array` |
 | `HAS(object, key)` | Checks if the object has a value stored under the key. | `Boolean` |
+| `MERGE(...objects)` | Returns a new object with the keys of all the objects; the value of a later object wins. More than two objects since `core-1.3`. [[Read more]](functions/MERGE.md) | `Object` |
+| `VALUES(object)` | Returns the values of the object, in the order of its keys. Since `core-1.3`. [[Read more]](functions/VALUES.md) | `Array` |
+| `ENTRIES(object)` | Returns the `[key, value]` pairs of the object. Since `core-1.3`. [[Read more]](functions/ENTRIES.md) | `Array` |
+| `FROM_ENTRIES(entries)` | Creates an object from `[key, value]` pairs. Since `core-1.3`. [[Read more]](functions/FROM_ENTRIES.md) | `Object` |
+| `PUT(object, key, value)` | Returns a copy of the object with `key` set to `value`. Since `core-1.3`. [[Read more]](functions/PUT.md) | `Object` |
+| `REMOVE(object, key)` | Returns a copy of the object without `key`. Since `core-1.3`. [[Read more]](functions/REMOVE.md) | `Object` |
 
 ### 10. Time Functions
 

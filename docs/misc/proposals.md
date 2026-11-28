@@ -565,7 +565,7 @@ Changes that break the 1.x promise. They are collected here and are not specifie
 | Change | Why it breaks 1.x |
 | :----- | :---------------- |
 | Lazy `IF`, `AND`, `OR`, `&&`, `\|\|`: the branch or argument that is not needed is never computed, its assignments included. | In `1.1` the assignments of both branches are executed. |
-| `MAX([])`, `MIN([])` and, for consistency, `AVG([])` and `MEDIAN([])` give `null` instead of an `OPERATION_ERROR`, like `FIRST` and `LAST`. | An `OPERATION_ERROR` becomes a value, which `IFERR` and `ISERR` can tell apart. |
+| `MAX([])`, `MIN([])` and, for consistency, `AVG([])` and `MEDIAN([])` give `null` instead of an `OPERATION_ERROR`, like `FIRST` and `LAST`. `MAX([])` and `MIN([])` are specified in `core-1.3` ([Proposals for the 1.3 standards](proposals_1.3.md)). | An `OPERATION_ERROR` becomes a value, which `IFERR` and `ISERR` can tell apart. |
 | `requires` of the metadata replaces `REQUIRE`. | `REQUIRE` would be removed. |
 | `HISTORY` in the Time Context, with a limit given by the host application. | - (new; needs a design of the limit) |
 

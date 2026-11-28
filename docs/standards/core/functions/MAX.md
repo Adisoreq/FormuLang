@@ -63,15 +63,22 @@ Collection template:
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | numbers | | Array&lt;Number&gt; | - | false | false | false |
 
+Since `core-1.3`, the elements may also be `null` (see [Missing values](../README.md#missing-values)).
+
 Algorithm:
 
-- If the array is empty, returns an `OPERATION_ERROR`
+- If the array is empty, returns `null` (an `OPERATION_ERROR` before `core-1.3`)
+- If an element is `null`, returns `null`: one missing element makes the result unknown, so `null` is not skipped
 - Otherwise, returns the greatest element
 
 Examples:
 
 - Formula: `MAX([4, 5, 7, 9])`
   - Result: `9`
+- Formula: `MAX([4, null, 9])`
+  - Result: `null`
+- Formula: `MAX([])`
+  - Result: `null`
 - Formula: `MAX([4, "5"])`
   - Result: `ARGUMENT_ERROR` (an element is not a **Number**, so no overload matches)
 
@@ -92,10 +99,11 @@ Collection template:
 
 Algorithm:
 
-- If the array is empty, returns an `OPERATION_ERROR`
+- If the array is empty, returns `null` (an `OPERATION_ERROR` before `core-1.3`)
 - Calls `handler` with every element, from the first to the last
 - If a call returns an **Error**, stops and returns that **Error**
-- If a call returns a value that is not a **Number**, returns an `OPERATION_ERROR`
+- If a call returns a value that is neither a **Number** nor `null`, returns an `OPERATION_ERROR`
+- If a call returns `null`, the result is `null` (since `core-1.3`)
 - Otherwise, returns the greatest result
 
 Examples:
@@ -110,8 +118,8 @@ See [argument collection template](../../../implementation/argument_collection_t
 
 ## Errors
 
-- [`OPERATION_ERROR`](../errors/OPERATION_ERROR.md) - the array is empty, or `handler` returns a value that is not a **Number**.
-- [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) - the arguments match no overload, e.g. an element of the array is not a **Number** and no handler is given, or `handler` does not have exactly 1 parameter. If one of the arguments, or an element of an array argument, is an **Error**, that **Error** is returned instead (see [Evaluation](../../../semantics/evaluation.md#3-function-call)).
+- [`OPERATION_ERROR`](../errors/OPERATION_ERROR.md) - `handler` returns a value that is neither a **Number** nor `null` (before `core-1.3`, also an empty array).
+- [`ARGUMENT_ERROR`](../errors/ARGUMENT_ERROR.md) - the arguments match no overload, e.g. an element of the array is neither a **Number** nor `null` and no handler is given, or `handler` does not have exactly 1 parameter. If one of the arguments, or an element of an array argument, is an **Error**, that **Error** is returned instead (see [Evaluation](../../../semantics/evaluation.md#3-function-call)).
 - An **Error** returned by `handler` is returned unchanged.
 
 

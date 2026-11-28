@@ -27,6 +27,31 @@ Examples:
 | 10 | 20 | -10 |
 | 2.5 | 0.5 | 2 |
 
+---
+
+### Overload 2: Missing values
+
+Since `core-1.3`. Signature: `SUB(a <Number | Null>, b <Number | Null>)`, with at least one argument `null`. Operator form: `a - b`.
+
+Collection template:
+
+| # | Name |   | Base type | Extended type | Any type | Multiple | Optional |
+| - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
+| 1 | a | | Number, Null | - | false | false | false |
+| 2 | b | | Number, Null | - | false | false | false |
+
+Algorithm:
+
+- Returns `null` (see [Missing values](../README.md#missing-values))
+
+Examples:
+
+|  a  |  b  | SUB(a, b) |
+| :-: | :-: | :-------: |
+| null | 1 | null |
+| 1 | null | null |
+| null | null | null |
+
 ## Errors
 
 - [`OPERATION_ERROR`](../errors/OPERATION_ERROR.md) - the result is not a finite number (for example, it is too large).

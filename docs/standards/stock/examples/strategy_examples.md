@@ -204,6 +204,122 @@ IF($uptrend && CROSSOVER($rsi, 30), BUY, NEUTRAL)
 
 `$trend` and `$hourly` are [aligned](../README.md#aligned-and-native-series) with the 15-minute candles: `$trend[I]` and `$hourly[I]` belong to the last 1-hour candle that is closed at the current 15-minute candle, so a backtest never sees an hour that has not ended yet. When `$trend[I]` has a value, `$hourly[I]` is not `null`.
 
+## Example 8: MACD + EMA200 without warm-up checks
+
+**Context**: Strategy Context (since `stock-1.3`)
+
+**Registry**: `EMA` and `MACD` from the [indicator examples](indicator_examples.md).
+
+**Result**: The strategy of [example 6](#example-6-macd--ema200-with-the-stop-loss-behind-the-swing) written for `stock-1.3`: a [signal object](../README.md#signal-object) with the signal [`SIGNAL_SCORE($buy, $sell)`](../functions/SIGNAL_SCORE.md), from `-1` to `1`. `1` means that all the buy conditions are met; the host application decides from which strength it trades.
+
+#### Formula:
+
+```php
+<@ {
+  id: "macd-ema200",
+  name: "MACD + EMA200",
+  context: "Stock.Strategy",
+  parameters: {
+    emaPeriod: { type: "Number", default: 200, min: 1, description: "Period of the trend EMA" }
+  },
+  stock: {
+    checks: {
+      aboveEma: "Price above the EMA", macdCrossUp: "MACD crosses the signal upwards", macdBelowZero: "MACD below 0",
+      belowEma: "Price below the EMA", macdCrossDown: "MACD crosses the signal downwards", macdAboveZero: "MACD above 0"
+    }
+  }
+} @>
+REQUIRE "stock-1.3+"
+
+$ema = LOAD_INDICATOR("EMA", { period: PARAMETERS.emaPeriod })
+$macd = LOAD_INDICATOR("MACD", { }, { output: "macd" })
+$signal = LOAD_INDICATOR("MACD", { }, { output: "signal" })
+
+$buy = {
+  aboveEma: CLOSE[I] > $ema[I],
+  macdCrossUp: CROSSOVER($macd, $signal),
+  macdBelowZero: $macd[I] < 0
+}
+$sell = {
+  belowEma: CLOSE[I] < $ema[I],
+  macdCrossDown: CROSSUNDER($macd, $signal),
+  macdAboveZero: $macd[I] > 0
+}
+
+{ signal: SIGNAL_SCORE($buy, $sell), checks: MERGE($buy, $sell) }
+```
+
+- No `READY`: while `$ema[I]` or `$macd[I]` is `null`, the comparisons are `false` (see [Missing values](../../core/README.md#missing-values)), so no condition is met and the signal is `0`.
+- The sell conditions are written directly (`<`, `CROSSUNDER`), not as `!` of the buy conditions: `!(CLOSE[I] > $ema[I])` would be `true` while `$ema[I]` is `null`.
+- With 2 of 3 buy conditions and no sell condition, the signal is `0.67`. A host application that trades only on all the conditions uses the threshold `1`.
+
+## Example 9: Buy and sell conditions on other timeframes
+
+**Context**: Strategy Context (since `stock-1.3`), main chart `15m`; the host application provides the timeframes `1h` and `4h`.
+
+**Registry**: `EMA`, `MACD` and `RSI` from the [indicator examples](indicator_examples.md).
+
+**Result**: A **Number** from `-1` to `1`: [`SIGNAL_SCORE`](../functions/SIGNAL_SCORE.md) of four buy and four sell conditions.
+
+#### Formula:
+
+```php
+REQUIRE "stock-1.3+"
+
+$ema4h = LOAD_INDICATOR("EMA", { period: 50 }, { timeframe: "4h" })
+$fastEma1h = LOAD_INDICATOR("EMA", { period: 20 }, { timeframe: "1h" })
+$slowEma1h = LOAD_INDICATOR("EMA", { period: 50 }, { timeframe: "1h" })
+$macd = LOAD_INDICATOR("MACD", { }, { output: "macd" })
+$macdSignal = LOAD_INDICATOR("MACD", { }, { output: "signal" })
+$rsi = LOAD_INDICATOR("RSI", { period: 14 })
+
+$buy = {
+  aboveEma4h: CLOSE[I] > $ema4h[I],
+  uptrend1h: $fastEma1h[I] > $slowEma1h[I],
+  macdAboveSignal: $macd[I] > $macdSignal[I],
+  rsiAbove50: $rsi[I] > 50
+}
+
+$sell = {
+  belowEma4h: CLOSE[I] < $ema4h[I],
+  downtrend1h: $fastEma1h[I] < $slowEma1h[I],
+  macdBelowSignal: $macd[I] < $macdSignal[I],
+  rsiBelow50: $rsi[I] < 50
+}
+
+SIGNAL_SCORE($buy, $sell)
+```
+
+Every pair of conditions describes one indicator, so every indicator moves the signal by `0.25`:
+
+| Buy conditions met | Sell conditions met | Signal |
+| :----------------: | :-----------------: | :----: |
+| 4 | 0 | `1` |
+| 3 | 1 | `0.5` |
+| 1 | 3 | `-0.5` |
+| 0 (warm-up) | 0 (warm-up) | `0` |
+
+`$ema4h[I]` belongs to the last 4-hour candle that is closed at the current 15-minute candle (see [aligned series](../README.md#aligned-and-native-series)), and the timeframe of `LOAD_INDICATOR` without `timeframe` is the main chart.
+
+To make the higher timeframes count more, `SIGNAL_SCORE` takes one Object of weights for both sides:
+
+```php
+SIGNAL_SCORE($buy, $sell, { aboveEma4h: 2, belowEma4h: 2 })
+```
+
+To show the conditions to the user, the formula returns a [signal object](../README.md#signal-object) instead: `{ signal: SIGNAL_SCORE($buy, $sell), checks: MERGE($buy, $sell) }`.
+
+A filter that applies to both sides (e.g. "the volatility is high enough") is not a condition of `$buy` or `$sell`: it would count for both. It is applied to the result:
+
+```php
+$atr = LOAD_INDICATOR("ATR", { period: 14 })
+$isVolatile = $atr[I] > WINDOW($atr, 50, AVG)
+
+IF($isVolatile, SIGNAL_SCORE($buy, $sell), NEUTRAL)
+```
+
+`WINDOW($atr, 50, AVG)` is `null` while the window has a `null` element (see [`AVG`](../../core/functions/AVG.md)), so `$isVolatile` is `false` during the warm-up.
+
 ## Reference
 
 - [`LOAD_PATTERN`](../functions/LOAD_PATTERN.md)
@@ -213,3 +329,5 @@ IF($uptrend && CROSSOVER($rsi, 30), BUY, NEUTRAL)
 - [Indicator examples](indicator_examples.md)
 - [Series functions](../functions/README.md#series-functions)
 - [Other timeframes](../README.md#other-timeframes)
+- [`SIGNAL_SCORE`](../functions/SIGNAL_SCORE.md)
+- [Missing values](../../core/README.md#missing-values)

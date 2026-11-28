@@ -2,6 +2,31 @@
 
 Changes of the [**Core**](README.md) standard. Changes of the language itself (syntax, semantics, implementation structures) are in the [main changelog](../../../CHANGELOG.md).
 
+## 1.3
+
+Identifier: `core-1.3`. Backward compatible with `1.2`: every formula whose result is a value in `1.2` gives the same value; only formulas whose result was an **Error** in `1.2` can give a value now. A formula that catches such an **Error** with [`IFERR`](functions/IFERR.md) or [`ISERR`](functions/ISERR.md) sees the value instead: `IFERR(null + 1, 0)` is `null`, `ISERR(null > 1)` is `false`. The design and the proposals that were not taken are in [Proposals for the 1.3 standards](../../misc/proposals_1.3.md).
+
+### Added
+- [Missing values](README.md#missing-values): the rules of `null` in comparisons, arithmetic, aggregates and keys, in one section.
+- Overloads for `null` of the comparisons [`GRE`](functions/GRE.md), [`GEQ`](functions/GEQ.md), [`LES`](functions/LES.md) and [`LEQ`](functions/LEQ.md) (`null` on either side gives `false`), and of [`ADD`](functions/ADD.md), [`SUB`](functions/SUB.md), [`MUL`](functions/MUL.md), [`DIV`](functions/DIV.md), [`NEG`](functions/NEG.md) and [`ABS`](functions/ABS.md) (`null`). `==` and `!=` do not change; a `null` with a value of another type still matches no overload.
+- [`GET`](functions/GET.md): `GET(null, key)` (and `null.key`) gives `null`; `GET(array, index, fallback)` and `GET(object, key, fallback)` give `fallback` for a missing index or key. The operator `array[index]` still gives an `INVALID_INDEX_ERROR`.
+- Array functions [`APPEND(array, value)`](functions/APPEND.md), [`INSERT(array, index, value)`](functions/INSERT.md), [`PUT(array, index, value)`](functions/PUT.md), [`REMOVE(array, index)`](functions/REMOVE.md) and the overload [`CONCAT(array1, array2)`](functions/CONCAT.md#overload-2-arrays). They return a new array and never change their argument.
+- Object functions [`VALUES(object)`](functions/VALUES.md), [`ENTRIES(object)`](functions/ENTRIES.md), [`FROM_ENTRIES(entries)`](functions/FROM_ENTRIES.md), [`PUT(object, key, value)`](functions/PUT.md#overload-2-object-key), [`REMOVE(object, key)`](functions/REMOVE.md#overload-2-object-key) and the overload [`MERGE(...objects)`](functions/MERGE.md#overload-2) with more than two objects. The element or key replacement is `PUT`, because [`SET`](procedures/SET.md) is the procedure of the assignment.
+
+### Changed
+- [`MIN`](functions/MIN.md), [`MAX`](functions/MAX.md), [`SUM`](functions/SUM.md) and [`AVG`](functions/AVG.md) of an array with a `null` element give `null` (one missing element makes the result unknown; `null` is not skipped). A handler of `MIN` or `MAX` may return `null`, with the same result.
+- `MIN([])` and `MAX([])` give `null` instead of an `OPERATION_ERROR`, like [`FIRST`](functions/FIRST.md) and [`LAST`](functions/LAST.md).
+- The version is `1.3` (identifier `core-1.3`). The `STANDARDS` constant contains `core-1.0`, `core-1.1`, `core-1.2` and `core-1.3`.
+
+### Not changed
+- `NOT(null)`, `null && x`, `null || x` and `IF(null, a, b)` are still an `ARGUMENT_ERROR`: `null` is not a **Boolean**.
+- An index outside of an array is still an `INVALID_INDEX_ERROR`.
+- [`READY`](../stock/functions/READY.md), [`ISNULL`](functions/ISNULL.md), [`IFNULL`](functions/IFNULL.md) and [`IFERR`](functions/IFERR.md).
+
+### Planned for 2.0
+- Lazy `IF`, `AND`, `OR`, `&&` and `||`, which do not compute the branch or the arguments that are not needed, assignments included.
+- `AVG([])` and `MEDIAN([])` give `null` instead of an `OPERATION_ERROR`.
+
 ## 1.2
 
 Identifier: `core-1.2`. Backward compatible with `1.1`: every formula valid in `1.1` gives the same result; only formulas whose result was an **Error** in `1.1` can give a value now. The design and the motivation of the changes are in [Proposals for the 1.2 standards](../../misc/proposals.md).

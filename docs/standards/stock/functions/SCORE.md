@@ -4,6 +4,8 @@
 
 Since `stock-1.2`. Optional **weights** make some conditions count more than others. It is used with the `checks` of the [signal object](../README.md#strategy-context) of a strategy: `SCORE($buy) == 1` means "all the conditions are met", and `SCORE($buy)` can be the strength of the signal. The function does not need a Stock Context.
 
+Since `stock-1.3`, a condition may be `null` (e.g. a pattern of another timeframe before its first candle): it counts as a condition that is not met, and it stays in the denominator. [`SIGNAL_SCORE(buy, sell)`](SIGNAL_SCORE.md) computes `SCORE(buy) - SCORE(sell)`, a signal from `-1` to `1`, with one Object of weights for both sides.
+
 ## Overloads
 
 ### Overload 1: Object
@@ -18,7 +20,7 @@ Collection template:
 
 Algorithm:
 
-1. If a value of `conditions` is not a **Boolean**, returns an `ARGUMENT_ERROR`.
+1. If a value of `conditions` is neither a **Boolean** nor `null` (`null` since `stock-1.3`), returns an `ARGUMENT_ERROR`.
 2. If `conditions` has no keys, returns `0`.
 3. Otherwise, returns the number of `true` values divided by the number of keys.
 
@@ -34,6 +36,8 @@ Collection template:
 | - | :--: | - | :-------: | :-----------: | :------: | :------: | :------: |
 | 1 | conditions | | Array&lt;Boolean&gt; | - | false | false | false |
 
+Since `stock-1.3`, the elements may also be `null`; a `null` element is not a `true` element.
+
 Algorithm:
 
 1. If the array is empty, returns `0`.
@@ -48,7 +52,9 @@ Examples:
 | `SCORE({ })` | `0` |
 | `SCORE([ ])` | `0` |
 | `SCORE({ a: true, b: 1 })` | `[ARGUMENT_ERROR (6)] ...` |
-| `SCORE($buy) - SCORE($sell)` | a signal from `-1` to `1` |
+| `SCORE([true, null])` | `0.5` (since `stock-1.3`) |
+| `SCORE({ a: true, b: null })` | `0.5` (since `stock-1.3`) |
+| `SCORE($buy) - SCORE($sell)` | a signal from `-1` to `1`, the same as [`SIGNAL_SCORE($buy, $sell)`](SIGNAL_SCORE.md) |
 
 A strategy that buys when at least 5 of 7 conditions are met, with the strength of the signal (the threshold of the strength is a setting of the host application):
 
@@ -74,7 +80,7 @@ Collection template:
 
 Algorithm:
 
-1. If a value of `conditions` is not a **Boolean**, or a value of `weights` is not a **Number**, returns an `ARGUMENT_ERROR`.
+1. If a value of `conditions` is neither a **Boolean** nor `null`, or a value of `weights` is not a **Number**, returns an `ARGUMENT_ERROR`.
 2. If `weights` has a key that is not a key of `conditions`, returns an `INVALID_KEY_ERROR` (a misspelt condition is not ignored).
 3. If a weight is negative, returns an `OPERATION_ERROR`.
 4. Every key of `conditions` has the weight from `weights`, or `1` if `weights` does not have it.
@@ -122,7 +128,7 @@ $buy = { trend: CLOSE[I] > $ema[I], momentum: $rsi[I] > 50, cross: CROSSOVER($ma
 
 ## Errors
 
-- [`ARGUMENT_ERROR`](../../core/errors/ARGUMENT_ERROR.md) - the arguments match no overload, e.g. an element or a value of `conditions` is not a **Boolean**, or a weight is not a **Number**. If an argument, or one of its elements or values, is an **Error**, that **Error** is returned instead (see [Evaluation](../../../semantics/evaluation.md#3-function-call)).
+- [`ARGUMENT_ERROR`](../../core/errors/ARGUMENT_ERROR.md) - the arguments match no overload, e.g. an element or a value of `conditions` is neither a **Boolean** nor `null`, or a weight is not a **Number**. If an argument, or one of its elements or values, is an **Error**, that **Error** is returned instead (see [Evaluation](../../../semantics/evaluation.md#3-function-call)).
 - [`INVALID_KEY_ERROR`](../../core/errors/INVALID_KEY_ERROR.md) - `weights` has a key that is not a key of `conditions`.
 - [`OPERATION_ERROR`](../../core/errors/OPERATION_ERROR.md) - a weight is negative, or the arrays of `conditions` and `weights` have different lengths.
 
@@ -130,4 +136,5 @@ $buy = { trend: CLOSE[I] > $ema[I], momentum: $rsi[I] > 50, cross: CROSSOVER($ma
 
 - [Stock standard](../README.md#strategy-context)
 - [Stock functions](README.md)
+- [`SIGNAL_SCORE`](SIGNAL_SCORE.md)
 - [Pattern and strategy examples](../examples/strategy_examples.md)

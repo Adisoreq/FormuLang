@@ -2,6 +2,20 @@
 
 Changes of the [**Stock**](README.md) standard.
 
+## 1.3
+
+Identifier: `stock-1.3`. Requires `core-1.3+`. Backward compatible with `1.2`: formulas whose result is a value in `1.2` give the same results; only formulas whose result was an **Error** in `1.2` can give a value now. `STANDARDS` contains `stock-1.0`, `stock-1.1`, `stock-1.2` and `stock-1.3`. The design is in [Proposals for the 1.3 standards](../../misc/proposals_1.3.md).
+
+### Added
+- The strategy function [`SIGNAL_SCORE(buy, sell, weights)`](functions/SIGNAL_SCORE.md): `SCORE(buy) - SCORE(sell)`, the strength of a signal from `-1` to `1`, from the buy and the sell conditions (Objects or Arrays of **Boolean** or `null`). The optional `weights` is one Object for the keys of both sides, only with Objects; a key of neither side is an `INVALID_KEY_ERROR`.
+- [Formula results](README.md#formula-results): the results of indicators, patterns and strategies in one table. They are plain values, not extended types; the results of a strategy do not change.
+- Examples: [a strategy without warm-up checks](examples/strategy_examples.md#example-8-macd--ema200-without-warm-up-checks) and [buy and sell conditions on other timeframes](examples/strategy_examples.md#example-9-buy-and-sell-conditions-on-other-timeframes), both with `SIGNAL_SCORE`.
+
+### Changed
+- [`SCORE`](functions/SCORE.md) accepts `null` conditions: a `null` is a condition that is not met, and it stays in the denominator (`SCORE([true, null])` is `0.5`).
+- With the [missing values](../core/README.md#missing-values) of `core-1.3`, a condition such as `CLOSE[I] > $ema[I]` is `false` while `$ema[I]` is `null`: a strategy does not need `READY` to avoid an **Error** during the warm-up. `READY` does not change.
+- The version is `1.3` (identifier `stock-1.3`), and it requires `core-1.3+`.
+
 ## 1.2
 
 Identifier: `stock-1.2`. Requires `core-1.2+`. Backward compatible with `1.1`: formulas valid in `1.1` give the same results; only formulas whose result was an **Error** in `1.1` can give a value now. `STANDARDS` contains `stock-1.0`, `stock-1.1` and `stock-1.2`. The design and the motivation are in [Proposals for the 1.2 standards](../../misc/proposals.md).

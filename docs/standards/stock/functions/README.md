@@ -46,7 +46,8 @@ Common rules of the series functions:
 
 | Function | Description | Return Type |
 | :------- | :---------- | :---------: |
-| [`SCORE(conditions, weights)`](SCORE.md) | Returns the share of `true` values of an Object of Booleans (e.g. the `checks` of a strategy) or of an `Array<Boolean>`, from `0` to `1`, optionally weighted (`weights`: the weight of every condition, `1` by default). Since `stock-1.2`. | `Number` |
+| [`SCORE(conditions, weights)`](SCORE.md) | Returns the share of `true` values of an Object of Booleans (e.g. the `checks` of a strategy) or of an `Array<Boolean>`, from `0` to `1`, optionally weighted (`weights`: the weight of every condition, `1` by default). Since `stock-1.2`; `null` conditions since `stock-1.3`. | `Number` |
+| [`SIGNAL_SCORE(buy, sell, weights)`](SIGNAL_SCORE.md) | Returns `SCORE(buy) - SCORE(sell)`: the strength of a signal from `-1` (all the sell conditions) to `1` (all the buy conditions), optionally weighted (`weights`: one Object for the keys of both sides). Since `stock-1.3`. | `Number` |
 
 ## Reference
 

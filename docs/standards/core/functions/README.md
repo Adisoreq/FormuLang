@@ -9,6 +9,8 @@ Built-in functions introduced by **Core** standard.
 
 Functions responsible for mathematical calculations on **Number** values.
 
+Since `core-1.3`, `ADD`, `SUB`, `MUL`, `DIV`, `NEG` and `ABS` give `null` when an argument is `null` (see [Missing values](../README.md#missing-values)).
+
 | Function | Operator | Description | Return Type |
 | :------- | :------: | :---------- | :---------: |
 | `ADD(a, b)` | `+` | Adds two numbers or joins two texts. [[Read more]](ADD.md) | `Number` / `Text` |
@@ -34,6 +36,8 @@ Functions responsible for mathematical calculations on **Number** values.
 ### 2. Logic & Comparison Functions
 
 Functions that evaluate conditions and return **Boolean** values.
+
+Since `core-1.3`, `GRE`, `GEQ`, `LES` and `LEQ` give `false` when an argument is `null`; `EQU` and `NEQ` do not change (see [Missing values](../README.md#missing-values)).
 
 | Function | Operator | Description | Return Type |
 | :------- | :------: | :---------- | :---------: |
@@ -87,10 +91,12 @@ Functions for manipulating **Text** strings.
 
 Functions operating on **Arrays** and collections.
 
+Since `core-1.3`, `MIN`, `MAX`, `SUM` and `AVG` give `null` when an element is `null`, and `MIN([])` and `MAX([])` give `null`. `APPEND`, `INSERT`, `PUT` and `REMOVE` return a copy and never change their argument.
+
 | Function | Description | Return Type |
 | :------- | :---------- | :---------: |
 | `ARRAY(elements...)` | Creates an array from provided arguments. Alias for `[...]`. [[Read more]](ARRAY.md) | `Array` |
-| `GET(array, index)` / `GET(object, key)` | Returns the value at an array index or object key. Operator forms: `array[index]` and `object.key`. [[Read more]](GET.md) | `Any` |
+| `GET(array, index)` / `GET(object, key)` / `GET(x, index_or_key, fallback)` | Returns the value at an array index or object key. Operator forms: `array[index]` and `object.key`. Since `core-1.3`, a `fallback` for a missing index or key, and `null.key` is `null`. [[Read more]](GET.md) | `Any` |
 | `SUM(array)` | Calculates the sum of all elements in the array. [[Read more]](SUM.md) | `Number` |
 | `PROD(array)` | Calculates the product of all elements in the array. [[Read more]](PROD.md) | `Number` |
 | `AVG(array)` | Calculates the mean average value of numbers in an array. [[Read more]](AVG.md) | `Number` |
@@ -109,6 +115,11 @@ Functions operating on **Arrays** and collections.
 | `HAS(array, index)` | Checks if the array has an element at the index (follows `@array_indexing`). Checks the index, not the value. [[Read more]](HAS.md) | `Boolean` |
 | `SORT(array)` / `SORT(array, handler)` | Returns the elements in ascending order: numbers, texts, or elements ordered by the handler results. The sort is stable. [[Read more]](SORT.md) | `Array` |
 | `REVERSE(array)` | Returns the elements in the reverse order. [[Read more]](REVERSE.md) | `Array` |
+| `APPEND(array, value)` | Returns a copy of the array with `value` at the end. Since `core-1.3`. [[Read more]](APPEND.md) | `Array` |
+| `INSERT(array, index, value)` | Returns a copy of the array with `value` inserted at `index`. Since `core-1.3`. [[Read more]](INSERT.md) | `Array` |
+| `PUT(array, index, value)` / `PUT(object, key, value)` | Returns a copy with the element at `index` replaced, or with `key` set to `value`. Since `core-1.3`. [[Read more]](PUT.md) | `Array` / `Object` |
+| `REMOVE(array, index)` / `REMOVE(object, key)` | Returns a copy without the element at `index`, or without `key`. Since `core-1.3`. [[Read more]](REMOVE.md) | `Array` / `Object` |
+| `CONCAT(array1, array2)` | Joins two arrays. Since `core-1.3`. [[Read more]](CONCAT.md#overload-2-arrays) | `Array` |
 | `FIRST(array)` / `FIRST(array, handler)` | Returns the first element, or the first element that satisfies the handler; `null` if there is none. [[Read more]](FIRST.md) | `Any` |
 | `LAST(array)` / `LAST(array, handler)` | Returns the last element, or the last element that satisfies the handler; `null` if there is none. [[Read more]](LAST.md) | `Any` |
 
@@ -162,7 +173,10 @@ Functions operating on **Objects**.
 | :------- | :---------- | :---------: |
 | `KEYS(object)` | Returns the keys of the object, in the order in which they were defined. [[Read more]](KEYS.md) | `Array` |
 | `HAS(object, key)` | Checks if the object has a value stored under the key. [[Read more]](HAS.md) | `Boolean` |
-| `MERGE(object1, object2)` | Returns a new object with the keys of both objects; the value of `object2` wins. [[Read more]](MERGE.md) | `Object` |
+| `MERGE(...objects)` | Returns a new object with the keys of all the objects; the value of a later object wins. More than two objects since `core-1.3`. [[Read more]](MERGE.md) | `Object` |
+| `VALUES(object)` | Returns the values of the object, in the order of its keys. Since `core-1.3`. [[Read more]](VALUES.md) | `Array` |
+| `ENTRIES(object)` | Returns the `[key, value]` pairs of the object. Since `core-1.3`. [[Read more]](ENTRIES.md) | `Array` |
+| `FROM_ENTRIES(entries)` | Creates an object from `[key, value]` pairs. Since `core-1.3`. [[Read more]](FROM_ENTRIES.md) | `Object` |
 
 ### 10. Time Functions
 

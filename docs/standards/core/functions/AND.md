@@ -74,6 +74,8 @@ The same rules apply to the operator: `a && b && c` is `AND(AND(a, b), c)`, so i
 | `true && ERROR("x")` | `[CUSTOM_ERROR (1)] x` | `[CUSTOM_ERROR (1)] x` |
 | `READY($ema, 1) && CLOSE[I] > $ema[I]` | an **Error** while `$ema[I]` is `null` | `false` while `$ema[I]` is `null` |
 
+Since `core-1.3`, `CLOSE[I] > $ema[I]` alone is `false` while `$ema[I]` is `null` (see [Missing values](../README.md#missing-values)), so the guard `READY($ema, 1) &&` is optional. A `null` operand of `&&` (`null && true`) is still an `ARGUMENT_ERROR`.
+
 All the arguments are still computed before `AND` is called, so the assignments in the arguments after the deciding one are executed. The writes to the [memory](../../../core/context.md#memory) (`STORE`, `CLEAR`) in those arguments are discarded. A lazy evaluation that does not compute them at all is planned for `core-2.0`.
 
 ## Performance

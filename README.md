@@ -143,7 +143,7 @@ $result
 
 ## Project Status
 
-Current version: **1.1** - Core standard `core-1.1`, Stock standard `stock-1.1`. Version **1.2** (`core-1.2`, `stock-1.2`) is specified, and its implementations are in progress; see the [proposals](./docs/misc/proposals.md).
+Current version: **1.3** - Core standard `core-1.3`, Stock standard `stock-1.3`. The design is in the [proposals for 1.3](./docs/misc/proposals_1.3.md) and [for 1.2](./docs/misc/proposals.md).
 
 The specification is stable: changes within the `1.x` versions are backward compatible.
 

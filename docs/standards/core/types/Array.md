@@ -15,7 +15,7 @@ Array is a type defining an ordered collection of values, accessed via unique in
 
 ## Access
 
-Elements are accessed with [`GET`](../functions/GET.md) or the `array[index]` operator. The first index depends on the `array_indexing` environment variable. An invalid index results in [`INVALID_INDEX_ERROR`](../errors/INVALID_INDEX_ERROR.md).
+Elements are accessed with [`GET`](../functions/GET.md) or the `array[index]` operator. The first index depends on the `array_indexing` environment variable. An invalid index results in [`INVALID_INDEX_ERROR`](../errors/INVALID_INDEX_ERROR.md); since `core-1.3`, `GET(array, index, fallback)` gives `fallback` instead. Arrays are never changed in place: [`APPEND`](../functions/APPEND.md), [`INSERT`](../functions/INSERT.md), [`PUT`](../functions/PUT.md) and [`REMOVE`](../functions/REMOVE.md) return a copy.
 
 ## Serialization
 

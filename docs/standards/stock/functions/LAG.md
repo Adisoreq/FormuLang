@@ -41,7 +41,7 @@ Examples (`CLOSE` = `[1, 2, 3, 4, 5]`):
 | `LAG(CLOSE, 2)` | the last one | `3` |
 | `LAG(CLOSE, 0)` | the last one | `5` |
 | `LAG(CLOSE)` | the first one | `null` |
-| `CLOSE[I] - IFNULL(LAG(CLOSE), CLOSE[I])` | every candle | `0`, `1`, `1`, `1`, `1` (change from the previous close, `0` on the first candle; without `IFNULL`, `1 - null` is an `ARGUMENT_ERROR`) |
+| `CLOSE[I] - IFNULL(LAG(CLOSE), CLOSE[I])` | every candle | `0`, `1`, `1`, `1`, `1` (change from the previous close, `0` on the first candle; without `IFNULL`, `1 - null` is an `ARGUMENT_ERROR` in `core-1.2` and `null` since `core-1.3`) |
 | `LAG(CLOSE, -1)` | any | `[OPERATION_ERROR (3)] ...` |
 
 ## Errors
